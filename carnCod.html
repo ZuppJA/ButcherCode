@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ButcherCode</title>
+  <style>
+    body {
+      margin: 0;
+      background: #113311; /* Slightly lighter background */
+      color: #b3ffb3; /* Less intense green */
+      font-family: 'Source Code Pro', monospace;
+      font-size: 16px; /* Slightly larger base font size */
+      line-height: 1.6; /* Improved line height for readability */
+      overflow-x: hidden;
+      transition: margin-left 0.3s ease;
+      padding-bottom: 20px; /* Add some padding at the bottom */
+    }
+    body.sidebar-open main {
+      margin-left: 320px; /* Adjust margin to accommodate wider sidebar */
+    }
+    header {
+      background: #005500; /* Slightly lighter header background */
+      padding: 15px 30px; /* Increased horizontal padding */
+      display: flex;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1001;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+    #hamburger {
+      cursor: pointer;
+      width: 35px; /* Slightly larger hamburger icon */
+      height: 26px;
+      position: relative;
+    }
+    #hamburger span {
+      background: #b3ffb3; /* Less intense green */
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      left: 0;
+      border-radius: 2px;
+      transition: 0.3s ease;
+    }
+    #hamburger span:nth-child(1) {
+      top: 0;
+    }
+    #hamburger span:nth-child(2) {
+      top: 11px; /* Adjusted spacing */
+    }
+    #hamburger span:nth-child(3) {
+      top: 22px; /* Adjusted spacing */
+    }
+    #hamburger.open span:nth-child(1) {
+      transform: rotate(45deg);
+      top: 11px; /* Adjusted for rotation */
+    }
+    #hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    #hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg);
+      top: 11px; /* Adjusted for rotation */
+    }
+    h1 {
+      margin: 0 0 0 30px; /* Increased left margin */
+      font-size: 2.2rem; /* Slightly larger font size */
+      font-weight: bold;
+      animation: fadeInScale 1s ease forwards;
+    }
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8); /* Slightly larger starting scale */
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    #sidebar {
+      position: fixed;
+      top: 65px; /* Adjusted top position */
+      left: 0;
+      width: 300px; /* Slightly wider sidebar */
+      height: calc(100vh - 65px); /* Adjust height to account for header */
+      background: #004400; /* Slightly lighter sidebar background */
+      color: #b3ffb3; /* Less intense green */
+      overflow-y: auto;
+      z-index: 1000;
+      padding: 20px; /* Increased padding */
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+    #sidebar.open {
+      transform: translateX(0);
+    }
+    #sidebar h2 { /* Targeting the new clickable h2 elements */
+      margin-top: 0;
+      font-size: 1.4rem; /* Slightly larger heading */
+      border-bottom: 1px solid #b3ffb3; /* Less intense green */
+      padding-bottom: 8px; /* Increased padding */
+      margin-bottom: 15px; /* Increased margin */
+      cursor: pointer; /* Indicate it's clickable */
+      user-select: none; /* Prevent text selection on click */
+      position: relative;
+      padding-right: 25px; /* Space for the arrow */
+    }
+    #sidebar h2::after { /* Arrow for the h2 titles */
+      content: "▶";
+      position: absolute;
+      right: 5px;
+      top: 2px;
+      transition: transform 0.3s ease;
+    }
+    #sidebar h2.open::after {
+      transform: rotate(90deg);
+    }
+
+    .menu-section {
+      margin-bottom: 25px; /* Increased margin between sections */
+    }
+    .subfolder {
+      margin-left: 20px; /* Increased indentation */
+      display: none; /* Default to hidden */
+      margin-bottom: 12px; /* Increased margin */
+    }
+    .subfolder.open {
+      display: block;
+    }
+    main {
+      margin: 100px 30px 30px 30px; /* Increased margins */
+      max-width: 700px; /* Slightly wider main content area */
+      transition: margin-left 0.3s ease;
+      padding: 20px; /* Add some padding to the main content */
+      background-color: #002200; /* Slightly darker background for contrast */
+      border-radius: 8px; /* Soften the corners */
+    }
+    /* Hide all main sections by default */
+    #mainTerminalSection, #gameCodeSection, #initialScreen {
+        display: none;
+    }
+    /* Show only the active section */
+    main.show-terminal #mainTerminalSection {
+        display: block;
+    }
+    main.show-game #gameCodeSection {
+        display: block;
+    }
+    main.show-initial #initialScreen {
+        display: block;
+    }
+
+
+    /* Styles for sidebar list items */
+    .item {
+      cursor: pointer;
+      padding: 5px 8px; /* Increased padding */
+      border-radius: 4px;
+      margin-bottom: 5px; /* Small margin between items */
+    }
+    .item:hover {
+      background: #006600;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px; /* Increased margin */
+      font-weight: bold;
+      color: #ccffcc; /* Slightly lighter label color */
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    input, button {
+      padding: 12px; /* Increased padding for input and button */
+      font-size: 1.2rem; /* Slightly larger font size */
+      border-radius: 6px; /* More rounded corners */
+    }
+    input::placeholder {
+      color: #88aa88; /* Less intense placeholder color */
+    }
+    input:focus {
+      outline: none;
+      border-color: #88ff88; /* Highlight on focus */
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3); /* Subtle focus shadow */
+    }
+    input {
+      flex-grow: 1; /* Permite que o input cresça para preencher o espaço */
+      width: 100%; /* Ocupa 100% da largura */
+      background: #001100; /* Slightly darker input background */
+      border: 1px solid #88aa88; /* Less intense border */
+      color: #b3ffb3; /* Less intense text color */
+      font-family: 'Source Code Pro', monospace;
+      padding-right: 12px; /* Padding padrão */
+    }
+
+    button {
+      margin-top: 0px; /* Remover margem superior, pois o input está dentro de um wrapper */
+      background: #006600;
+      color: #ccffcc;
+      border: none;
+      font-family: 'Source Code Pro', monospace;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%; /* Botão "Executar" ocupa a largura total */
+    }
+    button:hover {
+      background: #008800;
+    }
+    #result {
+      margin-top: 25px; /* Increased margin */
+      min-height: 40px; /* Slightly taller result area */
+      font-size: 1.6rem; /* Slightly larger result text */
+      font-weight: bold;
+      border: 2px solid #88ff88; /* Less intense border */
+      padding: 12px; /* Increased padding */
+      border-radius: 8px; /* More rounded corners */
+      background: #001a00; /* Slightly darker background */
+      white-space: nowrap;
+      overflow: hidden; /* Hide overflow for marquee effect */
+      position: relative; /* Needed for animation */
+    }
+    #result .marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 10s linear infinite; /* Adjust duration as needed */
+      animation-play-state: paused; /* Pause by default */
+      transform: translateX(100%); /* Start from right */
+    }
+    #result.scrolling .marquee {
+      animation-play-state: running;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    #instructionsContent {
+      background: #001a00; /* Slightly darker background */
+      padding: 15px; /* Increased padding */
+      border-radius: 6px; /* More rounded corners */
+      font-size: 1rem; /* Slightly larger font size */
+      line-height: 1.7; /* Improved line height */
+      color: #aaffaa; /* Slightly softer instruction text color */
+    }
+    #instructionsContent p {
+      margin-bottom: 10px;
+    }
+    #instructionsContent p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* --- Estilos para o Modal de Senha --- */
+    #passwordModalOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8); /* Fundo semi-transparente escuro */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Garante que fique acima de tudo */
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    #passwordModalOverlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #passwordModal {
+      background: #002200; /* Cor do fundo do modal */
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2); /* Sombra verde */
+      max-width: 400px;
+      width: 90%;
+      color: #b3ffb3;
+      transform: translateY(-20px); /* Começa um pouco acima */
+      transition: transform 0.3s ease;
+      position: relative; /* Para posicionar a mensagem de sucesso */
+    }
+    #passwordModalOverlay.show #passwordModal {
+        transform: translateY(0); /* Desliza para a posição normal */
+    }
+
+    #passwordModal h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: #ccffcc;
+      margin-bottom: 20px;
+    }
+
+    #passwordInput {
+      width: calc(100% - 24px); /* Ajusta a largura para o padding */
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #88ff88;
+      background: #001100;
+      color: #b3ffb3;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    #passwordInput:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    }
+
+    #passwordSubmit {
+      padding: 12px 30px;
+      background: #006600;
+      color: #ccffcc;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #passwordSubmit:hover {
+      background: #008800;
+    }
+
+    #passwordError {
+      color: #ff6666; /* Cor de erro mais vibrante */
+      margin-top: 10px;
+      font-size: 0.95rem;
+      min-height: 20px; /* Garante espaço para a mensagem de erro */
+    }
+
+    #welcomeMessage {
+      /* Estilos existentes */
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #aaffaa;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+      margin-bottom: 20px; /* Adiciona espaço para os botões */
+    }
+    #welcomeMessage.show {
+        opacity: 1;
+        pointer-events: auto; /* Permite interação com a mensagem se houver */
+    }
+
+    #initial-screen-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Espaçamento entre os botões */
+        margin-top: 30px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        padding: 0 20px; /* Padding para garantir que os botões não colem nas bordas */
+        box-sizing: border-box; /* Inclui padding na largura total */
+    }
+    #initial-screen-options.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    #initial-screen-options button {
+        background-color: #007700; /* Cor mais vibrante para os atalhos */
+        color: #ffffff;
+        padding: 15px;
+        font-size: 1.3rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    #initial-screen-options button:hover {
+        background-color: #009900;
+        transform: translateY(-2px);
+    }
+
+
+    /* --- Estilos para Resultado (Sucesso/Erro) --- */
+    #result.success {
+      border-color: #00cc00; /* Verde mais claro para sucesso */
+      background-color: #003300; /* Verde mais escuro para fundo de sucesso */
+      color: #00ff00; /* Cor do texto para sucesso */
+    }
+
+    #result.error {
+      border-color: #cc0000; /* Vermelho mais claro para erro */
+      background-color: #330000; /* Vermelho mais escuro para fundo de erro */
+      color: #ff0000; /* Cor do texto para erro */
+    }
+
+    /* --- Estilos para o Jogo --- */
+    #game-container {
+      padding: 15px;
+      background-color: #002200;
+      border-radius: 6px;
+      color: #aaffaa;
+      text-align: center; /* Centraliza conteúdo do jogo */
+    }
+
+    #question {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      min-height: 3em; /* Garante espaço para a pergunta */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #options button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 8px;
+      background-color: #004400;
+      color: #ccffcc;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Source Code Pro', monospace;
+      transition: background-color 0.3s ease;
+    }
+
+    #options button:hover:not(:disabled) { /* Não hover se desabilitado */
+      background-color: #006600;
+    }
+    #options button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    #feedback {
+      margin-top: 10px;
+      font-weight: bold;
+      min-height: 2em; /* Garante espaço para feedback */
+    }
+
+    #feedback.correct {
+      color: #00ff00;
+    }
+
+    #feedback.incorrect {
+      color: #ff6666;
+    }
+
+    #score-display {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 1.05rem;
+      min-height: 1.5em;
+    }
+
+    #next-question {
+      padding: 10px 20px;
+      background-color: #006600;
+      color: #ccffcc;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Source Code Pro', monospace;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    #next-question:hover {
+      background-color: #008800;
+    }
+
+    #game-start-screen, #game-end-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background-color: #002200;
+      border-radius: 8px;
+      min-height: 200px;
+    }
+    #game-start-screen h3, #game-end-screen h3 {
+      font-size: 1.8rem;
+      color: #ccffcc;
+      margin-bottom: 20px;
+    }
+    #game-end-screen p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    #start-game-button, #restart-game-button {
+      padding: 15px 30px;
+      background-color: #009900;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+    #start-game-button:hover, #restart-game-button:hover {
+      background-color: #00bb00;
+      transform: translateY(-2px);
+    }
+    /* #game-elements { display: none; } is now handled by JS for specific use */
+
+    #progress-bar-container {
+      width: 100%;
+      background-color: #001100;
+      border-radius: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+      height: 10px;
+      position: relative;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #00ff00;
+      border-radius: 5px;
+      transition: width 0.1s linear; /* Animação suave para o progresso */
+    }
+    #timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #aaffaa;
+    }
+    #timer.warning {
+        color: #ffaa00; /* Amarelo/Laranja para aviso de tempo */
+    }
+    #timer.critical {
+        color: #ff0000; /* Vermelho para tempo crítico */
+    }
+    #question-counter {
+        font-size: 0.9em;
+        color: #88cc88;
+        margin-bottom: 5px;
+    }
+
+    /* Estilo para o novo botão "Voltar ao Início" */
+    .back-to-home-button {
+        display: block; /* Oculta por padrão */
+        margin-top: 30px; /* Espaço acima do botão */
+        width: 100%;
+        padding: 12px;
+        background-color: #555500; /* Um tom de verde-oliva ou marrom para contraste */
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .back-to-home-button:hover {
+        background-color: #777700;
+        transform: translateY(-2px);
+    }
+
+  </style>
+</head>
+<body>
+  <div id="passwordModalOverlay">
+    <div id="passwordModal">
+      <h2 id="modalTitle">Acesso Restrito</h2>
+      <p id="modalPrompt">Digite a senha para prosseguir:</p>
+      <input type="password" id="passwordInput" placeholder="Senha" autofocus />
+      <div id="passwordError"></div>
+      <button id="passwordSubmit">Entrar</button>
+      </div>
+  </div>
+
+  <header>
+    <div id="hamburger" aria-label="Menu" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+    <h1>ButcherCode</h1>
+  </header>
+
+  <nav id="sidebar" aria-label="Menu lateral">
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="bovinosList" data-type="accordion">Códigos Bovinos</h2>
+      <div class="subfolder" id="bovinosList"></div>
+    </div>
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="suinosList" data-type="accordion">Códigos Suínos</h2>
+      <div class="subfolder" id="suinosList"></div>
+    </div>
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="instructionsContent" data-type="accordion">Instruções</h2>
+      <div class="subfolder" id="instructionsContent">
+        <p>Digite um código ou o nome do produto no campo "Terminal ButcherCode" e clique em "Executar".</p>
+        <p>Se digitar o código, aparecerá o nome do produto correspondente.</p>
+        <p>Se digitar o nome do produto, aparecerá o código.</p>
+        <p>Use o menu lateral para consultar os códigos e aprender.</p>
+      </div>
+    </div>
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="mainTerminalSection" data-type="main-content">Terminal de Consulta</h2>
+    </div>
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="gameCodeSection" data-type="main-content">GameCode</h2>
+    </div>
+  </nav>
+
+  <main class="show-initial"> <section id="initialScreen" style="text-align: center; padding-top: 50px;">
+        <div id="welcomeMessage"></div>
+        <div id="initial-screen-options">
+            <button id="accessTerminalButton">Acessar Terminal</button>
+            <button id="playGameCodeButton">Jogar GameCode</button>
+        </div>
+    </section>
+
+    <section id="mainTerminalSection">
+        <label for="inputCode">Terminal ButcherCode</label>
+        <div class="input-wrapper">
+            <input type="text" id="inputCode" placeholder="Digite código ou produto aqui..." autocomplete="off" />
+        </div>
+        <button id="btnExecute">Executar</button>
+        <div id="result" aria-live="polite" role="status"></div>
+        <button class="back-to-home-button" id="backToHomeTerminal">Voltar ao Início</button>
+    </section>
+
+    <section id="gameCodeSection">
+        <div id="game-container">
+            <div id="game-start-screen">
+              <h3>Bem-vindo ao GameCode!</h3>
+              <p>Teste seus conhecimentos sobre os códigos de açougue.</p>
+              <p>Você terá 15 segundos para responder a cada uma das 20 perguntas.</p>
+              <button id="start-game-button">Iniciar Jogo</button>
+            </div>
+
+            <div id="game-elements" style="display: none;">
+              <div id="question-counter"></div>
+              <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+              </div>
+              <div id="timer"></div>
+              <div id="question"></div>
+              <div id="options">
+                </div>
+              <div id="feedback"></div>
+              <div id="score-display"></div>
+              <button id="next-question">Próxima Pergunta</button>
+            </div>
+
+            <div id="game-end-screen" style="display: none;">
+              <h3>Jogo Finalizado!</h3>
+              <p id="final-score-message"></p>
+              <button id="restart-game-button">Reiniciar Jogo</button>
+            </div>
+        </div>
+        <button class="back-to-home-button" id="backToHomeGame">Voltar ao Início</button>
+    </section>
+  </main>
+
+
+  <script>
+    // --- Lógica de Senha ---
+    const CORRECT_PASSWORD_1 = "744336"; // Senha universal
+    const CORRECT_PASSWORD_2 = "desenrolado"; // Nova senha
+    const passwordModalOverlay = document.getElementById('passwordModalOverlay');
+    const passwordModal = document.getElementById('passwordModal');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordSubmit = document.getElementById('passwordSubmit');
+    const passwordError = document.getElementById('passwordError');
+    const welcomeMessage = document.getElementById('welcomeMessage'); // Movido para a main
+    const modalTitle = document.getElementById('modalTitle');
+    const modalPrompt = document.getElementById('modalPrompt');
+    const initialScreenOptions = document.getElementById('initial-screen-options'); // Novos botões
+    const accessTerminalButton = document.getElementById('accessTerminalButton');
+    const playGameCodeButton = document.getElementById('playGameCodeButton');
+
+
+    function checkPassword() {
+        const enteredPassword = passwordInput.value;
+        if (enteredPassword === CORRECT_PASSWORD_1 || enteredPassword === CORRECT_PASSWORD_2) {
+            // Oculta elementos do modal de senha
+            modalTitle.style.display = 'none';
+            modalPrompt.style.display = 'none';
+            passwordInput.style.display = 'none';
+            passwordSubmit.style.display = 'none';
+            passwordError.textContent = '';
+
+            // Exibe mensagem de boas-vindas e botões de atalho
+            welcomeMessage.innerHTML = 'Bem-vindo, Mestre Açougueiro!<br>Vamos desenrolar!';
+            welcomeMessage.classList.add('show');
+
+            // Move os elementos do modal para a tela principal (initialScreen)
+            document.getElementById('initialScreen').prepend(welcomeMessage);
+            initialScreenOptions.classList.add('show');
+            document.getElementById('passwordModal').style.display = 'none'; // Oculta o modal completamente
+
+            // Remove a sobreposição do modal após um tempo
+            setTimeout(() => {
+                passwordModalOverlay.classList.remove('show');
+                passwordModalOverlay.style.display = 'none'; // Garante que a sobreposição desapareça
+            }, 500); // Tempo para transição de opacidade
+
+
+        } else {
+            passwordError.textContent = 'Senha incorreta. Tente novamente.';
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    }
+
+    passwordSubmit.addEventListener('click', checkPassword);
+    passwordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        passwordModalOverlay.classList.add('show');
+        passwordInput.focus();
+    });
+
+    // --- Código Existente (Lógica Principal do ButcherCode) ---
+
+    function normalizeText(text) {
+        return text
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .trim();
+    }
+
+    const bovinos = {
+      "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso",
+      "14694": "Colchão Duro", "26390": "Colchão Mole", "25812": "Contra Filé",
+      "14793": "Coração da Alcatra", "4282": "Fígado", "14762": "Lagarto",
+      "14809": "Miolo da Paleta", "14618": "Músculo do Dianteiro", "14816": "Paleta",
+      "14823": "Patinho", "00260": "Picanha em Pedaços", "05418": "Picanha Grill",
+      "16094": "Picanha Maturada", "07160": "Picanha Todo Dia", "06019": "Picanha Tradicional"
+    };
+
+    const suinos = {
+      "11549": "Bisteca Suína", "23023": "Carne Suína Corte", "15776": "Carne Suína Embalada",
+      "23740": "Costela com Panceta Suína Corte", "23733": "Costela com Panceta Suína Embalada",
+      "18159": "Pé Suíno"
+    };
+
+    const products = {...bovinos, ...suinos};
+
+    const productsInverseNormalized = {};
+    Object.entries(products).forEach(([code, name]) => {
+      productsInverseNormalized[normalizeText(name)] = {
+          code: code.padStart(5, '0'),
+          originalName: name
+      };
+    });
+
+    const mainTerminalSection = document.getElementById('mainTerminalSection');
+    const inputCode = document.getElementById('inputCode');
+    const btnExecute = document.getElementById('btnExecute');
+    const resultDiv = document.getElementById('result');
+    const bovinosList = document.getElementById('bovinosList');
+    const suinosList = document.getElementById('suinosList');
+
+    // Funções de áudio removidas
+
+    function displayResult(text) {
+        resultDiv.innerHTML = '';
+        resultDiv.classList.remove('scrolling');
+
+        const marqueeSpan = document.createElement('span');
+        marqueeSpan.textContent = text;
+        resultDiv.appendChild(marqueeSpan);
+
+        if (text.length > 15) {
+            marqueeSpan.classList.add('marquee');
+            void resultDiv.offsetWidth;
+            resultDiv.classList.add('scrolling');
+        }
+    }
+
+    function populateSidebarList(listElement, data) { // Removido soundFunction
+        Object.entries(data).forEach(([code, name]) => {
+            const div = document.createElement('div');
+            div.classList.add('item');
+            div.textContent = `${code.padStart(5, '0')} - ${name}`;
+            div.tabIndex = 0;
+            div.addEventListener('click', () => {
+                // Ao clicar em um item da lista, o terminal deve aparecer
+                showSection('mainTerminalSection'); // Chama com o ID específico da seção
+                inputCode.value = code.padStart(5, '0');
+                displayResult(name);
+                // playClickSound(); // Removido
+                // if (soundFunction) soundFunction(); // Removido
+                resultDiv.classList.remove('success', 'error');
+                // Fechar a sidebar após clicar no item
+                hamburger.classList.remove('open');
+                sidebar.classList.remove('open');
+                document.body.classList.remove('sidebar-open');
+            });
+            listElement.appendChild(div);
+        });
+    }
+
+    populateSidebarList(bovinosList, bovinos); // Removido playCowSound
+    populateSidebarList(suinosList, suinos); // Removido playPigSound
+
+    function buscarCodigoOuNome(input) {
+      const texto = input.trim();
+      if (!texto) return { result: "", found: false };
+
+      if (/^\d+$/.test(texto)) {
+        const codigo = texto.padStart(5, '0');
+        const nomeProduto = products[codigo];
+        return {
+            result: nomeProduto || "Código não encontrado",
+            found: !!nomeProduto
+        };
+      } else {
+        const normalizedInput = normalizeText(texto);
+        const foundData = productsInverseNormalized[normalizedInput];
+        return {
+            result: foundData ? foundData.code : "Produto não encontrado",
+            found: !!foundData
+        };
+      }
+    }
+
+    btnExecute.addEventListener('click', () => {
+      // playClickSound(); // Removido
+      const valor = inputCode.value;
+      const { result, found } = buscarCodigoOuNome(valor);
+      displayResult(result);
+
+      resultDiv.classList.remove('success', 'error');
+
+      if (found) {
+          resultDiv.classList.add('success');
+          // playSuccessSound(); // Removido
+      } else {
+          resultDiv.classList.add('error');
+          // playErrorSound(); // Removido
+      }
+    });
+
+    inputCode.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        btnExecute.click();
+      }
+    });
+
+    inputCode.addEventListener('input', () => {
+        resultDiv.innerHTML = '';
+        resultDiv.classList.remove('scrolling', 'success', 'error');
+    });
+
+    // --- Gerenciamento da Visibilidade de Seções e Acordeão do Menu ---
+    const mainContent = document.querySelector('main');
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarTitles = document.querySelectorAll('#sidebar h2');
+    const initialScreen = document.getElementById('initialScreen'); // Acessa a nova seção da tela inicial
+
+    const backToHomeTerminalButton = document.getElementById('backToHomeTerminal');
+    const backToHomeGameButton = document.getElementById('backToHomeGame');
+
+
+    let activeAccordionItem = null; // Para controlar qual item do acordeão está aberto
+
+    function showSection(sectionId) {
+        mainContent.classList.remove('show-terminal', 'show-game', 'show-initial');
+        clearInterval(timerInterval); // Para o timer do jogo se ele estava rodando
+
+        // Oculta todos os botões de voltar ao início primeiro
+        backToHomeTerminalButton.style.display = 'none';
+        backToHomeGameButton.style.display = 'none';
+
+        if (sectionId === 'mainTerminalSection') {
+            mainContent.classList.add('show-terminal');
+            inputCode.focus();
+            backToHomeTerminalButton.style.display = 'block'; // Mostra o botão no terminal
+        } else if (sectionId === 'gameCodeSection') {
+            mainContent.classList.add('show-game');
+            // Ao mostrar a seção do jogo, sempre exibe a tela de início do jogo
+            gameStartScreen.style.display = 'flex';
+            gameElements.style.display = 'none';
+            gameEndScreen.style.display = 'none';
+            startGameButton.focus(); // Foca no botão de iniciar
+            backToHomeGameButton.style.display = 'block'; // Mostra o botão no game
+        } else if (sectionId === 'initialScreen') {
+            mainContent.classList.add('show-initial');
+            // Garante que a mensagem de boas-vindas e os botões estejam visíveis
+            welcomeMessage.classList.add('show');
+            initialScreenOptions.classList.add('show');
+        }
+        // Fechar a sidebar ao trocar de seção principal
+        hamburger.classList.remove('open');
+        sidebar.classList.remove('open');
+        document.body.classList.remove('sidebar-open');
+    }
+
+    // Event listeners para os novos botões de atalho
+    accessTerminalButton.addEventListener('click', () => {
+        // playClickSound(); // Removido
+        showSection('mainTerminalSection');
+    });
+
+    playGameCodeButton.addEventListener('click', () => {
+        // playClickSound(); // Removido
+        showSection('gameCodeSection');
+    });
+
+    // Event listeners para os novos botões "Voltar ao Início"
+    backToHomeTerminalButton.addEventListener('click', () => {
+        // playClickSound(); // Removido
+        showSection('initialScreen');
+    });
+
+    backToHomeGameButton.addEventListener('click', () => {
+        // playClickSound(); // Removido
+        showSection('initialScreen');
+    });
+
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      sidebar.classList.toggle('open');
+      document.body.classList.toggle('sidebar-open');
+    });
+
+    document.addEventListener('click', e => {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target)) { // Adicionado !passwordModalOverlay.contains(e.target)
+        hamburger.classList.remove('open');
+        sidebar.classList.remove('open');
+        document.body.classList.remove('sidebar-open');
+      }
+    });
+
+    sidebarTitles.forEach(title => {
+      title.addEventListener('click', () => {
+        const targetId = title.dataset.target;
+        const contentType = title.dataset.type; // 'accordion' ou 'main-content'
+        const targetElement = document.getElementById(targetId);
+
+        if (contentType === 'accordion') {
+            // Lógica do acordeão para as subpastas no menu lateral
+            if (activeAccordionItem && activeAccordionItem !== targetElement) {
+                activeAccordionItem.classList.remove('open');
+                activeAccordionItem.previousElementSibling.classList.remove('open');
+            }
+
+            targetElement.classList.toggle('open');
+            title.classList.toggle('open');
+            activeAccordionItem = targetElement.classList.contains('open') ? targetElement : null;
+
+            // Fechar seções principais ao interagir com acordeão
+            mainContent.classList.remove('show-terminal', 'show-game', 'show-initial'); // Inclui 'show-initial'
+            clearInterval(timerInterval); // Para o timer do jogo se ele estava rodando
+        } else if (contentType === 'main-content') {
+            // Seções que abrem na área principal (Terminal de Consulta, GameCode)
+            showSection(targetId); // Exibe a seção correspondente na área principal
+            // Fechar todos os itens do acordeão quando uma seção principal é aberta
+            document.querySelectorAll('.subfolder').forEach(folder => {
+                folder.classList.remove('open');
+                folder.previousElementSibling.classList.remove('open');
+            });
+            activeAccordionItem = null; // Reseta o ativo
+        }
+      });
+    });
+
+
+    // --- Lógica do GameCode ---
+    const gameCodeSection = document.getElementById('gameCodeSection');
+    const gameStartScreen = document.getElementById('game-start-screen');
+    const gameEndScreen = document.getElementById('game-end-screen');
+    const gameElements = document.getElementById('game-elements');
+    const startGameButton = document.getElementById('start-game-button');
+    const restartGameButton = document.getElementById('restart-game-button');
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const feedbackElement = document.getElementById('feedback');
+    const scoreDisplayElement = document.getElementById('score-display');
+    const nextQuestionButton = document.getElementById('next-question');
+    const progressBar = document.getElementById('progress-bar');
+    const timerElement = document.getElementById('timer');
+    const questionCounterElement = document.getElementById('question-counter');
+    const finalScoreMessage = document.getElementById('final-score-message');
+
+
+    const TIME_PER_QUESTION = 15;
+    let countdown;
+    let timeLeft;
+    let timerInterval;
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let questions = [];
+
+    const fixedQuestions = [
+      { question: "Qual o nome do produto com o código: 25812?", options: ["Picanha Tradicional", "Contra Filé", "Alcatra com Maminha", "Lagarto"], correctAnswer: "Contra Filé" },
+      { question: "Qual o código do produto: Miolo da Paleta?", options: ["14816", "14618", "14809", "14793"], correctAnswer: "14809" },
+      { question: "Qual o nome do produto com o código: 07160?", options: ["Picanha Grill", "Picanha Maturada", "Picanha Todo Dia", "Picanha em Pedaços"], correctAnswer: "Picanha Todo Dia" },
+      { question: "Qual o código do produto: Acém?", options: ["14601", "14625", "14694", "26390"], correctAnswer: "14601" },
+      { question: "Qual o nome do produto com o código: 11549?", options: ["Pé Suíno", "Carne Suína Corte", "Bisteca Suína", "Costela com Panceta Suína Embalada"], correctAnswer: "Bisteca Suína" },
+      { question: "Qual o código do produto: Coração da Alcatra?", options: ["14625", "14793", "14823", "00260"], correctAnswer: "14793" },
+      { question: "Qual o nome do produto com o código: 23733?", options: ["Costela com Panceta Suína Corte", "Costela com Panceta Suína Embalada", "Carne Suína Embalada", "Bisteca Suína"], correctAnswer: "Costela com Panceta Suína Embalada" },
+      { question: "Qual o código do produto: Fígado?", options: ["1762", "4282", "14762", "14809"], correctAnswer: "4282" },
+      { question: "Qual o nome do produto com o código: 16094?", options: ["Picanha Tradicional", "Picanha Grill", "Picanha Maturada", "Picanha Todo Dia"], correctAnswer: "Picanha Maturada" },
+      { question: "Qual o código do produto: Músculo do Dianteiro?", options: ["14601", "14816", "14618", "14823"], correctAnswer: "14618" },
+      { question: "Qual o nome do produto com o código: 18159?", options: ["Bisteca Suína", "Carne Suína Embalada", "Pé Suíno", "Costela com Panceta Suína Corte"], correctAnswer: "Pé Suíno" },
+      { question: "Qual o código do produto: Colchão Duro?", options: ["14694", "26390", "25812", "14793"], correctAnswer: "14694" },
+      { question: "Qual o nome do produto com o código: 14762?", options: ["Patinho", "Lagarto", "Paleta", "Músculo do Dianteiro"], correctAnswer: "Lagarto" },
+      { question: "Qual o código do produto: Alcatra com Maminha?", options: ["14601", "1762", "14625", "26390"], correctAnswer: "14625" },
+      { question: "Qual o nome do produto com o código: 05418?", options: ["Picanha Todo Dia", "Picanha em Pedaços", "Picanha Grill", "Picanha Maturada"], correctAnswer: "Picanha Grill" },
+      { question: "Qual o código do produto: Bisteca com osso?", options: ["14601", "1762", "14625", "25812"], correctAnswer: "1762" },
+      { question: "Qual o nome do produto com o código: 23023?", options: ["Bisteca Suína", "Carne Suína Embalada", "Carne Suína Corte", "Pé Suíno"], correctAnswer: "Carne Suína Corte" },
+      { question: "Qual o código do produto: Patinho?", options: ["14816", "14823", "14618", "14809"], correctAnswer: "14823" },
+      { question: "Qual o nome do produto com o código: 06019?", options: ["Picanha em Pedaços", "Picanha Todo Dia", "Picanha Grill", "Picanha Tradicional"], correctAnswer: "Picanha Tradicional" },
+      { question: "Qual o código do produto: Colchão Mole?", options: ["14694", "26390", "14762", "14823"], correctAnswer: "26390" }
+    ];
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function startTimer() {
+        timeLeft = TIME_PER_QUESTION;
+        timerElement.textContent = `Tempo: ${timeLeft}s`;
+        timerElement.classList.remove('warning', 'critical');
+        progressBar.style.width = '100%';
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = `Tempo: ${timeLeft}s`;
+            const progress = (timeLeft / TIME_PER_QUESTION) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            if (timeLeft <= 5 && timeLeft > 0) {
+                timerElement.classList.add('warning');
+                timerElement.classList.remove('critical');
+                // playTickSound(); // Removido
+            } else if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // playTimeUpSound(); // Removido
+                timerElement.textContent = "Tempo esgotado!";
+                timerElement.classList.add('critical');
+                checkAnswer(null);
+            } else {
+                timerElement.classList.remove('warning', 'critical');
+            }
+        }, 1000);
+    }
+
+    function showQuestion() {
+      if (currentQuestionIndex < questions.length) {
+        startTimer();
+
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.textContent = currentQuestion.question;
+        optionsElement.innerHTML = '';
+        currentQuestion.options.forEach(option => {
+          const button = document.createElement('button');
+          button.textContent = option;
+          button.dataset.answer = option;
+          button.addEventListener('click', checkAnswer);
+          optionsElement.appendChild(button);
+        });
+        feedbackElement.textContent = '';
+        feedbackElement.className = '';
+        nextQuestionButton.style.display = 'none';
+        questionCounterElement.textContent = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        scoreDisplayElement.textContent = `Pontuação: ${score}/${currentQuestionIndex}`;
+      } else {
+        endGame();
+      }
+    }
+
+    function checkAnswer(event) {
+      clearInterval(timerInterval);
+
+      const currentQuestion = questions[currentQuestionIndex];
+      const correctAnswer = currentQuestion.correctAnswer;
+      let selectedAnswer = null;
+
+      if (event) {
+        selectedAnswer = event.target.dataset.answer;
+      }
+
+      optionsElement.querySelectorAll('button').forEach(button => {
+        button.disabled = true;
+        if (button.dataset.answer === correctAnswer) {
+          button.style.backgroundColor = '#006600';
+        } else if (button.dataset.answer === selectedAnswer) {
+          button.style.backgroundColor = '#660000';
+        }
+      });
+
+      if (selectedAnswer === correctAnswer) {
+        feedbackElement.textContent = 'Correto!';
+        feedbackElement.className = 'correct';
+        score++;
+        // playSuccessSound(); // Removido
+      } else {
+        feedbackElement.textContent = `Incorreto. A resposta correta era: ${correctAnswer}`;
+        feedbackElement.className = 'incorrect';
+        // playErrorSound(); // Removido
+      }
+
+      scoreDisplayElement.textContent = `Pontuação: ${score}/${currentQuestionIndex + 1} (${(((score / (currentQuestionIndex + 1)) * 100) || 0).toFixed(0)}%)`;
+      nextQuestionButton.style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      gameElements.style.display = 'none';
+      gameEndScreen.style.display = 'flex';
+
+      const finalPercentage = ((score / questions.length) * 100).toFixed(0);
+      finalScoreMessage.innerHTML = `Sua pontuação final foi: <br><span style="font-size: 2em; color: ${finalPercentage >= 70 ? '#00ff00' : (finalPercentage >= 40 ? '#ffff00' : '#ff0000')};">${score} de ${questions.length} (${finalPercentage}%)</span>`;
+      scoreDisplayElement.textContent = '';
+      questionCounterElement.textContent = '';
+      timerElement.textContent = '';
+    }
+
+    function startGame() {
+      gameStartScreen.style.display = 'none';
+      gameEndScreen.style.display = 'none';
+      gameElements.style.display = 'block'; // Mostra os elementos do jogo
+
+      currentQuestionIndex = 0;
+      score = 0;
+      questions = [...fixedQuestions];
+      shuffleArray(questions);
+      scoreDisplayElement.textContent = '';
+      nextQuestionButton.textContent = 'Próxima Pergunta';
+      nextQuestionButton.removeEventListener('click', startGame); // Garante que não haja múltiplos listeners
+      nextQuestionButton.addEventListener('click', nextQuestion);
+      showQuestion(); // Inicia a primeira pergunta
+    }
+
+    startGameButton.addEventListener('click', startGame);
+    restartGameButton.addEventListener('click', startGame);
+
+    // Default: Ao carregar a página, sempre exibir a tela inicial (onde a senha desbloqueia o conteúdo)
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicialmente, apenas o modal de senha é visível.
+        // A tela inicial (`initialScreen`) será mostrada após a senha.
+        mainContent.classList.remove('show-terminal', 'show-game'); // Garante que nenhuma seção principal esteja visível
+        mainContent.classList.add('show-initial'); // Assume que a tela inicial será o primeiro display após a senha.
+
+        // Oculta a mensagem de boas-vindas e os botões até a senha ser digitada.
+        welcomeMessage.classList.remove('show');
+        initialScreenOptions.classList.remove('show');
+
+        // Garante que os botões "Voltar ao Início" estejam ocultos inicialmente
+        backToHomeTerminalButton.style.display = 'none';
+        backToHomeGameButton.style.display = 'none';
+    });
+
+  </script>
+</body>
+</html>
