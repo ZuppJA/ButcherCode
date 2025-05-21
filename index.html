@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ButcherCode</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     /* Definindo variáveis CSS para cores */
     :root {
@@ -312,6 +313,28 @@
     #instructionsContent p:last-child {
       margin-bottom: 0;
     }
+
+    /* Estilos para o ícone de feedback no resultado */
+    #result .feedback-icon {
+        position: absolute;
+        right: 15px; /* Ajuste a posição conforme necessário */
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.8em;
+        opacity: 0;
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+    #result.success .feedback-icon.show {
+        opacity: 1;
+        color: var(--cor-sucesso);
+        transform: translateY(-50%) scale(1.1);
+    }
+    #result.error .feedback-icon.show {
+        opacity: 1;
+        color: var(--cor-erro);
+        transform: translateY(-50%) scale(1.1);
+    }
+
 
     /* --- Estilos para o Modal de Senha --- */
     #passwordModalOverlay {
@@ -856,20 +879,65 @@
     const bovinosList = document.getElementById('bovinosList');
     const suinosList = document.getElementById('suinosList');
 
-    function displayResult(text) {
-        resultDiv.innerHTML = '';
+    // --- Funções para tocar sons ---
+    const sounds = {
+        correct: new Audio('images/sounds/correct.mp3'),
+        incorrect: new Audio('images/sounds/incorrect.mp3'),
+        gameStart: new Audio('images/sounds/game-start.mp3'),
+        gameEnd: new Audio('images/sounds/game-end.mp3'),
+        tick: new Audio('images/sounds/tick.mp3'), // Para o timer
+        terminalSuccess: new Audio('images/sounds/terminal-success.mp3'), // Para acerto no terminal
+        terminalError: new Audio('images/sounds/terminal-error.mp3') // Para erro no terminal
+    };
+
+    // Função para tocar um som (com verificação para evitar erros se o arquivo não carregar)
+    function playSound(soundName) {
+        if (sounds[soundName]) {
+            sounds[soundName].currentTime = 0; // Reinicia o áudio se ele já estiver tocando
+            sounds[soundName].play().catch(e => console.error("Erro ao tocar som:", e));
+        }
+    }
+
+    function displayResult(text, isSuccess) {
+        resultDiv.innerHTML = ''; // Limpa o conteúdo existente
         resultDiv.classList.remove('scrolling');
 
         const marqueeSpan = document.createElement('span');
         marqueeSpan.textContent = text;
         resultDiv.appendChild(marqueeSpan);
 
+        // Adiciona o ícone de feedback
+        const icon = document.createElement('i');
+        icon.classList.add('feedback-icon', isSuccess ? 'fas' : 'fa'); // Font Awesome classes
+        icon.classList.add(isSuccess ? 'fa-check-circle' : 'fa-times-circle'); // Check ou X
+        resultDiv.appendChild(icon);
+
+        resultDiv.classList.remove('success', 'error');
+
+        if (isSuccess) {
+            resultDiv.classList.add('success');
+            playSound('terminalSuccess');
+        } else {
+            resultDiv.classList.add('error');
+            playSound('terminalError');
+        }
+
+        // Mostra o ícone por um breve período
+        setTimeout(() => {
+            icon.classList.add('show');
+        }, 50); // Pequeno atraso para a transição
+        setTimeout(() => {
+            icon.classList.remove('show');
+            icon.remove(); // Remove o ícone do DOM
+        }, 1500); // Ícone visível por 1.5 segundos
+
         if (text.length > 15) {
             marqueeSpan.classList.add('marquee');
-            void resultDiv.offsetWidth;
+            void resultDiv.offsetWidth; // Trigger reflow for animation
             resultDiv.classList.add('scrolling');
         }
     }
+
 
     function populateSidebarList(listElement, data) {
         Object.entries(data).forEach(([code, name]) => {
@@ -880,8 +948,8 @@
             div.addEventListener('click', () => {
                 showSection('mainTerminalSection');
                 inputCode.value = code.padStart(5, '0');
-                displayResult(name);
-                resultDiv.classList.remove('success', 'error');
+                displayResult(name, true); // Assume sucesso ao clicar no menu
+                resultDiv.classList.remove('success', 'error'); // Limpa classes para um novo displayResult
                 hamburger.classList.remove('open');
                 sidebar.classList.remove('open');
                 document.body.classList.remove('sidebar-open');
@@ -917,15 +985,7 @@
     btnExecute.addEventListener('click', () => {
       const valor = inputCode.value;
       const { result, found } = buscarCodigoOuNome(valor);
-      displayResult(result);
-
-      resultDiv.classList.remove('success', 'error');
-
-      if (found) {
-          resultDiv.classList.add('success');
-      } else {
-          resultDiv.classList.add('error');
-      }
+      displayResult(result, found); // Passa 'found' para a função de display
     });
 
     inputCode.addEventListener('keydown', e => {
@@ -1073,6 +1133,7 @@
     const TIME_PER_QUESTION = 15;
     let timeLeft;
     let timerInterval;
+    let tickSoundInterval; // Novo intervalo para o som de tick
 
     let currentQuestionIndex = 0;
     let score = 0;
@@ -1133,6 +1194,7 @@
 
     function startTimer() {
         clearInterval(timerInterval);
+        clearInterval(tickSoundInterval); // Limpa o intervalo do tick anterior
 
         if (timeLeft === undefined || timeLeft === null || timeLeft <= 0 || timeLeft > TIME_PER_QUESTION) {
             timeLeft = TIME_PER_QUESTION;
@@ -1141,6 +1203,14 @@
         timerElement.textContent = `Tempo: ${timeLeft}s`;
         timerElement.classList.remove('warning', 'critical');
         progressBar.style.width = `${(timeLeft / TIME_PER_QUESTION) * 100}%`;
+
+        // Inicia o som de tick nos últimos 5 segundos
+        if (timeLeft <= 5 && timeLeft > 0) {
+            tickSoundInterval = setInterval(() => {
+                if (timeLeft > 0) playSound('tick');
+            }, 1000);
+        }
+
 
         timerInterval = setInterval(() => {
             timeLeft--;
@@ -1151,13 +1221,21 @@
             if (timeLeft <= 5 && timeLeft > 0) {
                 timerElement.classList.add('warning');
                 timerElement.classList.remove('critical');
+                if (!tickSoundInterval) { // Garante que o tick só começa uma vez
+                     tickSoundInterval = setInterval(() => {
+                        if (timeLeft > 0) playSound('tick');
+                    }, 1000);
+                }
             } else if (timeLeft <= 0) {
                 clearInterval(timerInterval);
+                clearInterval(tickSoundInterval);
                 timerElement.textContent = "Tempo esgotado!";
                 timerElement.classList.add('critical');
                 checkAnswer(null);
             } else {
                 timerElement.classList.remove('warning', 'critical');
+                clearInterval(tickSoundInterval); // Para o tick se o tempo subir novamente (ex: reset)
+                tickSoundInterval = null;
             }
             saveGameState();
         }, 1000);
@@ -1196,6 +1274,7 @@
 
     function checkAnswer(event) {
       clearInterval(timerInterval);
+      clearInterval(tickSoundInterval); // Garante que o tick pare ao responder
 
       const currentQuestion = questions[currentQuestionIndex];
       const correctAnswer = currentQuestion.correctAnswer;
@@ -1218,9 +1297,11 @@
         feedbackElement.textContent = 'Correto!';
         feedbackElement.className = 'correct';
         score++;
+        playSound('correct'); // Toca som de acerto
       } else {
         feedbackElement.textContent = `Incorreto. A resposta correta era: ${currentQuestion.correctAnswer}`;
         feedbackElement.className = 'incorrect';
+        playSound('incorrect'); // Toca som de erro
       }
 
       currentQuestionIndex++;
@@ -1246,8 +1327,10 @@
 
     function endGame(earlyExit = false) {
       clearInterval(timerInterval);
+      clearInterval(tickSoundInterval); // Garante que o tick pare ao finalizar o jogo
       gameElements.style.display = 'none';
       gameEndScreen.style.display = 'flex';
+      playSound('gameEnd'); // Toca som de fim de jogo
 
       const totalQuestionsAttempted = currentQuestionIndex;
 
@@ -1271,6 +1354,7 @@
       gameStartScreen.style.display = 'none';
       gameEndScreen.style.display = 'none';
       gameElements.style.display = 'block';
+      playSound('gameStart'); // Toca som de início de jogo
 
       if (!loadGameState() || currentQuestionIndex >= fixedQuestions.length) {
           currentQuestionIndex = 0;
