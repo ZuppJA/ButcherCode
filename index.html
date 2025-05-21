@@ -18,7 +18,21 @@
     }
     body.sidebar-open main {
       margin-left: 320px; /* Adjust margin to accommodate wider sidebar */
+      /* NOVO: Efeito de camuflagem quando a sidebar está aberta */
+      filter: brightness(0.4) blur(3px); /* Escurece e embaça */
+      opacity: 0.6; /* Reduz a visibilidade */
+      pointer-events: none; /* Impede cliques na tela de fundo */
+      transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease; /* Transição suave para todos */
     }
+
+    body:not(.sidebar-open) main {
+        filter: brightness(1) blur(0); /* Garante que volte ao normal */
+        opacity: 1;
+        pointer-events: auto;
+        transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
+    }
+
+
     header {
       background: #005500; /* Slightly lighter header background */
       padding: 15px 30px; /* Increased horizontal padding */
@@ -478,6 +492,22 @@
     #next-question:hover {
       background-color: #008800;
     }
+    
+    #end-game-button { /* Novo estilo para o botão de finalizar jogo */
+      padding: 10px 20px;
+      background-color: #880000; /* Vermelho para indicar "parar" */
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Source Code Pro', monospace;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+    #end-game-button:hover {
+      background-color: #aa0000;
+    }
+
 
     #game-start-screen, #game-end-screen {
       display: flex;
@@ -655,6 +685,7 @@
               <div id="feedback"></div>
               <div id="score-display"></div>
               <button id="next-question">Próxima Pergunta</button>
+              <button id="end-game-button">Finalizar Jogo</button> 
             </div>
 
             <div id="game-end-screen" style="display: none;">
@@ -672,45 +703,51 @@
     // --- Lógica de Senha ---
     const CORRECT_PASSWORD_1 = "744336"; // Senha universal
     const CORRECT_PASSWORD_2 = "desenrolado"; // Nova senha
+    const ACCESS_GRANTED_KEY = "butchercode_access_granted"; // Chave para localStorage
+
     const passwordModalOverlay = document.getElementById('passwordModalOverlay');
     const passwordModal = document.getElementById('passwordModal');
     const passwordInput = document.getElementById('passwordInput');
     const passwordSubmit = document.getElementById('passwordSubmit');
     const passwordError = document.getElementById('passwordError');
-    const welcomeMessage = document.getElementById('welcomeMessage'); // Movido para a main
+    const welcomeMessage = document.getElementById('welcomeMessage');
     const modalTitle = document.getElementById('modalTitle');
     const modalPrompt = document.getElementById('modalPrompt');
-    const initialScreenOptions = document.getElementById('initial-screen-options'); // Novos botões
+    const initialScreenOptions = document.getElementById('initial-screen-options');
     const accessTerminalButton = document.getElementById('accessTerminalButton');
     const playGameCodeButton = document.getElementById('playGameCodeButton');
 
+    function grantAccess() {
+        // Salva no localStorage que o acesso foi concedido
+        localStorage.setItem(ACCESS_GRANTED_KEY, "true");
+
+        // Oculta elementos do modal de senha
+        modalTitle.style.display = 'none';
+        modalPrompt.style.display = 'none';
+        passwordInput.style.display = 'none';
+        passwordSubmit.style.display = 'none';
+        passwordError.textContent = '';
+
+        // Exibe mensagem de boas-vindas e botões de atalho
+        welcomeMessage.innerHTML = 'Bem-vindo, Mestre Açougueiro!<br>Vamos desenrolar!';
+        welcomeMessage.classList.add('show');
+
+        // Move os elementos do modal para a tela principal (initialScreen)
+        document.getElementById('initialScreen').prepend(welcomeMessage);
+        initialScreenOptions.classList.add('show');
+        document.getElementById('passwordModal').style.display = 'none'; // Oculta o modal completamente
+
+        // Remove a sobreposição do modal após um tempo
+        setTimeout(() => {
+            passwordModalOverlay.classList.remove('show');
+            passwordModalOverlay.style.display = 'none'; // Garante que a sobreposição desapareça
+        }, 500); // Tempo para transição de opacidade
+    }
 
     function checkPassword() {
         const enteredPassword = passwordInput.value;
         if (enteredPassword === CORRECT_PASSWORD_1 || enteredPassword === CORRECT_PASSWORD_2) {
-            // Oculta elementos do modal de senha
-            modalTitle.style.display = 'none';
-            modalPrompt.style.display = 'none';
-            passwordInput.style.display = 'none';
-            passwordSubmit.style.display = 'none';
-            passwordError.textContent = '';
-
-            // Exibe mensagem de boas-vindas e botões de atalho
-            welcomeMessage.innerHTML = 'Bem-vindo, Mestre Açougueiro!<br>Vamos desenrolar!';
-            welcomeMessage.classList.add('show');
-
-            // Move os elementos do modal para a tela principal (initialScreen)
-            document.getElementById('initialScreen').prepend(welcomeMessage);
-            initialScreenOptions.classList.add('show');
-            document.getElementById('passwordModal').style.display = 'none'; // Oculta o modal completamente
-
-            // Remove a sobreposição do modal após um tempo
-            setTimeout(() => {
-                passwordModalOverlay.classList.remove('show');
-                passwordModalOverlay.style.display = 'none'; // Garante que a sobreposição desapareça
-            }, 500); // Tempo para transição de opacidade
-
-
+            grantAccess();
         } else {
             passwordError.textContent = 'Senha incorreta. Tente novamente.';
             passwordInput.value = '';
@@ -725,9 +762,14 @@
         }
     });
 
+    // Modificado para verificar o localStorage ao carregar a página
     document.addEventListener('DOMContentLoaded', () => {
-        passwordModalOverlay.classList.add('show');
-        passwordInput.focus();
+        if (localStorage.getItem(ACCESS_GRANTED_KEY) === "true") {
+            grantAccess(); // Concede acesso diretamente se já foi salvo
+        } else {
+            passwordModalOverlay.classList.add('show');
+            passwordInput.focus();
+        }
     });
 
     // --- Código Existente (Lógica Principal do ButcherCode) ---
@@ -773,8 +815,6 @@
     const bovinosList = document.getElementById('bovinosList');
     const suinosList = document.getElementById('suinosList');
 
-    // Funções de áudio removidas
-
     function displayResult(text) {
         resultDiv.innerHTML = '';
         resultDiv.classList.remove('scrolling');
@@ -790,21 +830,17 @@
         }
     }
 
-    function populateSidebarList(listElement, data) { // Removido soundFunction
+    function populateSidebarList(listElement, data) {
         Object.entries(data).forEach(([code, name]) => {
             const div = document.createElement('div');
             div.classList.add('item');
             div.textContent = `${code.padStart(5, '0')} - ${name}`;
             div.tabIndex = 0;
             div.addEventListener('click', () => {
-                // Ao clicar em um item da lista, o terminal deve aparecer
-                showSection('mainTerminalSection'); // Chama com o ID específico da seção
+                showSection('mainTerminalSection');
                 inputCode.value = code.padStart(5, '0');
                 displayResult(name);
-                // playClickSound(); // Removido
-                // if (soundFunction) soundFunction(); // Removido
                 resultDiv.classList.remove('success', 'error');
-                // Fechar a sidebar após clicar no item
                 hamburger.classList.remove('open');
                 sidebar.classList.remove('open');
                 document.body.classList.remove('sidebar-open');
@@ -813,8 +849,8 @@
         });
     }
 
-    populateSidebarList(bovinosList, bovinos); // Removido playCowSound
-    populateSidebarList(suinosList, suinos); // Removido playPigSound
+    populateSidebarList(bovinosList, bovinos);
+    populateSidebarList(suinosList, suinos);
 
     function buscarCodigoOuNome(input) {
       const texto = input.trim();
@@ -838,7 +874,6 @@
     }
 
     btnExecute.addEventListener('click', () => {
-      // playClickSound(); // Removido
       const valor = inputCode.value;
       const { result, found } = buscarCodigoOuNome(valor);
       displayResult(result);
@@ -847,10 +882,8 @@
 
       if (found) {
           resultDiv.classList.add('success');
-          // playSuccessSound(); // Removido
       } else {
           resultDiv.classList.add('error');
-          // playErrorSound(); // Removido
       }
     });
 
@@ -870,65 +903,58 @@
     const hamburger = document.getElementById('hamburger');
     const sidebar = document.getElementById('sidebar');
     const sidebarTitles = document.querySelectorAll('#sidebar h2');
-    const initialScreen = document.getElementById('initialScreen'); // Acessa a nova seção da tela inicial
+    const initialScreen = document.getElementById('initialScreen');
 
     const backToHomeTerminalButton = document.getElementById('backToHomeTerminal');
     const backToHomeGameButton = document.getElementById('backToHomeGame');
 
 
-    let activeAccordionItem = null; // Para controlar qual item do acordeão está aberto
+    let activeAccordionItem = null;
 
     function showSection(sectionId) {
         mainContent.classList.remove('show-terminal', 'show-game', 'show-initial');
-        clearInterval(timerInterval); // Para o timer do jogo se ele estava rodando
+        
+        clearInterval(timerInterval); 
+        timeLeft = TIME_PER_QUESTION; 
+        progressBar.style.width = '100%'; 
 
-        // Oculta todos os botões de voltar ao início primeiro
         backToHomeTerminalButton.style.display = 'none';
         backToHomeGameButton.style.display = 'none';
 
         if (sectionId === 'mainTerminalSection') {
             mainContent.classList.add('show-terminal');
-            inputCode.focus();
-            backToHomeTerminalButton.style.display = 'block'; // Mostra o botão no terminal
+            // inputCode.focus(); // Esta linha foi removida para impedir o foco automático
+            backToHomeTerminalButton.style.display = 'block';
         } else if (sectionId === 'gameCodeSection') {
             mainContent.classList.add('show-game');
-            // Ao mostrar a seção do jogo, sempre exibe a tela de início do jogo
             gameStartScreen.style.display = 'flex';
             gameElements.style.display = 'none';
             gameEndScreen.style.display = 'none';
-            startGameButton.focus(); // Foca no botão de iniciar
-            backToHomeGameButton.style.display = 'block'; // Mostra o botão no game
+            startGameButton.focus();
+            backToHomeGameButton.style.display = 'block';
         } else if (sectionId === 'initialScreen') {
             mainContent.classList.add('show-initial');
-            // Garante que a mensagem de boas-vindas e os botões estejam visíveis
             welcomeMessage.classList.add('show');
             initialScreenOptions.classList.add('show');
         }
-        // Fechar a sidebar ao trocar de seção principal
         hamburger.classList.remove('open');
         sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
     }
 
-    // Event listeners para os novos botões de atalho
     accessTerminalButton.addEventListener('click', () => {
-        // playClickSound(); // Removido
         showSection('mainTerminalSection');
     });
 
     playGameCodeButton.addEventListener('click', () => {
-        // playClickSound(); // Removido
         showSection('gameCodeSection');
     });
 
-    // Event listeners para os novos botões "Voltar ao Início"
     backToHomeTerminalButton.addEventListener('click', () => {
-        // playClickSound(); // Removido
         showSection('initialScreen');
     });
 
     backToHomeGameButton.addEventListener('click', () => {
-        // playClickSound(); // Removido
         showSection('initialScreen');
     });
 
@@ -940,7 +966,7 @@
     });
 
     document.addEventListener('click', e => {
-      if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target)) { // Adicionado !passwordModalOverlay.contains(e.target)
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target)) {
         hamburger.classList.remove('open');
         sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
@@ -950,11 +976,10 @@
     sidebarTitles.forEach(title => {
       title.addEventListener('click', () => {
         const targetId = title.dataset.target;
-        const contentType = title.dataset.type; // 'accordion' ou 'main-content'
+        const contentType = title.dataset.type;
         const targetElement = document.getElementById(targetId);
 
         if (contentType === 'accordion') {
-            // Lógica do acordeão para as subpastas no menu lateral
             if (activeAccordionItem && activeAccordionItem !== targetElement) {
                 activeAccordionItem.classList.remove('open');
                 activeAccordionItem.previousElementSibling.classList.remove('open');
@@ -964,18 +989,16 @@
             title.classList.toggle('open');
             activeAccordionItem = targetElement.classList.contains('open') ? targetElement : null;
 
-            // Fechar seções principais ao interagir com acordeão
-            mainContent.classList.remove('show-terminal', 'show-game', 'show-initial'); // Inclui 'show-initial'
-            clearInterval(timerInterval); // Para o timer do jogo se ele estava rodando
+            clearInterval(timerInterval);
+            timeLeft = TIME_PER_QUESTION; 
+            progressBar.style.width = '100%'; 
         } else if (contentType === 'main-content') {
-            // Seções que abrem na área principal (Terminal de Consulta, GameCode)
-            showSection(targetId); // Exibe a seção correspondente na área principal
-            // Fechar todos os itens do acordeão quando uma seção principal é aberta
+            showSection(targetId);
             document.querySelectorAll('.subfolder').forEach(folder => {
                 folder.classList.remove('open');
                 folder.previousElementSibling.classList.remove('open');
             });
-            activeAccordionItem = null; // Reseta o ativo
+            activeAccordionItem = null;
         }
       });
     });
@@ -997,15 +1020,18 @@
     const timerElement = document.getElementById('timer');
     const questionCounterElement = document.getElementById('question-counter');
     const finalScoreMessage = document.getElementById('final-score-message');
+    const endGameButton = document.getElementById('end-game-button'); 
 
+    const GAME_STATE_KEY = "game_code_state"; 
 
     const TIME_PER_QUESTION = 15;
-    let countdown;
     let timeLeft;
-    let timerInterval;
+    let timerInterval; 
 
-    let currentQuestionIndex = 0;
-    let score = 0;
+    // currentQuestionIndex agora representa o NÚMERO TOTAL de perguntas que já foram processadas (respondidas ou tempo esgotado).
+    // Começa em 0, e será incrementado a cada pergunta respondida/esgotada.
+    let currentQuestionIndex = 0; 
+    let score = 0; // Quantas acertos
     let questions = [];
 
     const fixedQuestions = [
@@ -1038,13 +1064,40 @@
       }
     }
 
+    function saveGameState() {
+        const gameState = {
+            currentQuestionIndex: currentQuestionIndex,
+            score: score,
+            questions: questions, 
+            timeLeft: timeLeft 
+        };
+        localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
+    }
+
+    function loadGameState() {
+        const savedState = localStorage.getItem(GAME_STATE_KEY);
+        if (savedState) {
+            const gameState = JSON.parse(savedState);
+            currentQuestionIndex = gameState.currentQuestionIndex;
+            score = gameState.score;
+            questions = gameState.questions;
+            timeLeft = (gameState.timeLeft > 0 && gameState.timeLeft <= TIME_PER_QUESTION) ? gameState.timeLeft : TIME_PER_QUESTION; 
+            return true;
+        }
+        return false;
+    }
+
     function startTimer() {
-        timeLeft = TIME_PER_QUESTION;
+        clearInterval(timerInterval); 
+
+        if (timeLeft === undefined || timeLeft === null || timeLeft <= 0 || timeLeft > TIME_PER_QUESTION) {
+            timeLeft = TIME_PER_QUESTION;
+        }
+
         timerElement.textContent = `Tempo: ${timeLeft}s`;
         timerElement.classList.remove('warning', 'critical');
-        progressBar.style.width = '100%';
+        progressBar.style.width = `${(timeLeft / TIME_PER_QUESTION) * 100}%`;
 
-        clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             timeLeft--;
             timerElement.textContent = `Tempo: ${timeLeft}s`;
@@ -1054,24 +1107,26 @@
             if (timeLeft <= 5 && timeLeft > 0) {
                 timerElement.classList.add('warning');
                 timerElement.classList.remove('critical');
-                // playTickSound(); // Removido
             } else if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                // playTimeUpSound(); // Removido
                 timerElement.textContent = "Tempo esgotado!";
                 timerElement.classList.add('critical');
-                checkAnswer(null);
+                checkAnswer(null); // Chama checkAnswer com um evento nulo para indicar tempo esgotado
             } else {
                 timerElement.classList.remove('warning', 'critical');
             }
+            saveGameState(); 
         }, 1000);
     }
 
     function showQuestion() {
+      // currentQuestionIndex agora representa quantas perguntas JÁ FORAM PROCESSADAS
+      // Para exibir a próxima, usamos currentQuestionIndex como o índice.
       if (currentQuestionIndex < questions.length) {
-        startTimer();
+        timeLeft = TIME_PER_QUESTION; 
+        startTimer(); 
 
-        const currentQuestion = questions[currentQuestionIndex];
+        const currentQuestion = questions[currentQuestionIndex]; // Pega a pergunta correta
         questionElement.textContent = currentQuestion.question;
         optionsElement.innerHTML = '';
         currentQuestion.options.forEach(option => {
@@ -1084,96 +1139,136 @@
         feedbackElement.textContent = '';
         feedbackElement.className = '';
         nextQuestionButton.style.display = 'none';
+        
+        // Exibe o contador da pergunta atual (currentQuestionIndex + 1 porque é base 0)
         questionCounterElement.textContent = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
-        scoreDisplayElement.textContent = `Pontuação: ${score}/${currentQuestionIndex}`;
+
+        // A pontuação parcial aqui reflete as perguntas ANTERIORES.
+        // A pergunta atual só será contabilizada no scoreDisplayElement após a interação (em checkAnswer).
+        const totalQuestionsProcessedForDisplay = currentQuestionIndex; 
+        const percentage = totalQuestionsProcessedForDisplay > 0 ? (((score / totalQuestionsProcessedForDisplay) * 100) || 0).toFixed(0) : 0;
+        scoreDisplayElement.textContent = `Pontuação: ${score}/${totalQuestionsProcessedForDisplay} (${percentage}%)`;
+        
+        saveGameState(); 
       } else {
-        endGame();
+        endGame(false); // Se todas as perguntas foram respondidas, finaliza o jogo
       }
     }
 
     function checkAnswer(event) {
-      clearInterval(timerInterval);
+      clearInterval(timerInterval); 
 
       const currentQuestion = questions[currentQuestionIndex];
       const correctAnswer = currentQuestion.correctAnswer;
       let selectedAnswer = null;
 
-      if (event) {
+      if (event) { 
         selectedAnswer = event.target.dataset.answer;
       }
 
       optionsElement.querySelectorAll('button').forEach(button => {
-        button.disabled = true;
+        button.disabled = true; 
         if (button.dataset.answer === correctAnswer) {
-          button.style.backgroundColor = '#006600';
+          button.style.backgroundColor = '#006600'; 
         } else if (button.dataset.answer === selectedAnswer) {
-          button.style.backgroundColor = '#660000';
+          button.style.backgroundColor = '#660000'; 
         }
       });
 
+      // Lógica de feedback e pontuação
       if (selectedAnswer === correctAnswer) {
         feedbackElement.textContent = 'Correto!';
         feedbackElement.className = 'correct';
         score++;
-        // playSuccessSound(); // Removido
-      } else {
-        feedbackElement.textContent = `Incorreto. A resposta correta era: ${correctAnswer}`;
+      } else { 
+        feedbackElement.textContent = `Incorreto. A resposta correta era: ${currentQuestion.correctAnswer}`;
         feedbackElement.className = 'incorrect';
-        // playErrorSound(); // Removido
       }
 
-      scoreDisplayElement.textContent = `Pontuação: ${score}/${currentQuestionIndex + 1} (${(((score / (currentQuestionIndex + 1)) * 100) || 0).toFixed(0)}%)`;
+      // IMPORTANTE: Incrementa currentQuestionIndex AQUI.
+      // Agora, currentQuestionIndex representa o total de perguntas *processadas*.
+      currentQuestionIndex++; 
+
+      // O display de pontuação agora usa o currentQuestionIndex atualizado
+      const totalQuestionsAttempted = currentQuestionIndex;
+      const percentage = totalQuestionsAttempted > 0 ? (((score / totalQuestionsAttempted) * 100) || 0).toFixed(0) : 0;
+      scoreDisplayElement.textContent = `Pontuação: ${score}/${totalQuestionsAttempted} (${percentage}%)`;
+      
       nextQuestionButton.style.display = 'block';
+      saveGameState(); 
     }
 
     function nextQuestion() {
-      currentQuestionIndex++;
+      // nextQuestion agora apenas exibe a próxima pergunta.
+      // currentQuestionIndex já foi incrementado em checkAnswer.
+      feedbackElement.textContent = '';
+      feedbackElement.className = '';
+      optionsElement.querySelectorAll('button').forEach(button => {
+          button.style.backgroundColor = '#004400'; 
+          button.disabled = false; 
+      });
       showQuestion();
     }
 
-    function endGame() {
+
+    function endGame(earlyExit = false) { 
       clearInterval(timerInterval);
       gameElements.style.display = 'none';
       gameEndScreen.style.display = 'flex';
 
-      const finalPercentage = ((score / questions.length) * 100).toFixed(0);
-      finalScoreMessage.innerHTML = `Sua pontuação final foi: <br><span style="font-size: 2em; color: ${finalPercentage >= 70 ? '#00ff00' : (finalPercentage >= 40 ? '#ffff00' : '#ff0000')};">${score} de ${questions.length} (${finalPercentage}%)</span>`;
+      // Com currentQuestionIndex sempre refletindo o total de perguntas processadas,
+      // o cálculo final é muito mais simples.
+      const totalQuestionsAttempted = currentQuestionIndex;
+      
+      const finalPercentage = totalQuestionsAttempted > 0 ? ((score / totalQuestionsAttempted) * 100).toFixed(0) : 0;
+      
+      let message = "Sua pontuação final foi: ";
+      if (earlyExit) {
+          message = "Você finalizou o jogo antecipadamente! <br>Sua pontuação parcial foi: ";
+      }
+
+      finalScoreMessage.innerHTML = `${message}<br><span style="font-size: 2em; color: ${finalPercentage >= 70 ? '#00ff00' : (finalPercentage >= 40 ? '#ffff00' : '#ff0000')};">${score} de ${totalQuestionsAttempted} (${finalPercentage}%)</span>`;
+      
       scoreDisplayElement.textContent = '';
       questionCounterElement.textContent = '';
       timerElement.textContent = '';
+
+      localStorage.removeItem(GAME_STATE_KEY); 
     }
 
     function startGame() {
       gameStartScreen.style.display = 'none';
       gameEndScreen.style.display = 'none';
-      gameElements.style.display = 'block'; // Mostra os elementos do jogo
+      gameElements.style.display = 'block';
 
-      currentQuestionIndex = 0;
-      score = 0;
-      questions = [...fixedQuestions];
-      shuffleArray(questions);
+      // Se não há estado salvo ou se todas as perguntas foram jogadas antes, reinicia.
+      if (!loadGameState() || currentQuestionIndex >= fixedQuestions.length) { 
+          currentQuestionIndex = 0; // Começa do zero.
+          score = 0;
+          questions = [...fixedQuestions];
+          shuffleArray(questions);
+          localStorage.removeItem(GAME_STATE_KEY); 
+          timeLeft = TIME_PER_QUESTION; 
+      }
+      
       scoreDisplayElement.textContent = '';
       nextQuestionButton.textContent = 'Próxima Pergunta';
-      nextQuestionButton.removeEventListener('click', startGame); // Garante que não haja múltiplos listeners
+      nextQuestionButton.removeEventListener('click', startGame);
       nextQuestionButton.addEventListener('click', nextQuestion);
-      showQuestion(); // Inicia a primeira pergunta
+      
+      optionsElement.querySelectorAll('button').forEach(button => {
+          button.style.backgroundColor = '#004400';
+          button.disabled = false;
+      });
+
+      showQuestion(); // Exibe a pergunta inicial ou a pergunta salva
     }
 
     startGameButton.addEventListener('click', startGame);
     restartGameButton.addEventListener('click', startGame);
+    endGameButton.addEventListener('click', () => endGame(true)); 
 
-    // Default: Ao carregar a página, sempre exibir a tela inicial (onde a senha desbloqueia o conteúdo)
     document.addEventListener('DOMContentLoaded', () => {
-        // Inicialmente, apenas o modal de senha é visível.
-        // A tela inicial (`initialScreen`) será mostrada após a senha.
-        mainContent.classList.remove('show-terminal', 'show-game'); // Garante que nenhuma seção principal esteja visível
-        mainContent.classList.add('show-initial'); // Assume que a tela inicial será o primeiro display após a senha.
-
-        // Oculta a mensagem de boas-vindas e os botões até a senha ser digitada.
-        welcomeMessage.classList.remove('show');
-        initialScreenOptions.classList.remove('show');
-
-        // Garante que os botões "Voltar ao Início" estejam ocultos inicialmente
         backToHomeTerminalButton.style.display = 'none';
         backToHomeGameButton.style.display = 'none';
     });
