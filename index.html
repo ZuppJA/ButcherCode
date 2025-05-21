@@ -4,91 +4,127 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ButcherCode</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <style>
+    /* Definindo variáveis CSS para cores */
+    :root {
+      --cor-fundo-principal: #113311;
+      --cor-fundo-secundario: #002200;
+      --cor-texto-principal: #b3ffb3;
+      --cor-texto-secundario: #aaffaa;
+      --cor-header-fundo: #005500;
+      --cor-sidebar-fundo: #004400;
+      --cor-borda-clara: #b3ffb3;
+      --cor-input-fundo: #001100;
+      --cor-input-borda: #88aa88;
+      --cor-input-placeholder: #88aa88;
+      --cor-botao-fundo: #006600;
+      --cor-botao-hover: #008800;
+      --cor-botao-texto: #ccffcc;
+      --cor-link: #88ff88;
+      --cor-destaque: #00cc00;
+      --cor-erro: #ff6666;
+      --cor-aviso: #ffaa00;
+      --cor-critico: #ff0000;
+      --cor-sucesso: #00ff00;
+      --cor-modal-fundo: #002200;
+      --cor-modal-sombra: rgba(0, 255, 0, 0.2);
+      --cor-camuflagem: brightness(0.4) blur(3px);
+    }
+
     body {
       margin: 0;
-      background: #113311; /* Slightly lighter background */
-      color: #b3ffb3; /* Less intense green */
+      background: var(--cor-fundo-principal);
+      color: var(--cor-texto-principal);
       font-family: 'Source Code Pro', monospace;
-      font-size: 16px; /* Slightly larger base font size */
-      line-height: 1.6; /* Improved line height for readability */
+      font-size: 16px;
+      line-height: 1.6;
       overflow-x: hidden;
-      transition: margin-left 0.3s ease;
-      padding-bottom: 20px; /* Add some padding at the bottom */
+      transition: margin-left 0.3s ease, background 0.3s ease, color 0.3s ease; /* Adicionado transição para cores */
+      padding-bottom: 20px;
     }
     body.sidebar-open main {
-      margin-left: 320px; /* Adjust margin to accommodate wider sidebar */
-      /* NOVO: Efeito de camuflagem quando a sidebar está aberta */
-      filter: brightness(0.4) blur(3px); /* Escurece e embaça */
-      opacity: 0.6; /* Reduz a visibilidade */
-      pointer-events: none; /* Impede cliques na tela de fundo */
-      transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease; /* Transição suave para todos */
+      margin-left: 320px;
+      filter: var(--cor-camuflagem); /* Usa variável */
+      opacity: 0.6;
+      pointer-events: none;
+      transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
     }
 
     body:not(.sidebar-open) main {
-        filter: brightness(1) blur(0); /* Garante que volte ao normal */
+        filter: brightness(1) blur(0);
         opacity: 1;
         pointer-events: auto;
         transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
     }
 
-
     header {
-      background: #005500; /* Slightly lighter header background */
-      padding: 15px 30px; /* Increased horizontal padding */
+      background: var(--cor-header-fundo);
+      padding: 15px 30px;
       display: flex;
       align-items: center;
       position: fixed;
       width: 100%;
       top: 0;
       z-index: 1001;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease; /* Transição para cor do header */
+      /* Ajustes para centralizar o h1 */
+      justify-content: space-between; /* Empurra os itens para as extremidades */
     }
     #hamburger {
       cursor: pointer;
-      width: 35px; /* Slightly larger hamburger icon */
+      width: 35px;
       height: 26px;
       position: relative;
     }
     #hamburger span {
-      background: #b3ffb3; /* Less intense green */
+      background: var(--cor-borda-clara);
       position: absolute;
       height: 3px;
       width: 100%;
       left: 0;
       border-radius: 2px;
-      transition: 0.3s ease;
+      transition: 0.3s ease, background 0.3s ease; /* Transição para cor do hambúrguer */
     }
     #hamburger span:nth-child(1) {
       top: 0;
     }
     #hamburger span:nth-child(2) {
-      top: 11px; /* Adjusted spacing */
+      top: 11px;
     }
     #hamburger span:nth-child(3) {
-      top: 22px; /* Adjusted spacing */
+      top: 22px;
     }
     #hamburger.open span:nth-child(1) {
       transform: rotate(45deg);
-      top: 11px; /* Adjusted for rotation */
+      top: 11px;
     }
     #hamburger.open span:nth-child(2) {
       opacity: 0;
     }
     #hamburger.open span:nth-child(3) {
       transform: rotate(-45deg);
-      top: 11px; /* Adjusted for rotation */
+      top: 11px;
     }
+
     h1 {
-      margin: 0 0 0 30px; /* Increased left margin */
-      font-size: 2.2rem; /* Slightly larger font size */
+      margin: 0;
+      font-size: 2.2rem;
       font-weight: bold;
       animation: fadeInScale 1s ease forwards;
+      /* Novas regras para centralizar e tornar clicável */
+      flex-grow: 1; /* Faz o h1 ocupar o espaço restante */
+      text-align: center; /* Centraliza o texto dentro do h1 */
+      cursor: pointer; /* Indica que é clicável */
+      user-select: none; /* Impede a seleção do texto ao clicar */
+      /* Adicionando um pequeno ajuste de margin para compensar o hambúrguer, se necessário */
+      margin-right: 35px; /* Ajuste para o hambúrguer no lado oposto */
     }
     @keyframes fadeInScale {
       0% {
         opacity: 0;
-        transform: scale(0.8); /* Slightly larger starting scale */
+        transform: scale(0.8);
       }
       100% {
         opacity: 1;
@@ -97,62 +133,64 @@
     }
     #sidebar {
       position: fixed;
-      top: 65px; /* Adjusted top position */
+      top: 65px;
       left: 0;
-      width: 300px; /* Slightly wider sidebar */
-      height: calc(100vh - 65px); /* Adjust height to account for header */
-      background: #004400; /* Slightly lighter sidebar background */
-      color: #b3ffb3; /* Less intense green */
+      width: 300px;
+      height: calc(100vh - 65px);
+      background: var(--cor-sidebar-fundo);
+      color: var(--cor-texto-principal);
       overflow-y: auto;
       z-index: 1000;
-      padding: 20px; /* Increased padding */
+      padding: 20px;
       transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease; /* Transição para sidebar */
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
     #sidebar.open {
       transform: translateX(0);
     }
-    #sidebar h2 { /* Targeting the new clickable h2 elements */
+    #sidebar h2 {
       margin-top: 0;
-      font-size: 1.4rem; /* Slightly larger heading */
-      border-bottom: 1px solid #b3ffb3; /* Less intense green */
-      padding-bottom: 8px; /* Increased padding */
-      margin-bottom: 15px; /* Increased margin */
-      cursor: pointer; /* Indicate it's clickable */
-      user-select: none; /* Prevent text selection on click */
+      font-size: 1.4rem;
+      border-bottom: 1px solid var(--cor-borda-clara);
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      user-select: none;
       position: relative;
-      padding-right: 25px; /* Space for the arrow */
+      padding-right: 25px;
+      transition: border-color 0.3s ease, color 0.3s ease;
     }
-    #sidebar h2::after { /* Arrow for the h2 titles */
+    #sidebar h2::after {
       content: "▶";
       position: absolute;
       right: 5px;
       top: 2px;
       transition: transform 0.3s ease;
+      color: var(--cor-texto-principal); /* Garante que a cor da seta mude */
     }
     #sidebar h2.open::after {
       transform: rotate(90deg);
     }
 
     .menu-section {
-      margin-bottom: 25px; /* Increased margin between sections */
+      margin-bottom: 25px;
     }
     .subfolder {
-      margin-left: 20px; /* Increased indentation */
-      display: none; /* Default to hidden */
-      margin-bottom: 12px; /* Increased margin */
+      margin-left: 20px;
+      display: none;
+      margin-bottom: 12px;
     }
     .subfolder.open {
       display: block;
     }
     main {
-      margin: 100px 30px 30px 30px; /* Increased margins */
-      max-width: 700px; /* Slightly wider main content area */
-      transition: margin-left 0.3s ease;
-      padding: 20px; /* Add some padding to the main content */
-      background-color: #002200; /* Slightly darker background for contrast */
-      border-radius: 8px; /* Soften the corners */
+      margin: 100px 30px 30px 30px;
+      max-width: 700px;
+      transition: margin-left 0.3s ease, background-color 0.3s ease; /* Transição para main */
+      padding: 20px;
+      background-color: var(--cor-fundo-secundario);
+      border-radius: 8px;
     }
     /* Hide all main sections by default */
     #mainTerminalSection, #gameCodeSection, #initialScreen {
@@ -173,18 +211,20 @@
     /* Styles for sidebar list items */
     .item {
       cursor: pointer;
-      padding: 5px 8px; /* Increased padding */
+      padding: 5px 8px;
       border-radius: 4px;
-      margin-bottom: 5px; /* Small margin between items */
+      margin-bottom: 5px;
     }
     .item:hover {
-      background: #006600;
+      background: var(--cor-botao-fundo);
+      transition: background 0.3s ease;
     }
     label {
       display: block;
-      margin-bottom: 8px; /* Increased margin */
+      margin-bottom: 8px;
       font-weight: bold;
-      color: #ccffcc; /* Slightly lighter label color */
+      color: var(--cor-botao-texto);
+      transition: color 0.3s ease;
     }
     .input-wrapper {
       position: relative;
@@ -193,60 +233,62 @@
       margin-bottom: 15px;
     }
     input, button {
-      padding: 12px; /* Increased padding for input and button */
-      font-size: 1.2rem; /* Slightly larger font size */
-      border-radius: 6px; /* More rounded corners */
+      padding: 12px;
+      font-size: 1.2rem;
+      border-radius: 6px;
     }
     input::placeholder {
-      color: #88aa88; /* Less intense placeholder color */
+      color: var(--cor-input-placeholder);
     }
     input:focus {
       outline: none;
-      border-color: #88ff88; /* Highlight on focus */
-      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3); /* Subtle focus shadow */
+      border-color: var(--cor-destaque);
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
     }
     input {
-      flex-grow: 1; /* Permite que o input cresça para preencher o espaço */
-      width: 100%; /* Ocupa 100% da largura */
-      background: #001100; /* Slightly darker input background */
-      border: 1px solid #88aa88; /* Less intense border */
-      color: #b3ffb3; /* Less intense text color */
+      flex-grow: 1;
+      width: 100%;
+      background: var(--cor-input-fundo);
+      border: 1px solid var(--cor-input-borda);
+      color: var(--cor-texto-principal);
       font-family: 'Source Code Pro', monospace;
-      padding-right: 12px; /* Padding padrão */
+      padding-right: 12px;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Transição para input */
     }
 
     button {
-      margin-top: 0px; /* Remover margem superior, pois o input está dentro de um wrapper */
-      background: #006600;
-      color: #ccffcc;
+      margin-top: 0px;
+      background: var(--cor-botao-fundo);
+      color: var(--cor-botao-texto);
       border: none;
       font-family: 'Source Code Pro', monospace;
       cursor: pointer;
-      transition: background 0.3s ease;
-      width: 100%; /* Botão "Executar" ocupa a largura total */
+      transition: background 0.3s ease, color 0.3s ease; /* Transição para botão */
+      width: 100%;
     }
     button:hover {
-      background: #008800;
+      background: var(--cor-botao-hover);
     }
     #result {
-      margin-top: 25px; /* Increased margin */
-      min-height: 40px; /* Slightly taller result area */
-      font-size: 1.6rem; /* Slightly larger result text */
+      margin-top: 25px;
+      min-height: 40px;
+      font-size: 1.6rem;
       font-weight: bold;
-      border: 2px solid #88ff88; /* Less intense border */
-      padding: 12px; /* Increased padding */
-      border-radius: 8px; /* More rounded corners */
-      background: #001a00; /* Slightly darker background */
+      border: 2px solid var(--cor-destaque);
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--cor-fundo-secundario);
       white-space: nowrap;
-      overflow: hidden; /* Hide overflow for marquee effect */
-      position: relative; /* Needed for animation */
+      overflow: hidden;
+      position: relative;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
     #result .marquee {
       display: inline-block;
       white-space: nowrap;
-      animation: marquee 10s linear infinite; /* Adjust duration as needed */
-      animation-play-state: paused; /* Pause by default */
-      transform: translateX(100%); /* Start from right */
+      animation: marquee 10s linear infinite;
+      animation-play-state: paused;
+      transform: translateX(100%);
     }
     #result.scrolling .marquee {
       animation-play-state: running;
@@ -256,12 +298,13 @@
       100% { transform: translateX(-100%); }
     }
     #instructionsContent {
-      background: #001a00; /* Slightly darker background */
-      padding: 15px; /* Increased padding */
-      border-radius: 6px; /* More rounded corners */
-      font-size: 1rem; /* Slightly larger font size */
-      line-height: 1.7; /* Improved line height */
-      color: #aaffaa; /* Slightly softer instruction text color */
+      background: var(--cor-fundo-secundario);
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--cor-texto-secundario);
+      transition: background 0.3s ease, color 0.3s ease;
     }
     #instructionsContent p {
       margin-bottom: 10px;
@@ -277,11 +320,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8); /* Fundo semi-transparente escuro */
+      background: rgba(0, 0, 0, 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999; /* Garante que fique acima de tudo */
+      z-index: 9999;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -292,39 +335,40 @@
     }
 
     #passwordModal {
-      background: #002200; /* Cor do fundo do modal */
+      background: var(--cor-modal-fundo);
       padding: 40px;
       border-radius: 10px;
       text-align: center;
-      box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2); /* Sombra verde */
+      box-shadow: 0 5px 15px var(--cor-modal-sombra);
       max-width: 400px;
       width: 90%;
-      color: #b3ffb3;
-      transform: translateY(-20px); /* Começa um pouco acima */
-      transition: transform 0.3s ease;
-      position: relative; /* Para posicionar a mensagem de sucesso */
+      color: var(--cor-texto-principal);
+      transform: translateY(-20px);
+      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Transição para modal */
+      position: relative;
     }
     #passwordModalOverlay.show #passwordModal {
-        transform: translateY(0); /* Desliza para a posição normal */
+        transform: translateY(0);
     }
 
     #passwordModal h2 {
       margin-top: 0;
       font-size: 1.8rem;
-      color: #ccffcc;
+      color: var(--cor-botao-texto);
       margin-bottom: 20px;
     }
 
     #passwordInput {
-      width: calc(100% - 24px); /* Ajusta a largura para o padding */
+      width: calc(100% - 24px);
       padding: 12px;
       margin-bottom: 15px;
-      border: 1px solid #88ff88;
-      background: #001100;
-      color: #b3ffb3;
+      border: 1px solid var(--cor-destaque);
+      background: var(--cor-input-fundo);
+      color: var(--cor-texto-principal);
       border-radius: 6px;
       font-size: 1.1rem;
       text-align: center;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 
     #passwordInput:focus {
@@ -334,60 +378,59 @@
 
     #passwordSubmit {
       padding: 12px 30px;
-      background: #006600;
-      color: #ccffcc;
+      background: var(--cor-botao-fundo);
+      color: var(--cor-botao-texto);
       border: none;
       border-radius: 6px;
       font-size: 1.1rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     #passwordSubmit:hover {
-      background: #008800;
+      background: var(--cor-botao-hover);
     }
 
     #passwordError {
-      color: #ff6666; /* Cor de erro mais vibrante */
+      color: var(--cor-erro);
       margin-top: 10px;
       font-size: 0.95rem;
-      min-height: 20px; /* Garante espaço para a mensagem de erro */
+      min-height: 20px;
     }
 
     #welcomeMessage {
-      /* Estilos existentes */
       font-size: 1.8rem;
       font-weight: bold;
-      color: #aaffaa;
+      color: var(--cor-texto-secundario);
       opacity: 0;
       transition: opacity 0.5s ease;
       pointer-events: none;
       text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-      margin-bottom: 20px; /* Adiciona espaço para os botões */
+      margin-bottom: 20px;
     }
     #welcomeMessage.show {
         opacity: 1;
-        pointer-events: auto; /* Permite interação com a mensagem se houver */
+        pointer-events: auto;
     }
 
     #initial-screen-options {
         display: flex;
         flex-direction: column;
-        gap: 15px; /* Espaçamento entre os botões */
+        gap: 15px;
         margin-top: 30px;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
-        padding: 0 20px; /* Padding para garantir que os botões não colem nas bordas */
-        box-sizing: border-box; /* Inclui padding na largura total */
+        padding: 0 20px;
+        box-sizing: border-box;
     }
     #initial-screen-options.show {
         opacity: 1;
         visibility: visible;
     }
     #initial-screen-options button {
-        background-color: #007700; /* Cor mais vibrante para os atalhos */
-        color: #ffffff;
+        background-color: var(--cor-botao-hover); /* Um verde um pouco mais vibrante para os atalhos */
+        color: var(--cor-botao-texto);
         padding: 15px;
         font-size: 1.3rem;
         border: none;
@@ -397,37 +440,38 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
     #initial-screen-options button:hover {
-        background-color: #009900;
+        background-color: var(--cor-destaque);
         transform: translateY(-2px);
     }
 
 
     /* --- Estilos para Resultado (Sucesso/Erro) --- */
     #result.success {
-      border-color: #00cc00; /* Verde mais claro para sucesso */
-      background-color: #003300; /* Verde mais escuro para fundo de sucesso */
-      color: #00ff00; /* Cor do texto para sucesso */
+      border-color: var(--cor-destaque);
+      background-color: var(--cor-fundo-secundario);
+      color: var(--cor-sucesso);
     }
 
     #result.error {
-      border-color: #cc0000; /* Vermelho mais claro para erro */
-      background-color: #330000; /* Vermelho mais escuro para fundo de erro */
-      color: #ff0000; /* Cor do texto para erro */
+      border-color: var(--cor-critico);
+      background-color: #330000; /* Fundo fixo para erro */
+      color: var(--cor-erro);
     }
 
     /* --- Estilos para o Jogo --- */
     #game-container {
       padding: 15px;
-      background-color: #002200;
+      background-color: var(--cor-fundo-secundario);
       border-radius: 6px;
-      color: #aaffaa;
-      text-align: center; /* Centraliza conteúdo do jogo */
+      color: var(--cor-texto-secundario);
+      text-align: center;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     #question {
       font-size: 1.1rem;
       margin-bottom: 15px;
-      min-height: 3em; /* Garante espaço para a pergunta */
+      min-height: 3em;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -439,17 +483,17 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 8px;
-      background-color: #004400;
-      color: #ccffcc;
+      background-color: var(--cor-botao-fundo);
+      color: var(--cor-botao-texto);
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-family: 'Source Code Pro', monospace;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    #options button:hover:not(:disabled) { /* Não hover se desabilitado */
-      background-color: #006600;
+    #options button:hover:not(:disabled) {
+      background-color: var(--cor-botao-hover);
     }
     #options button:disabled {
       cursor: not-allowed;
@@ -459,15 +503,15 @@
     #feedback {
       margin-top: 10px;
       font-weight: bold;
-      min-height: 2em; /* Garante espaço para feedback */
+      min-height: 2em;
     }
 
     #feedback.correct {
-      color: #00ff00;
+      color: var(--cor-sucesso);
     }
 
     #feedback.incorrect {
-      color: #ff6666;
+      color: var(--cor-erro);
     }
 
     #score-display {
@@ -479,33 +523,33 @@
 
     #next-question {
       padding: 10px 20px;
-      background-color: #006600;
-      color: #ccffcc;
+      background-color: var(--cor-botao-fundo);
+      color: var(--cor-botao-texto);
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-family: 'Source Code Pro', monospace;
       margin-top: 15px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     #next-question:hover {
-      background-color: #008800;
+      background-color: var(--cor-botao-hover);
     }
-    
-    #end-game-button { /* Novo estilo para o botão de finalizar jogo */
+
+    #end-game-button {
       padding: 10px 20px;
-      background-color: #880000; /* Vermelho para indicar "parar" */
+      background-color: var(--cor-critico);
       color: #ffffff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-family: 'Source Code Pro', monospace;
       margin-top: 15px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     #end-game-button:hover {
-      background-color: #aa0000;
+      background-color: #aa0000; /* Mais escuro */
     }
 
 
@@ -516,13 +560,14 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
-      background-color: #002200;
+      background-color: var(--cor-fundo-secundario);
       border-radius: 8px;
       min-height: 200px;
+      transition: background 0.3s ease, color 0.3s ease;
     }
     #game-start-screen h3, #game-end-screen h3 {
       font-size: 1.8rem;
-      color: #ccffcc;
+      color: var(--cor-botao-texto);
       margin-bottom: 20px;
     }
     #game-end-screen p {
@@ -532,23 +577,22 @@
     }
     #start-game-button, #restart-game-button {
       padding: 15px 30px;
-      background-color: #009900;
-      color: #ffffff;
+      background-color: var(--cor-botao-hover);
+      color: var(--cor-botao-texto);
       border: none;
       border-radius: 8px;
       font-size: 1.4rem;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.1s ease;
+      transition: background-color 0.3s ease, transform 0.1s ease, color 0.3s ease;
     }
     #start-game-button:hover, #restart-game-button:hover {
-      background-color: #00bb00;
+      background-color: var(--cor-destaque);
       transform: translateY(-2px);
     }
-    /* #game-elements { display: none; } is now handled by JS for specific use */
 
     #progress-bar-container {
       width: 100%;
-      background-color: #001100;
+      background-color: var(--cor-input-fundo);
       border-radius: 5px;
       margin-top: 15px;
       overflow: hidden;
@@ -558,41 +602,42 @@
     #progress-bar {
       height: 100%;
       width: 0%;
-      background-color: #00ff00;
+      background-color: var(--cor-sucesso);
       border-radius: 5px;
-      transition: width 0.1s linear; /* Animação suave para o progresso */
+      transition: width 0.1s linear, background-color 0.3s ease; /* Transição para barra de progresso */
     }
     #timer {
       font-size: 1.2rem;
       font-weight: bold;
       margin-top: 10px;
-      color: #aaffaa;
+      color: var(--cor-texto-secundario);
+      transition: color 0.3s ease;
     }
     #timer.warning {
-        color: #ffaa00; /* Amarelo/Laranja para aviso de tempo */
+        color: var(--cor-aviso);
     }
     #timer.critical {
-        color: #ff0000; /* Vermelho para tempo crítico */
+        color: var(--cor-critico);
     }
     #question-counter {
         font-size: 0.9em;
-        color: #88cc88;
-        margin-bottom: 5px;
+        color: var(--cor-texto-secundario);
+        transition: color 0.3s ease;
     }
 
     /* Estilo para o novo botão "Voltar ao Início" */
     .back-to-home-button {
-        display: block; /* Oculta por padrão */
-        margin-top: 30px; /* Espaço acima do botão */
+        display: block;
+        margin-top: 30px;
         width: 100%;
         padding: 12px;
-        background-color: #555500; /* Um tom de verde-oliva ou marrom para contraste */
+        background-color: #555500; /* Cor fixa para este botão, para manter contraste */
         color: #fff;
         border: none;
         border-radius: 6px;
         font-size: 1.1rem;
         cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.1s ease;
+        transition: background-color 0.3s ease, transform 0.1s ease, color 0.3s ease;
     }
 
     .back-to-home-button:hover {
@@ -617,7 +662,8 @@
     <div id="hamburger" aria-label="Menu" role="button" tabindex="0">
       <span></span><span></span><span></span>
     </div>
-    <h1>ButcherCode</h1>
+    <h1 id="butcherCodeTitle" role="button" tabindex="0">ButcherCode</h1>
+    <div style="width: 35px;"></div>
   </header>
 
   <nav id="sidebar" aria-label="Menu lateral">
@@ -685,7 +731,7 @@
               <div id="feedback"></div>
               <div id="score-display"></div>
               <button id="next-question">Próxima Pergunta</button>
-              <button id="end-game-button">Finalizar Jogo</button> 
+              <button id="end-game-button">Finalizar Jogo</button>
             </div>
 
             <div id="game-end-screen" style="display: none;">
@@ -716,32 +762,28 @@
     const initialScreenOptions = document.getElementById('initial-screen-options');
     const accessTerminalButton = document.getElementById('accessTerminalButton');
     const playGameCodeButton = document.getElementById('playGameCodeButton');
+    const butcherCodeTitle = document.getElementById('butcherCodeTitle'); // Novo elemento
 
     function grantAccess() {
-        // Salva no localStorage que o acesso foi concedido
         localStorage.setItem(ACCESS_GRANTED_KEY, "true");
 
-        // Oculta elementos do modal de senha
         modalTitle.style.display = 'none';
         modalPrompt.style.display = 'none';
         passwordInput.style.display = 'none';
         passwordSubmit.style.display = 'none';
         passwordError.textContent = '';
 
-        // Exibe mensagem de boas-vindas e botões de atalho
         welcomeMessage.innerHTML = 'Bem-vindo, Mestre Açougueiro!<br>Vamos desenrolar!';
         welcomeMessage.classList.add('show');
 
-        // Move os elementos do modal para a tela principal (initialScreen)
         document.getElementById('initialScreen').prepend(welcomeMessage);
         initialScreenOptions.classList.add('show');
-        document.getElementById('passwordModal').style.display = 'none'; // Oculta o modal completamente
+        document.getElementById('passwordModal').style.display = 'none';
 
-        // Remove a sobreposição do modal após um tempo
         setTimeout(() => {
             passwordModalOverlay.classList.remove('show');
-            passwordModalOverlay.style.display = 'none'; // Garante que a sobreposição desapareça
-        }, 500); // Tempo para transição de opacidade
+            passwordModalOverlay.style.display = 'none';
+        }, 500);
     }
 
     function checkPassword() {
@@ -762,10 +804,9 @@
         }
     });
 
-    // Modificado para verificar o localStorage ao carregar a página
     document.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem(ACCESS_GRANTED_KEY) === "true") {
-            grantAccess(); // Concede acesso diretamente se já foi salvo
+            grantAccess();
         } else {
             passwordModalOverlay.classList.add('show');
             passwordInput.focus();
@@ -913,17 +954,16 @@
 
     function showSection(sectionId) {
         mainContent.classList.remove('show-terminal', 'show-game', 'show-initial');
-        
-        clearInterval(timerInterval); 
-        timeLeft = TIME_PER_QUESTION; 
-        progressBar.style.width = '100%'; 
+
+        clearInterval(timerInterval);
+        timeLeft = TIME_PER_QUESTION;
+        progressBar.style.width = '100%';
 
         backToHomeTerminalButton.style.display = 'none';
         backToHomeGameButton.style.display = 'none';
 
         if (sectionId === 'mainTerminalSection') {
             mainContent.classList.add('show-terminal');
-            // inputCode.focus(); // Esta linha foi removida para impedir o foco automático
             backToHomeTerminalButton.style.display = 'block';
         } else if (sectionId === 'gameCodeSection') {
             mainContent.classList.add('show-game');
@@ -941,6 +981,11 @@
         sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
     }
+
+    // Event listener para o clique no título ButcherCode
+    butcherCodeTitle.addEventListener('click', () => {
+        showSection('initialScreen');
+    });
 
     accessTerminalButton.addEventListener('click', () => {
         showSection('mainTerminalSection');
@@ -966,7 +1011,8 @@
     });
 
     document.addEventListener('click', e => {
-      if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target)) {
+      // Adicionado butcherCodeTitle à verificação para não fechar o sidebar quando clicado
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target) && e.target !== butcherCodeTitle) {
         hamburger.classList.remove('open');
         sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
@@ -990,8 +1036,8 @@
             activeAccordionItem = targetElement.classList.contains('open') ? targetElement : null;
 
             clearInterval(timerInterval);
-            timeLeft = TIME_PER_QUESTION; 
-            progressBar.style.width = '100%'; 
+            timeLeft = TIME_PER_QUESTION;
+            progressBar.style.width = '100%';
         } else if (contentType === 'main-content') {
             showSection(targetId);
             document.querySelectorAll('.subfolder').forEach(folder => {
@@ -1020,18 +1066,16 @@
     const timerElement = document.getElementById('timer');
     const questionCounterElement = document.getElementById('question-counter');
     const finalScoreMessage = document.getElementById('final-score-message');
-    const endGameButton = document.getElementById('end-game-button'); 
+    const endGameButton = document.getElementById('end-game-button');
 
-    const GAME_STATE_KEY = "game_code_state"; 
+    const GAME_STATE_KEY = "game_code_state";
 
     const TIME_PER_QUESTION = 15;
     let timeLeft;
-    let timerInterval; 
+    let timerInterval;
 
-    // currentQuestionIndex agora representa o NÚMERO TOTAL de perguntas que já foram processadas (respondidas ou tempo esgotado).
-    // Começa em 0, e será incrementado a cada pergunta respondida/esgotada.
-    let currentQuestionIndex = 0; 
-    let score = 0; // Quantas acertos
+    let currentQuestionIndex = 0;
+    let score = 0;
     let questions = [];
 
     const fixedQuestions = [
@@ -1068,8 +1112,8 @@
         const gameState = {
             currentQuestionIndex: currentQuestionIndex,
             score: score,
-            questions: questions, 
-            timeLeft: timeLeft 
+            questions: questions,
+            timeLeft: timeLeft
         };
         localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState));
     }
@@ -1081,14 +1125,14 @@
             currentQuestionIndex = gameState.currentQuestionIndex;
             score = gameState.score;
             questions = gameState.questions;
-            timeLeft = (gameState.timeLeft > 0 && gameState.timeLeft <= TIME_PER_QUESTION) ? gameState.timeLeft : TIME_PER_QUESTION; 
+            timeLeft = (gameState.timeLeft > 0 && gameState.timeLeft <= TIME_PER_QUESTION) ? gameState.timeLeft : TIME_PER_QUESTION;
             return true;
         }
         return false;
     }
 
     function startTimer() {
-        clearInterval(timerInterval); 
+        clearInterval(timerInterval);
 
         if (timeLeft === undefined || timeLeft === null || timeLeft <= 0 || timeLeft > TIME_PER_QUESTION) {
             timeLeft = TIME_PER_QUESTION;
@@ -1111,22 +1155,20 @@
                 clearInterval(timerInterval);
                 timerElement.textContent = "Tempo esgotado!";
                 timerElement.classList.add('critical');
-                checkAnswer(null); // Chama checkAnswer com um evento nulo para indicar tempo esgotado
+                checkAnswer(null);
             } else {
                 timerElement.classList.remove('warning', 'critical');
             }
-            saveGameState(); 
+            saveGameState();
         }, 1000);
     }
 
     function showQuestion() {
-      // currentQuestionIndex agora representa quantas perguntas JÁ FORAM PROCESSADAS
-      // Para exibir a próxima, usamos currentQuestionIndex como o índice.
       if (currentQuestionIndex < questions.length) {
-        timeLeft = TIME_PER_QUESTION; 
-        startTimer(); 
+        timeLeft = TIME_PER_QUESTION;
+        startTimer();
 
-        const currentQuestion = questions[currentQuestionIndex]; // Pega a pergunta correta
+        const currentQuestion = questions[currentQuestionIndex];
         questionElement.textContent = currentQuestion.question;
         optionsElement.innerHTML = '';
         currentQuestion.options.forEach(option => {
@@ -1139,101 +1181,90 @@
         feedbackElement.textContent = '';
         feedbackElement.className = '';
         nextQuestionButton.style.display = 'none';
-        
-        // Exibe o contador da pergunta atual (currentQuestionIndex + 1 porque é base 0)
+
         questionCounterElement.textContent = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
 
-        // A pontuação parcial aqui reflete as perguntas ANTERIORES.
-        // A pergunta atual só será contabilizada no scoreDisplayElement após a interação (em checkAnswer).
-        const totalQuestionsProcessedForDisplay = currentQuestionIndex; 
+        const totalQuestionsProcessedForDisplay = currentQuestionIndex;
         const percentage = totalQuestionsProcessedForDisplay > 0 ? (((score / totalQuestionsProcessedForDisplay) * 100) || 0).toFixed(0) : 0;
         scoreDisplayElement.textContent = `Pontuação: ${score}/${totalQuestionsProcessedForDisplay} (${percentage}%)`;
-        
-        saveGameState(); 
+
+        saveGameState();
       } else {
-        endGame(false); // Se todas as perguntas foram respondidas, finaliza o jogo
+        endGame(false);
       }
     }
 
     function checkAnswer(event) {
-      clearInterval(timerInterval); 
+      clearInterval(timerInterval);
 
       const currentQuestion = questions[currentQuestionIndex];
       const correctAnswer = currentQuestion.correctAnswer;
       let selectedAnswer = null;
 
-      if (event) { 
+      if (event) {
         selectedAnswer = event.target.dataset.answer;
       }
 
       optionsElement.querySelectorAll('button').forEach(button => {
-        button.disabled = true; 
+        button.disabled = true;
         if (button.dataset.answer === correctAnswer) {
-          button.style.backgroundColor = '#006600'; 
+          button.style.backgroundColor = 'var(--cor-botao-hover)';
         } else if (button.dataset.answer === selectedAnswer) {
-          button.style.backgroundColor = '#660000'; 
+          button.style.backgroundColor = '#660000';
         }
       });
 
-      // Lógica de feedback e pontuação
       if (selectedAnswer === correctAnswer) {
         feedbackElement.textContent = 'Correto!';
         feedbackElement.className = 'correct';
         score++;
-      } else { 
+      } else {
         feedbackElement.textContent = `Incorreto. A resposta correta era: ${currentQuestion.correctAnswer}`;
         feedbackElement.className = 'incorrect';
       }
 
-      // IMPORTANTE: Incrementa currentQuestionIndex AQUI.
-      // Agora, currentQuestionIndex representa o total de perguntas *processadas*.
-      currentQuestionIndex++; 
+      currentQuestionIndex++;
 
-      // O display de pontuação agora usa o currentQuestionIndex atualizado
       const totalQuestionsAttempted = currentQuestionIndex;
       const percentage = totalQuestionsAttempted > 0 ? (((score / totalQuestionsAttempted) * 100) || 0).toFixed(0) : 0;
       scoreDisplayElement.textContent = `Pontuação: ${score}/${totalQuestionsAttempted} (${percentage}%)`;
-      
+
       nextQuestionButton.style.display = 'block';
-      saveGameState(); 
+      saveGameState();
     }
 
     function nextQuestion() {
-      // nextQuestion agora apenas exibe a próxima pergunta.
-      // currentQuestionIndex já foi incrementado em checkAnswer.
       feedbackElement.textContent = '';
       feedbackElement.className = '';
       optionsElement.querySelectorAll('button').forEach(button => {
-          button.style.backgroundColor = '#004400'; 
-          button.disabled = false; 
+          button.style.backgroundColor = 'var(--cor-botao-fundo)';
+          button.disabled = false;
       });
       showQuestion();
     }
 
 
-    function endGame(earlyExit = false) { 
+    function endGame(earlyExit = false) {
       clearInterval(timerInterval);
       gameElements.style.display = 'none';
       gameEndScreen.style.display = 'flex';
 
-      // Com currentQuestionIndex sempre refletindo o total de perguntas processadas,
-      // o cálculo final é muito mais simples.
       const totalQuestionsAttempted = currentQuestionIndex;
-      
+
       const finalPercentage = totalQuestionsAttempted > 0 ? ((score / totalQuestionsAttempted) * 100).toFixed(0) : 0;
-      
+
       let message = "Sua pontuação final foi: ";
       if (earlyExit) {
           message = "Você finalizou o jogo antecipadamente! <br>Sua pontuação parcial foi: ";
       }
 
-      finalScoreMessage.innerHTML = `${message}<br><span style="font-size: 2em; color: ${finalPercentage >= 70 ? '#00ff00' : (finalPercentage >= 40 ? '#ffff00' : '#ff0000')};">${score} de ${totalQuestionsAttempted} (${finalPercentage}%)</span>`;
-      
+      finalScoreMessage.innerHTML = `${message}<br><span style="font-size: 2em; color: ${finalPercentage >= 70 ? 'var(--cor-sucesso)' : (finalPercentage >= 40 ? 'var(--cor-aviso)' : 'var(--cor-critico)')};">${score} de ${totalQuestionsAttempted} (${finalPercentage}%)</span>`;
+
       scoreDisplayElement.textContent = '';
       questionCounterElement.textContent = '';
       timerElement.textContent = '';
 
-      localStorage.removeItem(GAME_STATE_KEY); 
+      localStorage.removeItem(GAME_STATE_KEY);
     }
 
     function startGame() {
@@ -1241,32 +1272,31 @@
       gameEndScreen.style.display = 'none';
       gameElements.style.display = 'block';
 
-      // Se não há estado salvo ou se todas as perguntas foram jogadas antes, reinicia.
-      if (!loadGameState() || currentQuestionIndex >= fixedQuestions.length) { 
-          currentQuestionIndex = 0; // Começa do zero.
+      if (!loadGameState() || currentQuestionIndex >= fixedQuestions.length) {
+          currentQuestionIndex = 0;
           score = 0;
           questions = [...fixedQuestions];
           shuffleArray(questions);
-          localStorage.removeItem(GAME_STATE_KEY); 
-          timeLeft = TIME_PER_QUESTION; 
+          localStorage.removeItem(GAME_STATE_KEY);
+          timeLeft = TIME_PER_QUESTION;
       }
-      
+
       scoreDisplayElement.textContent = '';
       nextQuestionButton.textContent = 'Próxima Pergunta';
       nextQuestionButton.removeEventListener('click', startGame);
       nextQuestionButton.addEventListener('click', nextQuestion);
-      
+
       optionsElement.querySelectorAll('button').forEach(button => {
-          button.style.backgroundColor = '#004400';
+          button.style.backgroundColor = 'var(--cor-botao-fundo)';
           button.disabled = false;
       });
 
-      showQuestion(); // Exibe a pergunta inicial ou a pergunta salva
+      showQuestion();
     }
 
     startGameButton.addEventListener('click', startGame);
     restartGameButton.addEventListener('click', startGame);
-    endGameButton.addEventListener('click', () => endGame(true)); 
+    endGameButton.addEventListener('click', () => endGame(true));
 
     document.addEventListener('DOMContentLoaded', () => {
         backToHomeTerminalButton.style.display = 'none';
