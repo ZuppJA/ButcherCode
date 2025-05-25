@@ -1098,8 +1098,6 @@
 
     const backToHomeTerminalButton = document.getElementById('backToHomeTerminal');
     const backToHomeGameButton = document.getElementById('backToHomeGame');
-    const backToHomeAddProductButton = document.getElementById('backToHomeAddProduct');
-    const backToHomeCommentsButton = document.getElementById('backToHomeComments');
     const backToHomeProfileButton = document.getElementById('backToHomeProfile');
     const accessTerminalButton = document.getElementById('accessTerminalButton');
     const playGameCodeButton = document.getElementById('playGameCodeButton');
@@ -1198,7 +1196,7 @@
         if (sectionId === 'mainTerminalSection') {
             mainContent.classList.add('show-terminal');
             backToHomeTerminalButton.style.display = 'block';
-            // inputCode.focus(); // REMOVIDO: Evita que o teclado apareça automaticamente
+            inputCode.focus(); // Foca no input do terminal
         } else if (sectionId === 'gameCodeSection') {
             mainContent.classList.add('show-game');
             gameStartScreen.style.display = 'flex'; // Garante que a tela de início do jogo seja exibida
@@ -1218,7 +1216,7 @@
             mainContent.classList.add('show-comments');
             loadComments(); // Carrega os comentários ao exibir a seção
             backToHomeCommentsButton.style.display = 'block';
-            // commentInput.focus(); // REMOVIDO: Evita que o teclado apareça automaticamente
+            commentInput.focus();
         } else if (sectionId === 'userProfileSection') {
             if (!currentUser) { // Redireciona para o login se não estiver logado
                 showAuthModal('Você precisa fazer login para ver seu perfil.');
