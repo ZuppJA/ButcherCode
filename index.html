@@ -41,12 +41,12 @@
       font-size: 16px;
       line-height: 1.6;
       overflow-x: hidden;
-      transition: margin-left 0.3s ease, background 0.3s ease, color 0.3s ease; /* Adicionado transição para cores */
+      transition: margin-left 0.3s ease, background 0.3s ease, color 0.3s ease;
       padding-bottom: 20px;
     }
     body.sidebar-open main {
       margin-left: 320px;
-      filter: var(--cor-camuflagem); /* Usa variável */
+      filter: var(--cor-camuflagem);
       opacity: 0.6;
       pointer-events: none;
       transition: filter 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
@@ -69,9 +69,8 @@
       top: 0;
       z-index: 1001;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      transition: background 0.3s ease; /* Transição para cor do header */
-      /* Ajustes para centralizar o h1 */
-      justify-content: space-between; /* Empurra os itens para as extremidades */
+      transition: background 0.3s ease;
+      justify-content: space-between;
     }
     #hamburger {
       cursor: pointer;
@@ -86,7 +85,7 @@
       width: 100%;
       left: 0;
       border-radius: 2px;
-      transition: 0.3s ease, background 0.3s ease; /* Transição para cor do hambúrguer */
+      transition: 0.3s ease, background 0.3s ease;
     }
     #hamburger span:nth-child(1) {
       top: 0;
@@ -114,13 +113,11 @@
       font-size: 2.2rem;
       font-weight: bold;
       animation: fadeInScale 1s ease forwards;
-      /* Novas regras para centralizar e tornar clicável */
-      flex-grow: 1; /* Faz o h1 ocupar o espaço restante */
-      text-align: center; /* Centraliza o texto dentro do h1 */
-      cursor: pointer; /* Indica que é clicável */
-      user-select: none; /* Impede a seleção do texto ao clicar */
-      /* Adicionando um pequeno ajuste de margin para compensar o hambúrguer, se necessário */
-      margin-right: 35px; /* Ajuste para o hambúrguer no lado oposto */
+      flex-grow: 1;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      margin-right: 35px;
     }
     @keyframes fadeInScale {
       0% {
@@ -144,7 +141,7 @@
       z-index: 1000;
       padding: 20px;
       transform: translateX(-100%);
-      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease; /* Transição para sidebar */
+      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
     #sidebar.open {
@@ -168,7 +165,7 @@
       right: 5px;
       top: 2px;
       transition: transform 0.3s ease;
-      color: var(--cor-texto-principal); /* Garante que a cor da seta mude */
+      color: var(--cor-texto-principal);
     }
     #sidebar h2.open::after {
       transform: rotate(90deg);
@@ -188,13 +185,13 @@
     main {
       margin: 100px 30px 30px 30px;
       max-width: 700px;
-      transition: margin-left 0.3s ease, background-color 0.3s ease; /* Transição para main */
+      transition: margin-left 0.3s ease, background-color 0.3s ease;
       padding: 20px;
       background-color: var(--cor-fundo-secundario);
       border-radius: 8px;
     }
     /* Hide all main sections by default */
-    #mainTerminalSection, #gameCodeSection, #initialScreen {
+    #mainTerminalSection, #gameCodeSection, #initialScreen, #addProductSection {
         display: none;
     }
     /* Show only the active section */
@@ -205,6 +202,9 @@
         display: block;
     }
     main.show-initial #initialScreen {
+        display: block;
+    }
+    main.show-add-product #addProductSection {
         display: block;
     }
 
@@ -230,7 +230,7 @@
     .input-wrapper {
       position: relative;
       display: flex;
-      align-items: center;
+      flex-direction: column; /* Alterado para empilhar label e input */
       margin-bottom: 15px;
     }
     input, button {
@@ -254,7 +254,31 @@
       color: var(--cor-texto-principal);
       font-family: 'Source Code Pro', monospace;
       padding-right: 12px;
-      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Transição para input */
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+    /* Estilos para o select */
+    select {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1rem;
+        border-radius: 6px;
+        background: var(--cor-input-fundo);
+        border: 1px solid var(--cor-input-borda);
+        color: var(--cor-texto-principal);
+        font-family: 'Source Code Pro', monospace;
+        margin-top: 5px;
+        appearance: none; /* Remove seta padrão em alguns navegadores */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b3ffb3%22%20d%3D%22M287%2069.9a17.6%2017.6%200%200%200-24.8%200L146.2%20185.7%2030.2%2069.9a17.6%2017.6%200%200%200-24.8%2024.8l139%20139.1a17.6%2017.6%200%200%200%2024.8%200l139-139.1a17.6%2017.6%200%200%200%200-24.8z%22%2F%3E%3C%2Fsvg%3E'); /* Seta customizada */
+        background-repeat: no-repeat;
+        background-position: right 10px top 50%;
+        background-size: 12px auto;
+    }
+    select:focus {
+        outline: none;
+        border-color: var(--cor-destaque);
+        box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
     }
 
     button {
@@ -264,7 +288,7 @@
       border: none;
       font-family: 'Source Code Pro', monospace;
       cursor: pointer;
-      transition: background 0.3s ease, color 0.3s ease; /* Transição para botão */
+      transition: background 0.3s ease, color 0.3s ease;
       width: 100%;
     }
     button:hover {
@@ -317,7 +341,7 @@
     /* Estilos para o ícone de feedback no resultado */
     #result .feedback-icon {
         position: absolute;
-        right: 15px; /* Ajuste a posição conforme necessário */
+        right: 15px;
         top: 50%;
         transform: translateY(-50%);
         font-size: 1.8em;
@@ -367,7 +391,7 @@
       width: 90%;
       color: var(--cor-texto-principal);
       transform: translateY(-20px);
-      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* Transição para modal */
+      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
       position: relative;
     }
     #passwordModalOverlay.show #passwordModal {
@@ -452,7 +476,7 @@
         visibility: visible;
     }
     #initial-screen-options button {
-        background-color: var(--cor-botao-hover); /* Um verde um pouco mais vibrante para os atalhos */
+        background-color: var(--cor-botao-hover);
         color: var(--cor-botao-texto);
         padding: 15px;
         font-size: 1.3rem;
@@ -477,7 +501,7 @@
 
     #result.error {
       border-color: var(--cor-critico);
-      background-color: #330000; /* Fundo fixo para erro */
+      background-color: #330000;
       color: var(--cor-erro);
     }
 
@@ -572,7 +596,7 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
     #end-game-button:hover {
-      background-color: #aa0000; /* Mais escuro */
+      background-color: #aa0000;
     }
 
 
@@ -627,7 +651,7 @@
       width: 0%;
       background-color: var(--cor-sucesso);
       border-radius: 5px;
-      transition: width 0.1s linear, background-color 0.3s ease; /* Transição para barra de progresso */
+      transition: width 0.1s linear, background-color 0.3s ease;
     }
     #timer {
       font-size: 1.2rem;
@@ -654,7 +678,7 @@
         margin-top: 30px;
         width: 100%;
         padding: 12px;
-        background-color: #555500; /* Cor fixa para este botão, para manter contraste */
+        background-color: #555500;
         color: #fff;
         border: none;
         border-radius: 6px;
@@ -666,6 +690,37 @@
     .back-to-home-button:hover {
         background-color: #777700;
         transform: translateY(-2px);
+    }
+
+    /* Estilos para a seção de adicionar produto */
+    #addProductSection {
+        padding: 20px;
+        background-color: var(--cor-fundo-secundario);
+        border-radius: 8px;
+        margin-top: 30px;
+        color: var(--cor-texto-secundario);
+    }
+    #addProductSection h2 {
+        color: var(--cor-botao-texto);
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--cor-destaque);
+        padding-bottom: 10px;
+    }
+    #addProductSection label {
+        margin-bottom: 5px;
+        color: var(--cor-texto-principal);
+    }
+    #addProductSection input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    #addProductSection input::-webkit-outer-spin-button,
+    #addProductSection input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    #addProductSection input, #addProductSection select {
+        margin-bottom: 15px;
     }
 
   </style>
@@ -713,9 +768,13 @@
     <div class="menu-section">
       <h2 tabindex="0" data-target="gameCodeSection" data-type="main-content">GameCode</h2>
     </div>
+    <div class="menu-section">
+      <h2 tabindex="0" data-target="addProductSection" data-type="main-content">Adicionar Produto</h2>
+    </div>
   </nav>
 
-  <main class="show-initial"> <section id="initialScreen" style="text-align: center; padding-top: 50px;">
+  <main class="show-initial">
+    <section id="initialScreen" style="text-align: center; padding-top: 50px;">
         <div id="welcomeMessage"></div>
         <div id="initial-screen-options">
             <button id="accessTerminalButton">Acessar Terminal</button>
@@ -731,6 +790,28 @@
         <button id="btnExecute">Executar</button>
         <div id="result" aria-live="polite" role="status"></div>
         <button class="back-to-home-button" id="backToHomeTerminal">Voltar ao Início</button>
+    </section>
+
+    <section id="addProductSection">
+        <h2>Adicionar Novo Produto</h2>
+        <div class="input-wrapper">
+            <label for="inputNewCode">Código (máximo 5 dígitos):</label>
+            <input type="number" id="inputNewCode" placeholder="Ex: 00123" min="0" max="99999" />
+        </div>
+        <div class="input-wrapper">
+            <label for="inputNewName">Nome do Produto:</label>
+            <input type="text" id="inputNewName" placeholder="Ex: Filé Mignon" />
+        </div>
+        <div class="input-wrapper">
+            <label for="selectNewCategory">Categoria:</label>
+            <select id="selectNewCategory">
+                <option value="bovinos">Bovinos</option>
+                <option value="suinos">Suínos</option>
+            </select>
+        </div>
+        <button id="btnAddNewProduct">Adicionar Produto</button>
+        <div id="addProductFeedback" style="margin-top: 15px; font-weight: bold; min-height: 20px;"></div>
+        <button class="back-to-home-button" id="backToHomeAddProduct">Voltar ao Início</button>
     </section>
 
     <section id="gameCodeSection">
@@ -785,7 +866,7 @@
     const initialScreenOptions = document.getElementById('initial-screen-options');
     const accessTerminalButton = document.getElementById('accessTerminalButton');
     const playGameCodeButton = document.getElementById('playGameCodeButton');
-    const butcherCodeTitle = document.getElementById('butcherCodeTitle'); // Novo elemento
+    const butcherCodeTitle = document.getElementById('butcherCodeTitle');
 
     function grantAccess() {
         localStorage.setItem(ACCESS_GRANTED_KEY, "true");
@@ -834,9 +915,83 @@
             passwordModalOverlay.classList.add('show');
             passwordInput.focus();
         }
+        loadProductData(); // Carrega os dados do Pantry ao carregar a página
     });
 
-    // --- Código Existente (Lógica Principal do ButcherCode) ---
+    // --- Integração com Pantry.cloud ---
+    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289'; // <--- SEU PANTRY ID
+    const BASKET_NAME = 'butcher_products'; // Nome da cesta que você criou no Pantry
+
+    let productData = { bovinos: {}, suinos: {}, meta: { version: 1, last_updated: "" } }; // Variável global para armazenar os dados carregados
+    let productsInverseNormalized = {}; // Também será preenchido dinamicamente
+
+    async function loadProductData() {
+        try {
+            const response = await fetch(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET_NAME}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // O Pantry retorna o JSON direto, sem uma chave 'record'
+            productData = data;
+            
+            // Reconstrói o índice inverso e preenche a sidebar
+            rebuildProductIndexesAndSidebar();
+            
+            console.log("Dados carregados com sucesso do Pantry:", productData);
+        } catch (error) {
+            console.error("Erro ao carregar dados do Pantry:", error);
+            // Fallback para dados locais se o carregamento falhar
+            productData = {
+                "meta": { "version": 1, "last_updated": "" },
+                "bovinos": {
+                  "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso",
+                  "14694": "Colchão Duro", "26390": "Colchão Mole", "25812": "Contra Filé",
+                  "14793": "Coração da Alcatra", "4282": "Fígado", "14762": "Lagarto",
+                  "14809": "Miolo da Paleta", "14618": "Músculo do Dianteiro", "14816": "Paleta",
+                  "14823": "Patinho", "00260": "Picanha em Pedaços", "05418": "Picanha Grill",
+                  "16094": "Picanha Maturada", "07160": "Picanha Todo Dia", "06019": "Picanha Tradicional"
+                },
+                "suinos": {
+                  "11549": "Bisteca Suína", "23023": "Carne Suína Corte", "15776": "Carne Suína Embalada",
+                  "23740": "Costela com Panceta Suína Corte", "23733": "Costela com Panceta Suína Embalada",
+                  "18159": "Pé Suíno"
+                }
+            };
+            rebuildProductIndexesAndSidebar();
+            alert("Não foi possível carregar os dados online. Usando dados padrão.");
+        }
+    }
+
+    async function saveProductData() {
+        try {
+            // Atualiza a data de última atualização
+            const now = new Date();
+            productData.meta = {
+                version: productData.meta ? productData.meta.version : 1,
+                last_updated: now.toISOString()
+            };
+
+            const response = await fetch(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET_NAME}`, {
+                method: 'POST', // POST para atualizar o bin existente no Pantry
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+            }
+            console.log("Dados salvos com sucesso no Pantry!");
+            return true;
+        } catch (error) {
+            console.error("Erro ao salvar dados no Pantry:", error);
+            alert("Erro ao salvar o novo produto. Verifique seu Pantry ID ou nome da cesta.");
+            return false;
+        }
+    }
 
     function normalizeText(text) {
         return text
@@ -847,31 +1002,6 @@
             .trim();
     }
 
-    const bovinos = {
-      "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso",
-      "14694": "Colchão Duro", "26390": "Colchão Mole", "25812": "Contra Filé",
-      "14793": "Coração da Alcatra", "4282": "Fígado", "14762": "Lagarto",
-      "14809": "Miolo da Paleta", "14618": "Músculo do Dianteiro", "14816": "Paleta",
-      "14823": "Patinho", "00260": "Picanha em Pedaços", "05418": "Picanha Grill",
-      "16094": "Picanha Maturada", "07160": "Picanha Todo Dia", "06019": "Picanha Tradicional"
-    };
-
-    const suinos = {
-      "11549": "Bisteca Suína", "23023": "Carne Suína Corte", "15776": "Carne Suína Embalada",
-      "23740": "Costela com Panceta Suína Corte", "23733": "Costela com Panceta Suína Embalada",
-      "18159": "Pé Suíno"
-    };
-
-    const products = {...bovinos, ...suinos};
-
-    const productsInverseNormalized = {};
-    Object.entries(products).forEach(([code, name]) => {
-      productsInverseNormalized[normalizeText(name)] = {
-          code: code.padStart(5, '0'),
-          originalName: name
-      };
-    });
-
     const mainTerminalSection = document.getElementById('mainTerminalSection');
     const inputCode = document.getElementById('inputCode');
     const btnExecute = document.getElementById('btnExecute');
@@ -879,37 +1009,45 @@
     const bovinosList = document.getElementById('bovinosList');
     const suinosList = document.getElementById('suinosList');
 
+    // Elementos para adicionar produto
+    const addProductSection = document.getElementById('addProductSection');
+    const inputNewCode = document.getElementById('inputNewCode');
+    const inputNewName = document.getElementById('inputNewName');
+    const selectNewCategory = document.getElementById('selectNewCategory');
+    const btnAddNewProduct = document.getElementById('btnAddNewProduct');
+    const addProductFeedback = document.getElementById('addProductFeedback');
+    const backToHomeAddProductButton = document.getElementById('backToHomeAddProduct');
+
+
     // --- Funções para tocar sons ---
     const sounds = {
         correct: new Audio('images/sounds/correct.mp3'),
         incorrect: new Audio('images/sounds/incorrect.mp3'),
         gameStart: new Audio('images/sounds/game-start.mp3'),
         gameEnd: new Audio('images/sounds/game-end.mp3'),
-        tick: new Audio('images/sounds/tick.mp3'), // Para o timer
-        terminalSuccess: new Audio('images/sounds/terminal-success.mp3'), // Para acerto no terminal
-        terminalError: new Audio('images/sounds/terminal-error.mp3') // Para erro no terminal
+        tick: new Audio('images/sounds/tick.mp3'),
+        terminalSuccess: new Audio('images/sounds/terminal-success.mp3'),
+        terminalError: new Audio('images/sounds/terminal-error.mp3')
     };
 
-    // Função para tocar um som (com verificação para evitar erros se o arquivo não carregar)
     function playSound(soundName) {
         if (sounds[soundName]) {
-            sounds[soundName].currentTime = 0; // Reinicia o áudio se ele já estiver tocando
+            sounds[soundName].currentTime = 0;
             sounds[soundName].play().catch(e => console.error("Erro ao tocar som:", e));
         }
     }
 
     function displayResult(text, isSuccess) {
-        resultDiv.innerHTML = ''; // Limpa o conteúdo existente
+        resultDiv.innerHTML = '';
         resultDiv.classList.remove('scrolling');
 
         const marqueeSpan = document.createElement('span');
         marqueeSpan.textContent = text;
         resultDiv.appendChild(marqueeSpan);
 
-        // Adiciona o ícone de feedback
         const icon = document.createElement('i');
-        icon.classList.add('feedback-icon', isSuccess ? 'fas' : 'fa'); // Font Awesome classes
-        icon.classList.add(isSuccess ? 'fa-check-circle' : 'fa-times-circle'); // Check ou X
+        icon.classList.add('feedback-icon', isSuccess ? 'fas' : 'fa');
+        icon.classList.add(isSuccess ? 'fa-check-circle' : 'fa-times-circle');
         resultDiv.appendChild(icon);
 
         resultDiv.classList.remove('success', 'error');
@@ -922,24 +1060,23 @@
             playSound('terminalError');
         }
 
-        // Mostra o ícone por um breve período
         setTimeout(() => {
             icon.classList.add('show');
-        }, 50); // Pequeno atraso para a transição
+        }, 50);
         setTimeout(() => {
             icon.classList.remove('show');
-            icon.remove(); // Remove o ícone do DOM
-        }, 1500); // Ícone visível por 1.5 segundos
+            icon.remove();
+        }, 1500);
 
         if (text.length > 15) {
             marqueeSpan.classList.add('marquee');
-            void resultDiv.offsetWidth; // Trigger reflow for animation
+            void resultDiv.offsetWidth;
             resultDiv.classList.add('scrolling');
         }
     }
 
-
     function populateSidebarList(listElement, data) {
+        listElement.innerHTML = ''; // Limpa a lista antes de preencher
         Object.entries(data).forEach(([code, name]) => {
             const div = document.createElement('div');
             div.classList.add('item');
@@ -948,8 +1085,8 @@
             div.addEventListener('click', () => {
                 showSection('mainTerminalSection');
                 inputCode.value = code.padStart(5, '0');
-                displayResult(name, true); // Assume sucesso ao clicar no menu
-                resultDiv.classList.remove('success', 'error'); // Limpa classes para um novo displayResult
+                displayResult(name, true);
+                resultDiv.classList.remove('success', 'error');
                 hamburger.classList.remove('open');
                 sidebar.classList.remove('open');
                 document.body.classList.remove('sidebar-open');
@@ -958,16 +1095,37 @@
         });
     }
 
-    populateSidebarList(bovinosList, bovinos);
-    populateSidebarList(suinosList, suinos);
+    function rebuildProductIndexesAndSidebar() {
+        // Zera os índices
+        productsInverseNormalized = {};
+
+        // Recria os índices a partir dos dados carregados/atualizados
+        Object.entries(productData.bovinos).forEach(([code, name]) => {
+          productsInverseNormalized[normalizeText(name)] = {
+              code: code.padStart(5, '0'),
+              originalName: name
+          };
+        });
+        Object.entries(productData.suinos).forEach(([code, name]) => {
+          productsInverseNormalized[normalizeText(name)] = {
+              code: code.padStart(5, '0'),
+              originalName: name
+          };
+        });
+
+        // Repopula a sidebar
+        populateSidebarList(bovinosList, productData.bovinos);
+        populateSidebarList(suinosList, productData.suinos);
+    }
 
     function buscarCodigoOuNome(input) {
       const texto = input.trim();
       if (!texto) return { result: "", found: false };
 
+      // Verifica se é um código (apenas números)
       if (/^\d+$/.test(texto)) {
         const codigo = texto.padStart(5, '0');
-        const nomeProduto = products[codigo];
+        const nomeProduto = productData.bovinos[codigo] || productData.suinos[codigo];
         return {
             result: nomeProduto || "Código não encontrado",
             found: !!nomeProduto
@@ -985,7 +1143,7 @@
     btnExecute.addEventListener('click', () => {
       const valor = inputCode.value;
       const { result, found } = buscarCodigoOuNome(valor);
-      displayResult(result, found); // Passa 'found' para a função de display
+      displayResult(result, found);
     });
 
     inputCode.addEventListener('keydown', e => {
@@ -998,6 +1156,57 @@
         resultDiv.innerHTML = '';
         resultDiv.classList.remove('scrolling', 'success', 'error');
     });
+
+    // --- Lógica de Adicionar Novo Produto ---
+    btnAddNewProduct.addEventListener('click', async () => {
+        const newCode = inputNewCode.value.trim();
+        const newName = inputNewName.value.trim();
+        const category = selectNewCategory.value;
+
+        if (!newCode || !newName || !category) {
+            addProductFeedback.textContent = 'Preencha todos os campos.';
+            addProductFeedback.style.color = 'var(--cor-aviso)';
+            return;
+        }
+
+        const formattedCode = newCode.padStart(5, '0');
+
+        // Verificar se o código ou nome já existem
+        if (productData.bovinos[formattedCode] || productData.suinos[formattedCode]) {
+            addProductFeedback.textContent = `Código "${formattedCode}" já existente!`;
+            addProductFeedback.style.color = 'var(--cor-erro)';
+            return;
+        }
+        if (productsInverseNormalized[normalizeText(newName)]) {
+             addProductFeedback.textContent = `Nome de produto "${newName}" já existente!`;
+             addProductFeedback.style.color = 'var(--cor-erro)';
+             return;
+        }
+
+
+        // Adicionar ao objeto de dados
+        if (category === 'bovinos') {
+            productData.bovinos[formattedCode] = newName;
+        } else if (category === 'suinos') {
+            productData.suinos[formattedCode] = newName;
+        }
+
+        // Salvar os dados no Pantry
+        const success = await saveProductData();
+        if (success) {
+            addProductFeedback.textContent = `Produto "${newName}" (${formattedCode}) adicionado com sucesso em ${category}!`;
+            addProductFeedback.style.color = 'var(--cor-sucesso)';
+            inputNewCode.value = '';
+            inputNewName.value = '';
+            rebuildProductIndexesAndSidebar(); // Atualiza a sidebar
+        } else {
+            addProductFeedback.textContent = 'Erro ao adicionar produto. Tente novamente.';
+            addProductFeedback.style.color = 'var(--cor-erro)';
+        }
+
+        setTimeout(() => { addProductFeedback.textContent = ''; }, 3000);
+    });
+
 
     // --- Gerenciamento da Visibilidade de Seções e Acordeão do Menu ---
     const mainContent = document.querySelector('main');
@@ -1013,7 +1222,7 @@
     let activeAccordionItem = null;
 
     function showSection(sectionId) {
-        mainContent.classList.remove('show-terminal', 'show-game', 'show-initial');
+        mainContent.classList.remove('show-terminal', 'show-game', 'show-initial', 'show-add-product');
 
         clearInterval(timerInterval);
         timeLeft = TIME_PER_QUESTION;
@@ -1021,6 +1230,7 @@
 
         backToHomeTerminalButton.style.display = 'none';
         backToHomeGameButton.style.display = 'none';
+        backToHomeAddProductButton.style.display = 'none'; // Novo botão de voltar
 
         if (sectionId === 'mainTerminalSection') {
             mainContent.classList.add('show-terminal');
@@ -1032,7 +1242,11 @@
             gameEndScreen.style.display = 'none';
             startGameButton.focus();
             backToHomeGameButton.style.display = 'block';
-        } else if (sectionId === 'initialScreen') {
+        } else if (sectionId === 'addProductSection') { // Nova seção
+            mainContent.classList.add('show-add-product');
+            backToHomeAddProductButton.style.display = 'block';
+        }
+        else if (sectionId === 'initialScreen') {
             mainContent.classList.add('show-initial');
             welcomeMessage.classList.add('show');
             initialScreenOptions.classList.add('show');
@@ -1042,7 +1256,6 @@
         document.body.classList.remove('sidebar-open');
     }
 
-    // Event listener para o clique no título ButcherCode
     butcherCodeTitle.addEventListener('click', () => {
         showSection('initialScreen');
     });
@@ -1063,6 +1276,10 @@
         showSection('initialScreen');
     });
 
+    backToHomeAddProductButton.addEventListener('click', () => {
+        showSection('initialScreen');
+    });
+
 
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('open');
@@ -1071,7 +1288,6 @@
     });
 
     document.addEventListener('click', e => {
-      // Adicionado butcherCodeTitle à verificação para não fechar o sidebar quando clicado
       if (!sidebar.contains(e.target) && !hamburger.contains(e.target) && !passwordModalOverlay.contains(e.target) && e.target !== butcherCodeTitle) {
         hamburger.classList.remove('open');
         sidebar.classList.remove('open');
@@ -1133,34 +1349,71 @@
     const TIME_PER_QUESTION = 15;
     let timeLeft;
     let timerInterval;
-    let tickSoundInterval; // Novo intervalo para o som de tick
+    let tickSoundInterval;
 
     let currentQuestionIndex = 0;
     let score = 0;
     let questions = [];
 
-    const fixedQuestions = [
-      { question: "Qual o nome do produto com o código: 25812?", options: ["Picanha Tradicional", "Contra Filé", "Alcatra com Maminha", "Lagarto"], correctAnswer: "Contra Filé" },
-      { question: "Qual o código do produto: Miolo da Paleta?", options: ["14816", "14618", "14809", "14793"], correctAnswer: "14809" },
-      { question: "Qual o nome do produto com o código: 07160?", options: ["Picanha Grill", "Picanha Maturada", "Picanha Todo Dia", "Picanha em Pedaços"], correctAnswer: "Picanha Todo Dia" },
-      { question: "Qual o código do produto: Acém?", options: ["14601", "14625", "14694", "26390"], correctAnswer: "14601" },
-      { question: "Qual o nome do produto com o código: 11549?", options: ["Pé Suíno", "Carne Suína Corte", "Bisteca Suína", "Costela com Panceta Suína Embalada"], correctAnswer: "Bisteca Suína" },
-      { question: "Qual o código do produto: Coração da Alcatra?", options: ["14625", "14793", "14823", "00260"], correctAnswer: "14793" },
-      { question: "Qual o nome do produto com o código: 23733?", options: ["Costela com Panceta Suína Corte", "Costela com Panceta Suína Embalada", "Carne Suína Embalada", "Bisteca Suína"], correctAnswer: "Costela com Panceta Suína Embalada" },
-      { question: "Qual o código do produto: Fígado?", options: ["1762", "4282", "14762", "14809"], correctAnswer: "4282" },
-      { question: "Qual o nome do produto com o código: 16094?", options: ["Picanha Tradicional", "Picanha Grill", "Picanha Maturada", "Picanha Todo Dia"], correctAnswer: "Picanha Maturada" },
-      { question: "Qual o código do produto: Músculo do Dianteiro?", options: ["14601", "14816", "14618", "14823"], correctAnswer: "14618" },
-      { question: "Qual o nome do produto com o código: 18159?", options: ["Bisteca Suína", "Carne Suína Embalada", "Pé Suíno", "Costela com Panceta Suína Corte"], correctAnswer: "Pé Suíno" },
-      { question: "Qual o código do produto: Colchão Duro?", options: ["14694", "26390", "25812", "14793"], correctAnswer: "14694" },
-      { question: "Qual o nome do produto com o código: 14762?", options: ["Patinho", "Lagarto", "Paleta", "Músculo do Dianteiro"], correctAnswer: "Lagarto" },
-      { question: "Qual o código do produto: Alcatra com Maminha?", options: ["14601", "1762", "14625", "26390"], correctAnswer: "14625" },
-      { question: "Qual o nome do produto com o código: 05418?", options: ["Picanha Todo Dia", "Picanha em Pedaços", "Picanha Grill", "Picanha Maturada"], correctAnswer: "Picanha Grill" },
-      { question: "Qual o código do produto: Bisteca com osso?", options: ["14601", "1762", "14625", "25812"], correctAnswer: "1762" },
-      { question: "Qual o nome do produto com o código: 23023?", options: ["Bisteca Suína", "Carne Suína Embalada", "Carne Suína Corte", "Pé Suíno"], correctAnswer: "Carne Suína Corte" },
-      { question: "Qual o código do produto: Patinho?", options: ["14816", "14823", "14618", "14809"], correctAnswer: "14823" },
-      { question: "Qual o nome do produto com o código: 06019?", options: ["Picanha em Pedaços", "Picanha Todo Dia", "Picanha Grill", "Picanha Tradicional"], correctAnswer: "Picanha Tradicional" },
-      { question: "Qual o código do produto: Colchão Mole?", options: ["14694", "26390", "14762", "14823"], correctAnswer: "26390" }
-    ];
+    // Gerar perguntas dinamicamente a partir dos dados carregados
+    function generateQuestions() {
+        const allProducts = { ...productData.bovinos, ...productData.suinos };
+        const productEntries = Object.entries(allProducts);
+        const generated = [];
+
+        // Limita o número de perguntas se houver poucos produtos
+        const numQuestions = Math.min(20, productEntries.length * 2);
+
+        if (productEntries.length < 2) { // Precisa de pelo menos 2 produtos para gerar opções
+            return []; // Retorna vazio se não houver produtos suficientes
+        }
+
+        for (let i = 0; i < numQuestions; i++) {
+            // Garante que o tipo de pergunta seja aleatório (código -> nome ou nome -> código)
+            const type = Math.random() < 0.5 ? 'codeToName' : 'nameToCode';
+            
+            // Seleciona uma pergunta correta aleatoriamente
+            const [correctCode, correctName] = productEntries[Math.floor(Math.random() * productEntries.length)];
+
+            let questionText, correctAnswer;
+            let options = new Set(); // Usa Set para evitar opções duplicadas
+
+            if (type === 'codeToName') {
+                questionText = `Qual o nome do produto com o código: ${correctCode.padStart(5, '0')}?`;
+                correctAnswer = correctName;
+            } else { // nameToCode
+                questionText = `Qual o código do produto: ${correctName}?`;
+                correctAnswer = correctCode.padStart(5, '0');
+            }
+            options.add(correctAnswer); // Adiciona a resposta correta
+
+            // Gera 3 opções extras aleatórias que não sejam a resposta correta
+            while (options.size < 4) {
+                const [randomCode, randomName] = productEntries[Math.floor(Math.random() * productEntries.length)];
+                let randomOption;
+                if (type === 'codeToName') {
+                    randomOption = randomName;
+                } else {
+                    randomOption = randomCode.padStart(5, '0');
+                }
+                
+                if (randomOption !== correctAnswer) {
+                    options.add(randomOption);
+                }
+            }
+
+            const shuffledOptions = Array.from(options);
+            shuffleArray(shuffledOptions); // Embaralha as opções
+
+            generated.push({
+                question: questionText,
+                options: shuffledOptions,
+                correctAnswer: correctAnswer
+            });
+        }
+        return generated;
+    }
+
 
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -1194,7 +1447,7 @@
 
     function startTimer() {
         clearInterval(timerInterval);
-        clearInterval(tickSoundInterval); // Limpa o intervalo do tick anterior
+        clearInterval(tickSoundInterval);
 
         if (timeLeft === undefined || timeLeft === null || timeLeft <= 0 || timeLeft > TIME_PER_QUESTION) {
             timeLeft = TIME_PER_QUESTION;
@@ -1204,13 +1457,11 @@
         timerElement.classList.remove('warning', 'critical');
         progressBar.style.width = `${(timeLeft / TIME_PER_QUESTION) * 100}%`;
 
-        // Inicia o som de tick nos últimos 5 segundos
         if (timeLeft <= 5 && timeLeft > 0) {
             tickSoundInterval = setInterval(() => {
                 if (timeLeft > 0) playSound('tick');
             }, 1000);
         }
-
 
         timerInterval = setInterval(() => {
             timeLeft--;
@@ -1221,7 +1472,7 @@
             if (timeLeft <= 5 && timeLeft > 0) {
                 timerElement.classList.add('warning');
                 timerElement.classList.remove('critical');
-                if (!tickSoundInterval) { // Garante que o tick só começa uma vez
+                if (!tickSoundInterval) {
                      tickSoundInterval = setInterval(() => {
                         if (timeLeft > 0) playSound('tick');
                     }, 1000);
@@ -1234,7 +1485,7 @@
                 checkAnswer(null);
             } else {
                 timerElement.classList.remove('warning', 'critical');
-                clearInterval(tickSoundInterval); // Para o tick se o tempo subir novamente (ex: reset)
+                clearInterval(tickSoundInterval);
                 tickSoundInterval = null;
             }
             saveGameState();
@@ -1274,7 +1525,7 @@
 
     function checkAnswer(event) {
       clearInterval(timerInterval);
-      clearInterval(tickSoundInterval); // Garante que o tick pare ao responder
+      clearInterval(tickSoundInterval);
 
       const currentQuestion = questions[currentQuestionIndex];
       const correctAnswer = currentQuestion.correctAnswer;
@@ -1297,11 +1548,11 @@
         feedbackElement.textContent = 'Correto!';
         feedbackElement.className = 'correct';
         score++;
-        playSound('correct'); // Toca som de acerto
+        playSound('correct');
       } else {
         feedbackElement.textContent = `Incorreto. A resposta correta era: ${currentQuestion.correctAnswer}`;
         feedbackElement.className = 'incorrect';
-        playSound('incorrect'); // Toca som de erro
+        playSound('incorrect');
       }
 
       currentQuestionIndex++;
@@ -1327,10 +1578,10 @@
 
     function endGame(earlyExit = false) {
       clearInterval(timerInterval);
-      clearInterval(tickSoundInterval); // Garante que o tick pare ao finalizar o jogo
+      clearInterval(tickSoundInterval);
       gameElements.style.display = 'none';
       gameEndScreen.style.display = 'flex';
-      playSound('gameEnd'); // Toca som de fim de jogo
+      playSound('gameEnd');
 
       const totalQuestionsAttempted = currentQuestionIndex;
 
@@ -1354,12 +1605,13 @@
       gameStartScreen.style.display = 'none';
       gameEndScreen.style.display = 'none';
       gameElements.style.display = 'block';
-      playSound('gameStart'); // Toca som de início de jogo
+      playSound('gameStart');
 
-      if (!loadGameState() || currentQuestionIndex >= fixedQuestions.length) {
+      // Se não há estado salvo ou o jogo anterior terminou, gera novas perguntas
+      if (!loadGameState() || questions.length === 0 || currentQuestionIndex >= questions.length) {
           currentQuestionIndex = 0;
           score = 0;
-          questions = [...fixedQuestions];
+          questions = generateQuestions(); // Usa a nova função
           shuffleArray(questions);
           localStorage.removeItem(GAME_STATE_KEY);
           timeLeft = TIME_PER_QUESTION;
@@ -1375,6 +1627,16 @@
           button.disabled = false;
       });
 
+      // Se não houver perguntas geradas (ex: poucos produtos no Pantry), encerra o jogo
+      if (questions.length === 0) {
+          gameElements.style.display = 'none';
+          gameStartScreen.style.display = 'flex';
+          gameStartScreen.querySelector('h3').textContent = 'Atenção!';
+          gameStartScreen.querySelector('p').innerHTML = 'Não há produtos suficientes para gerar perguntas. Adicione mais produtos para começar a jogar!';
+          startGameButton.style.display = 'none'; // Esconde o botão de iniciar se não houver perguntas
+          return;
+      }
+
       showQuestion();
     }
 
@@ -1385,6 +1647,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         backToHomeTerminalButton.style.display = 'none';
         backToHomeGameButton.style.display = 'none';
+        backToHomeAddProductButton.style.display = 'none';
     });
 
   </script>
