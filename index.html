@@ -573,12 +573,12 @@
     <section id="initialScreen" style="text-align: center; padding-top: 50px;">
         <div id="welcomeMessage"></div>
         <div id="loginRegisterInitialScreen" style="display:none; margin-top: 25px; margin-bottom: 25px;">
-            <p style="font-size: 1.1rem;">
-                <a href="#" id="loginInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 12px; border-radius: 4px; background-color: var(--cor-botao-fundo); margin-right: 10px;">Fazer Login</a>
-                <span style="color: var(--cor-texto-secundario); margin: 0 10px;">ou</span>
-                <a href="#" id="registerInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 12px; border-radius: 4px; background-color: var(--cor-botao-hover);">Criar Conta</a>
-            </p>
-        </div>
+            <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 1.1rem;">
+                <a href="#" id="loginInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 0;">Fazer Login</a>
+                <span style="color: var(--cor-texto-secundario); margin: 0 5px;">ou</span>
+                <a href="#" id="registerInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 0;">Criar Conta</a>
+            </div>
+            </div>
         <div id="initial-screen-options">
             <button id="accessTerminalButton">Acessar Terminal</button>
             <button id="playGameCodeButton">Jogar GameCode</button>
@@ -871,7 +871,7 @@
 
         // Controla visibilidade dos itens de Login/Registro vs Perfil/Logout
         if (loginRegisterSidebarItem) loginRegisterSidebarItem.style.display = isLoggedIn ? 'none' : 'block';
-        if (loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = isLoggedIn ? 'none' : 'block';
+        if (loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = isLoggedIn ? 'none' : 'block'; // Corrected this line
 
         if (userProfileMenuItem) userProfileMenuItem.style.display = isLoggedIn ? 'block' : 'none';
         if (logoutSection) logoutSection.style.display = isLoggedIn ? 'block' : 'none';
@@ -1099,6 +1099,8 @@
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
+             if(loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = 'none';
+
 
         } else { // Usuário deslogado
             currentUser = null;
@@ -1108,6 +1110,7 @@
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
+            if(loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = 'block';
             
             if(usernameDisplay) {
                 usernameDisplay.textContent = '';
