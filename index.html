@@ -550,6 +550,9 @@
       <li class="menu-section">
         <h2 tabindex="0" data-target="gameCodeSection" data-type="main-content">GameCode</h2>
       </li>
+      <li class="menu-section" id="loginRegisterSidebarItem" style="display:none;">
+        <h2 tabindex="0" id="loginRegisterSidebarButton" style="color: var(--cor-link); cursor:pointer; border-bottom: 1px solid var(--cor-link);">Login / Criar Conta</h2>
+      </li>
       <li class="menu-section" id="addProductMenuItem" style="display:none;"> <h2 tabindex="0" data-target="addProductSection" data-type="main-content">Adicionar Produto</h2>
       </li>
       <li class="menu-section">
@@ -569,6 +572,13 @@
   <main class="show-initial">
     <section id="initialScreen" style="text-align: center; padding-top: 50px;">
         <div id="welcomeMessage"></div>
+        <div id="loginRegisterInitialScreen" style="display:none; margin-top: 25px; margin-bottom: 25px;">
+            <p style="font-size: 1.1rem;">
+                <a href="#" id="loginInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 12px; border-radius: 4px; background-color: var(--cor-botao-fundo); margin-right: 10px;">Fazer Login</a>
+                <span style="color: var(--cor-texto-secundario); margin: 0 10px;">ou</span>
+                <a href="#" id="registerInitialLink" style="color: var(--cor-link); text-decoration: underline; padding: 8px 12px; border-radius: 4px; background-color: var(--cor-botao-hover);">Criar Conta</a>
+            </p>
+        </div>
         <div id="initial-screen-options">
             <button id="accessTerminalButton">Acessar Terminal</button>
             <button id="playGameCodeButton">Jogar GameCode</button>
@@ -723,6 +733,13 @@
     const logoutButton = document.getElementById('logoutButton');
     const userProfileMenuItem = document.getElementById('userProfileMenuItem');
 
+    // Novos elementos para login/registro rápido
+    const loginRegisterSidebarItem = document.getElementById('loginRegisterSidebarItem');
+    const loginRegisterSidebarButton = document.getElementById('loginRegisterSidebarButton');
+    const loginRegisterInitialScreen = document.getElementById('loginRegisterInitialScreen');
+    const loginInitialLink = document.getElementById('loginInitialLink');
+    const registerInitialLink = document.getElementById('registerInitialLink');
+
     const userProfileSection = document.getElementById('userProfileSection');
     const usernameDisplay = document.getElementById('usernameDisplay');
     const userEmailDisplay = document.getElementById('userEmailDisplay');
@@ -800,8 +817,8 @@
     let isCurrentUserAdmin = false; // Será derivado de currentUserRole
     let currentUserRole = 'user';   // Papéis: 'user', 'cooperator', 'admin'
     let activeAccordionItem = null;
-    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289'; // Seu Pantry ID
-    const BASKET_NAME = 'butcher_products'; // Seu nome de cesta
+    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289'; 
+    const BASKET_NAME = 'butcher_products'; 
     let productData = { bovinos: {}, suinos: {}, meta: { version: 1, last_updated: "" } };
     let productsInverseNormalized = {};
     const GAME_STATE_KEY = "game_code_state";
@@ -846,44 +863,40 @@
       }
     }
 
-    // Função para atualizar a UI com base nas permissões do usuário
     function updateUserAccessUI() {
         const isAdmin = currentUserRole === 'admin';
         const isCooperator = currentUserRole === 'cooperator';
         const canAddProducts = isAdmin || isCooperator;
+        const isLoggedIn = !!currentUser;
 
-        // Visibilidade do item de menu "Gerenciar Produtos (Admin)"
+        // Controla visibilidade dos itens de Login/Registro vs Perfil/Logout
+        if (loginRegisterSidebarItem) loginRegisterSidebarItem.style.display = isLoggedIn ? 'none' : 'block';
+        if (loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = isLoggedIn ? 'none' : 'block';
+
+        if (userProfileMenuItem) userProfileMenuItem.style.display = isLoggedIn ? 'block' : 'none';
+        if (logoutSection) logoutSection.style.display = isLoggedIn ? 'block' : 'none';
+
         if (adminProductManagementMenuItem) adminProductManagementMenuItem.style.display = isAdmin ? 'block' : 'none';
-        
-        // Visibilidade do texto "Você é um Administrador" no perfil
         if (adminStatusText) adminStatusText.style.display = isAdmin ? 'block' : 'none';
         
-        // Visibilidade do item de menu "Adicionar Produto"
-        const addProductMenuItemEl = document.getElementById('addProductMenuItem'); // Usar o ID do LI
+        const addProductMenuItemEl = document.getElementById('addProductMenuItem');
         if (addProductMenuItemEl) {
-            addProductMenuItemEl.style.display = canAddProducts ? 'block' : 'none';
+            addProductMenuItemEl.style.display = canAddProducts && isLoggedIn ? 'block' : 'none';
         }
 
-        // Se a seção de comentários estiver visível, recarrega para mostrar/ocultar botões de apagar (admin)
         if (mainContent.classList.contains('show-comments')) {
             loadComments(); 
         }
-
-        // Se a seção de gerenciamento de produtos admin estiver visível e o usuário não for admin, redireciona
         if (mainContent.classList.contains('show-admin-products') && !isAdmin) {
             showSection('initialScreen');
         }
-        
-        // Se a seção de adicionar produtos estiver visível e o usuário não tiver permissão, redireciona
         const addProductSectionEl = document.getElementById('addProductSection');
         const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
         if (mainContent.classList.contains('show-add-product')) {
-            if (editingCode && !isAdmin) { // Editando é só admin
+            if (editingCode && !isAdmin) { 
                 showSection('initialScreen');
-                // alert("Você não tem permissão para editar produtos."); // Opcional: alerta
-            } else if (!editingCode && !canAddProducts) { // Adicionando é admin ou cooperador
+            } else if (!editingCode && (!isLoggedIn || !canAddProducts)) { 
                 showSection('initialScreen');
-                // alert("Você não tem permissão para adicionar produtos."); // Opcional: alerta
             }
         }
     }
@@ -919,12 +932,12 @@
                 return;
             }
 
-            if (!editingCode && !canAdd) { // Tentando ADICIONAR sem permissão
+            if (!editingCode && !canAdd) { 
                 showAuthModal('Você não tem permissão para adicionar produtos.', 'Acesso Negado');
                 if (currentUser) setTimeout(() => showSection('initialScreen'), 0); 
                 return;
             }
-            if (editingCode && !isAdmin) { // Tentando EDITAR sem ser admin
+            if (editingCode && !isAdmin) { 
                  showAuthModal('Você não tem permissão para editar produtos.', 'Acesso Negado');
                  if (currentUser) setTimeout(() => showSection('initialScreen'), 0);
                  return;
@@ -933,12 +946,10 @@
             mainContent.classList.add('show-add-product');
             if(backToHomeAddProductButton) backToHomeAddProductButton.style.display = 'block';
             
-            if (addProductSectionEl && !editingCode) { // Modo Adição
+            if (addProductSectionEl && !editingCode) { 
                 if(inputNewCode) inputNewCode.focus(); 
                 resetAddProductForm(); 
             }
-            // Foco e preenchimento para edição são feitos por handleSetupEditProduct
-
         } else if (sectionId === 'commentsSection') {
             mainContent.classList.add('show-comments');
             loadComments(); 
@@ -979,7 +990,7 @@
                     
                     if(usernameDisplay) {
                        usernameDisplay.textContent = displayName;
-                       if (currentUserRole === 'admin') { // Usa currentUserRole
+                       if (currentUserRole === 'admin') { 
                            usernameDisplay.classList.add('admin-username');
                        } else {
                            usernameDisplay.classList.remove('admin-username');
@@ -999,7 +1010,7 @@
             }
             if(backToHomeProfileButton) backToHomeProfileButton.style.display = 'block';
         } else if (sectionId === 'adminProductManagementSection') { 
-            if (!currentUser || currentUserRole !== 'admin') { // Acesso restrito a administradores
+            if (!currentUser || currentUserRole !== 'admin') { 
                 showAuthModal('Acesso restrito a administradores.');
                 if (currentUser && currentUserRole !== 'admin') setTimeout(() => showSection('initialScreen'),0); 
                 return;
@@ -1019,22 +1030,24 @@
     }
     
     function showAuthModal(reasonMessage = '', generalPrompt = 'Faça login ou crie uma conta para prosseguir:') {
-         if(authModalTitle) authModalTitle.textContent = 'Acesso Restrito';
-        if (reasonMessage && authPrompt) {
+        if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!'; // Título padrão
+        if (reasonMessage && authPrompt) { // Permite sobrescrever o prompt se reasonMessage for fornecida
             authPrompt.textContent = reasonMessage;
-        } else if(authPrompt) {
+        } else if(authPrompt) { // Senão, usa o prompt geral ou o default do HTML
             authPrompt.textContent = generalPrompt;
         }
         if(authError) authError.textContent = '';
         if(authModalOverlay) authModalOverlay.classList.add('show');
-        if(usernameInputDOM) usernameInputDOM.focus(); 
         
+        // Resetar para o estado padrão de "Entrar" / "Criar Conta"
         if(authSubmit) authSubmit.textContent = 'Entrar';
-        if(registerButton) {
-            registerButton.textContent = 'Criar Conta';
-            registerButton.style.display = 'block';
+        if(registerButton) registerButton.textContent = 'Criar Conta';
+        
+        if(usernameInputDOM) {
+          usernameInputDOM.value = ''; // Limpa o campo de usuário
+          usernameInputDOM.focus();
         }
-        if(passwordInput) passwordInput.value = '';
+        if(passwordInput) passwordInput.value = ''; // Limpa o campo de senha
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -1047,17 +1060,15 @@
                 
                 const displayName = userData && userData.username ? userData.username : (user.email ? user.email.split('@')[0] : 'Usuário');
                 
-                currentUserRole = userData && userData.role ? userData.role : 'user'; // Carrega o papel do usuário
-                isCurrentUserAdmin = currentUserRole === 'admin'; // Deriva isCurrentUserAdmin
+                currentUserRole = userData && userData.role ? userData.role : 'user'; 
+                isCurrentUserAdmin = currentUserRole === 'admin'; 
 
                 let welcomeDisplayName = displayName;
-                if (isCurrentUserAdmin) { // ou currentUserRole === 'admin'
+                if (isCurrentUserAdmin) { 
                     welcomeDisplayName = `<span class="admin-username">${displayName}</span>`;
                 } else if (currentUserRole === 'cooperator') {
-                    // Estilo opcional para cooperador
                     welcomeDisplayName = `<span style="color: var(--cor-link);">${displayName} (Cooperador)</span>`;
                 }
-
 
                 if(welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo, ${welcomeDisplayName}! <br>Vamos desenrolar!`;
                 
@@ -1071,8 +1082,6 @@
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
                 
-                updateUserAccessUI(); 
-
             } catch (error) {
                 console.error("Erro ao carregar dados do usuário no Firestore:", error);
                 const fallbackUsername = user.email ? user.email.split('@')[0] : 'Usuário';
@@ -1083,44 +1092,39 @@
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
                 
-                currentUserRole = 'user'; // Reseta em caso de erro
+                currentUserRole = 'user'; 
                 isCurrentUserAdmin = false;
-                updateUserAccessUI();
             }
 
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
-            if (userProfileMenuItem) userProfileMenuItem.style.display = 'block';
-            if (logoutSection) logoutSection.style.display = 'block';
-        } else {
+
+        } else { // Usuário deslogado
             currentUser = null;
             isCurrentUserAdmin = false;
-            currentUserRole = 'user'; // Papel padrão para usuário deslogado
-            if(welcomeMessage) welcomeMessage.innerHTML = "Bem-vindo ao ButcherCode! <br>Explore as funcionalidades. O login é necessário para algumas interações.";
+            currentUserRole = 'user'; 
+            if(welcomeMessage) welcomeMessage.innerHTML = "Bem-vindo ao ButcherCode! <br>Faça login ou crie uma conta para começar.";
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
-            if (userProfileMenuItem) userProfileMenuItem.style.display = 'none';
-            if (logoutSection) logoutSection.style.display = 'none';
+            
             if(usernameDisplay) {
                 usernameDisplay.textContent = '';
                 usernameDisplay.classList.remove('admin-username');
             }
             if(userEmailDisplay) userEmailDisplay.textContent = '';
             
-            updateUserAccessUI(); 
-
             const isRestrictedSectionForGuests = mainContent.classList.contains('show-profile') ||
                                                 mainContent.classList.contains('show-add-product') ||
                                                 mainContent.classList.contains('show-admin-products');
             if (isRestrictedSectionForGuests) {
                  showSection('initialScreen');
             } else if (mainContent.classList.contains('show-comments')) {
-                // Permite ver comentários mesmo deslogado, mas o formulário será desabilitado
                 showSection('commentsSection'); 
             }
         }
+        updateUserAccessUI(); // Atualiza a UI com base no estado de login/papel
     });
 
     if (closeAuthModalButton) {
@@ -1142,15 +1146,16 @@
             const passwordVal = passwordInput.value.trim(); 
             if(authError) authError.textContent = '';
 
-            if (authSubmit.textContent === 'Voltar para Login') {
-                if(authPrompt) authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
+            if (authSubmit.textContent === 'Voltar para Login') { // Se está no modo "Criar Conta" e clica para voltar
                 if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
+                if(authPrompt) authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
                 authSubmit.textContent = 'Entrar';
                 if(registerButton) registerButton.textContent = 'Criar Conta';
                 if(usernameInputDOM) usernameInputDOM.focus();
                 return;
             }
 
+            // Se o texto é "Entrar", tenta fazer login
             if (!usernameVal || !passwordVal) {
                 if(authError) authError.textContent = 'Por favor, insira nome de usuário e senha.';
                 return;
@@ -1175,6 +1180,7 @@
                     return;
                 }
                 await signInWithEmailAndPassword(auth, fakeEmail, passwordVal);
+                // onAuthStateChanged cuidará de fechar o modal e atualizar a UI
             } catch (error) {
                 console.error("Erro ao fazer login:", error);
                 let errorMessage = "Erro no login.";
@@ -1196,13 +1202,13 @@
             const passwordVal = passwordInput.value.trim(); 
             if(authError) authError.textContent = '';
 
-            if (registerButton.textContent === 'Criar Conta') {
-                if(authPrompt) authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
+            if (registerButton.textContent === 'Criar Conta') { // Se está no modo "Login" e clica para criar conta
                 if(authModalTitle) authModalTitle.textContent = 'Criar Nova Conta';
+                if(authPrompt) authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
                 if(authSubmit) authSubmit.textContent = 'Voltar para Login';
                 registerButton.textContent = 'Registrar';
                 if(usernameInputDOM) usernameInputDOM.focus();
-            } else {
+            } else { // Se o texto é "Registrar", tenta registrar
                 if (!usernameVal) {
                     if(authError) authError.textContent = 'Por favor, insira um nome de usuário.';
                     return;
@@ -1229,9 +1235,10 @@
                         username: usernameVal,
                         email: fakeEmail,
                         createdAt: serverTimestamp(),
-                        isAdmin: false, // Pode manter ou remover se role for o principal
-                        role: 'user'    // Define o papel padrão para novos usuários
+                        isAdmin: false, 
+                        role: 'user'    
                     });
+                    // onAuthStateChanged cuidará de fechar o modal e atualizar a UI
                 } catch (error) {
                     console.error("Erro ao registrar:", error);
                     let errorMessage = "Erro no registro.";
@@ -1247,12 +1254,54 @@
             }
         });
     }
+    
+    // Event Listeners para os novos links de login/registro rápido
+    if (loginRegisterSidebarButton) {
+        loginRegisterSidebarButton.addEventListener('click', () => {
+            showAuthModal('Faça login ou crie uma conta para continuar.');
+            if (hamburger && hamburger.classList.contains('open')) {
+                hamburger.classList.remove('open');
+                if (sidebar) sidebar.classList.remove('open');
+                document.body.classList.remove('sidebar-open');
+            }
+        });
+    }
+
+    if (loginInitialLink) {
+        loginInitialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAuthModal('Bem-vindo de volta! Faça seu login ou crie uma conta.');
+            // Força o modal para o estado de login (textos)
+            if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
+            if(authPrompt) authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
+            if(authSubmit) authSubmit.textContent = 'Entrar';
+            if(registerButton) registerButton.textContent = 'Criar Conta';
+            if(usernameInputDOM) usernameInputDOM.focus();
+            if(passwordInput) passwordInput.value = '';
+            if(authError) authError.textContent = '';
+        });
+    }
+
+    if (registerInitialLink) {
+        registerInitialLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAuthModal('Novo por aqui? Crie sua conta ou faça login se já tiver uma.');
+            // Força o modal para o estado de registro (textos), simulando o clique no botão "Criar Conta"
+            if(authModalTitle) authModalTitle.textContent = 'Criar Nova Conta';
+            if(authPrompt) authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
+            if(authSubmit) authSubmit.textContent = 'Voltar para Login';
+            if(registerButton) registerButton.textContent = 'Registrar';
+            if(usernameInputDOM) usernameInputDOM.focus();
+            if(passwordInput) passwordInput.value = '';
+            if(authError) authError.textContent = '';
+        });
+    }
+
 
     if(logoutButton) {
         logoutButton.addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                // onAuthStateChanged cuidará de resetar currentUserRole e atualizar a UI
             } catch (error) {
                 console.error("Erro ao fazer logout:", error);
                 alert("Erro ao fazer logout.");
@@ -1317,7 +1366,7 @@
                   const displayName = newUsernameVal;
                   if(usernameDisplay) {
                     usernameDisplay.textContent = displayName;
-                    if (currentUserRole === 'admin') { // Reavalia estilo com base no role
+                    if (currentUserRole === 'admin') { 
                         usernameDisplay.classList.add('admin-username');
                     } else {
                         usernameDisplay.classList.remove('admin-username');
@@ -1359,15 +1408,11 @@
                 if (response.status === 404) {
                     console.warn("Pantry basket não encontrado ou vazio. Usando dados padrão e tentando criar.");
                     productData = { 
-                        bovinos: {
-                            "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso", "14694": "Colchão Duro", "26390": "Colchão Mole"
-                        }, 
-                        suinos: {
-                            "11549": "Bisteca Suína", "18159": "Pé Suíno"
-                        }, 
+                        bovinos: {"14601":"Acém","14625":"Alcatra com Maminha","1762":"Bisteca com osso","14694":"Colchão Duro","26390":"Colchão Mole"}, 
+                        suinos: {"11549":"Bisteca Suína","18159":"Pé Suíno"}, 
                         meta: { version: 0, last_updated: new Date().toISOString() } 
                     };
-                    await saveProductData();
+                    // await saveProductData(); // Comentado para evitar loop se save falhar e load for chamado no catch de save
                 } else {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -1378,12 +1423,13 @@
                 } else {
                     console.warn("Dados do Pantry em formato inesperado. Usando dados padrão.");
                     productData = { bovinos: {}, suinos: {}, meta: { version: 0, last_updated: new Date().toISOString() } };
-                    await saveProductData(); 
+                    // await saveProductData(); // Comentado
                 }
             }
         } catch (error) {
             console.error("Erro ao carregar dados do Pantry:", error);
-            productData = {
+            // Usar dados de fallback se o Pantry falhar completamente
+             productData = {
                 "meta": { "version": 1, "last_updated": new Date().toISOString() },
                 "bovinos": { "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso", "14694": "Colchão Duro", "26390": "Colchão Mole", "25812": "Contra Filé", "14793": "Coração da Alcatra", "4282": "Fígado", "14762": "Lagarto", "14809": "Miolo da Paleta", "14618": "Músculo do Dianteiro", "14816": "Paleta", "14823": "Patinho", "00260": "Picanha em Pedaços", "05418": "Picanha Grill", "16094": "Picanha Maturada", "07160": "Picanha Todo Dia", "06019": "Picanha Tradicional" },
                 "suinos": { "11549": "Bisteca Suína", "23023": "Carne Suína Corte", "15776": "Carne Suína Embalada", "23740": "Costela com Panceta Suína Corte", "23733": "Costela com Panceta Suína Embalada", "18159": "Pé Suíno" }
@@ -1540,7 +1586,7 @@
     }
 
     function handleSetupEditProduct(event) {
-        if (!currentUser || currentUserRole !== 'admin') { // Só admin pode iniciar edição
+        if (!currentUser || currentUserRole !== 'admin') { 
             showAuthModal('Apenas administradores podem editar produtos.');
             return;
         }
@@ -1587,8 +1633,8 @@
           const newNameVal = inputNewName.value.trim();
           const categoryVal = selectNewCategory.value;
 
-          if (editingCode) { // Modo de Edição
-              if (currentUserRole !== 'admin') { // Segurança extra: só admin edita
+          if (editingCode) { 
+              if (currentUserRole !== 'admin') { 
                   addProductFeedback.textContent = 'Apenas administradores podem editar produtos.';
                   addProductFeedback.style.color = 'var(--cor-erro)';
                   setTimeout(() => resetAddProductForm(), 3000);
@@ -1642,7 +1688,7 @@
                   await loadProductData();
                   setTimeout(() => resetAddProductForm(), 3000);
               }
-          } else { // Modo de Adição
+          } else { 
               const canAddProducts = currentUserRole === 'admin' || currentUserRole === 'cooperator';
               if (!canAddProducts) {
                   addProductFeedback.textContent = 'Você não tem permissão para adicionar novos produtos.';
@@ -1710,7 +1756,7 @@
                 const strongElement = document.createElement('strong');
                 const commenterNameText = comment.username || 'Anônimo';
 
-                if (comment.isAuthorAdmin) { // Mantém isAuthorAdmin para estilização, ou poderia usar comment.authorRole === 'admin'
+                if (comment.isAuthorAdmin) { 
                     const adminSpan = document.createElement('span');
                     adminSpan.classList.add('admin-username');
                     adminSpan.textContent = commenterNameText;
@@ -1732,7 +1778,7 @@
                 div.appendChild(commentTextNode);
                 div.appendChild(timestampSpan);
                 
-                if (currentUserRole === 'admin') { // Só admin pode apagar comentários
+                if (currentUserRole === 'admin') { 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.textContent = 'Apagar';
                     deleteBtn.classList.add('admin-delete-comment-btn'); 
@@ -1778,8 +1824,6 @@
               const userDocSnap = await getDoc(userDocRef);
               const userData = userDocSnap.exists() ? userDocSnap.data() : null;
               const username = userData && userData.username ? userData.username : (currentUser.email ? currentUser.email.split('@')[0] : 'Anônimo');
-              // A informação de isAuthorAdmin no comentário é para fins de exibição (e.g., destacar nome)
-              // A permissão de apagar é verificada por currentUserRole
               const authorIsAdminForDisplay = userData && userData.role === 'admin'; 
 
               await addDoc(collection(db, 'comments'), {
@@ -1787,7 +1831,7 @@
                   username: username, 
                   comment: commentText, 
                   timestamp: serverTimestamp(),
-                  isAuthorAdmin: authorIsAdminForDisplay // Usado para estilizar o nome do autor do comentário
+                  isAuthorAdmin: authorIsAdminForDisplay 
               });
               commentsFeedback.textContent = 'Comentário enviado com sucesso!'; commentsFeedback.style.color = 'var(--cor-sucesso)';
               commentInput.value = ''; loadComments();
@@ -1800,7 +1844,7 @@
     }
 
     function populateAdminProductLists() {
-        if (currentUserRole !== 'admin' || !adminBovinosList || !adminSuinosList) return; // Só admin
+        if (currentUserRole !== 'admin' || !adminBovinosList || !adminSuinosList) return; 
 
         adminBovinosList.innerHTML = '';
         adminSuinosList.innerHTML = '';
@@ -1850,7 +1894,7 @@
     }
 
     async function handleDeleteProduct(event) {
-        if (currentUserRole !== 'admin') { // Só admin
+        if (currentUserRole !== 'admin') { 
             if(adminProductManagementFeedback) {
                 adminProductManagementFeedback.textContent = 'Apenas administradores podem excluir produtos.';
                 adminProductManagementFeedback.style.color = 'var(--cor-erro)';
@@ -1911,7 +1955,6 @@
         const target = el.dataset.target;
         if (target) { 
             el.addEventListener('click', () => {
-                 // Adiciona verificação de permissão antes de mostrar a seção "Adicionar Produto" pelo menu
                 if (target === 'addProductSection') {
                     const isAdmin = currentUserRole === 'admin';
                     const isCooperator = currentUserRole === 'cooperator';
@@ -1956,6 +1999,11 @@
     });
     if(sidebarTitles) {
       sidebarTitles.forEach(title => {
+        // Não adicionar listener de clique para o novo item de login/registro aqui,
+        // pois ele tem um comportamento diferente (não usa data-target/data-type da mesma forma)
+        // e já terá seu próprio listener (loginRegisterSidebarButton).
+        if (title.id === 'loginRegisterSidebarButton') return; 
+
         title.addEventListener('click', () => {
           const targetId = title.dataset.target;
           const contentType = title.dataset.type;
@@ -1973,9 +2021,6 @@
               if (mainContent.classList.contains('show-add-product') && targetId !== 'addProductSection') {
                   resetAddProductForm();
               }
-              // As verificações de permissão para 'addProductSection' e 'adminProductManagementSection'
-              // já estão no listener dos elementos 'data-type="main-content"' acima.
-              // A função showSection também fará verificações.
               showSection(targetId);
               document.querySelectorAll('#sidebar .subfolder').forEach(folder => {
                   folder.classList.remove('open'); if(folder.previousElementSibling) folder.previousElementSibling.classList.remove('open');
@@ -1986,7 +2031,7 @@
       });
     }
 
-    // --- Game Logic (sem alterações nesta etapa) ---
+    // --- Game Logic ---
     function generateQuestions() {
         const allProductsList = [];
         if (productData.bovinos) Object.entries(productData.bovinos).forEach(([code, name]) => allProductsList.push([code, name]));
@@ -2136,8 +2181,8 @@
 
 
     loadProductData(); 
-    showSection('initialScreen'); // Mostra a tela inicial primeiro
-    updateUserAccessUI(); // Chama para configurar a UI inicial com base no estado de login/papel
+    showSection('initialScreen');
+    // updateUserAccessUI(); // Chamado dentro de onAuthStateChanged e no final do DOMContentLoaded para garantir
   });
 </script>
 </body>
