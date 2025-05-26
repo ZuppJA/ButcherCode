@@ -6,7 +6,7 @@
   <title>ButcherCode</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-o6p4D+E2n9B0o2k2yX2b/f/2q+6a+8+z3f6q3g+4y+5t6u7p8s9w=" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
+
   <style>
     /* Definindo variáveis CSS para cores */
     :root {
@@ -70,7 +70,7 @@
       position: fixed;
       width: 100%;
       top: 0;
-      z-index: 1001; 
+      z-index: 1001;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       transition: background 0.3s ease;
       justify-content: space-between;
@@ -170,6 +170,32 @@
       background: var(--cor-botao-fundo);
       transition: background 0.3s ease;
     }
+    /* Estilos para a seção de instruções */
+    #instructionsContent h4 {
+        color: var(--cor-destaque);
+        margin-top: 15px;
+        margin-bottom: 10px;
+        font-size: 1.15rem;
+    }
+    #instructionsContent ul {
+        list-style-type: none;
+        padding-left: 15px;
+    }
+    #instructionsContent ul li {
+        margin-bottom: 8px;
+    }
+    #instructionsContent ul ul {
+        padding-left: 20px;
+        list-style-type: disc; /* Ou circle */
+    }
+    #instructionsContent ul ul li {
+        margin-bottom: 5px;
+    }
+    #instructionsContent p {
+        margin-bottom: 10px;
+    }
+     #instructionsContent p:last-child { margin-bottom: 0; }
+
 
     main {
       margin: 100px 30px 30px 30px;
@@ -179,8 +205,8 @@
       background-color: var(--cor-fundo-secundario);
       border-radius: 8px;
     }
-    #mainTerminalSection, #gameCodeSection, #initialScreen, #addProductSection, 
-    #commentsSection, #userProfileSection, #adminProductManagementSection { display: none; } 
+    #mainTerminalSection, #gameCodeSection, #initialScreen, #addProductSection,
+    #commentsSection, #userProfileSection, #adminProductManagementSection { display: none; }
 
     main.show-terminal #mainTerminalSection { display: block; }
     main.show-game #gameCodeSection { display: block; }
@@ -188,7 +214,7 @@
     main.show-add-product #addProductSection { display: block; }
     main.show-comments #commentsSection { display: block; }
     main.show-profile #userProfileSection { display: block; }
-    main.show-admin-products #adminProductManagementSection { display: block; } 
+    main.show-admin-products #adminProductManagementSection { display: block; }
 
 
     label {
@@ -217,8 +243,8 @@
       box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
     }
     input, select, textarea {
-      width: 100%; 
-      box-sizing: border-box; 
+      width: 100%;
+      box-sizing: border-box;
       background: var(--cor-input-fundo);
       border: 1px solid var(--cor-input-borda);
       color: var(--cor-texto-principal);
@@ -246,15 +272,15 @@
       width: 100%;
     }
     button:hover { background: var(--cor-botao-hover); }
-    button.admin-delete-button { 
+    button.admin-delete-button {
         background-color: var(--cor-botao-admin-perigo);
         color: white;
         padding: 5px 10px;
         font-size: 0.9rem;
         margin-left: 10px;
-        margin-top: 5px; 
-        width: auto; 
-        display: inline-block; 
+        margin-top: 5px;
+        width: auto;
+        display: inline-block;
     }
     button.admin-delete-button:hover {
         background-color: var(--cor-botao-admin-perigo-hover);
@@ -287,17 +313,6 @@
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
     }
-    #instructionsContent {
-      background: var(--cor-fundo-secundario);
-      padding: 15px;
-      border-radius: 6px;
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--cor-texto-secundario);
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-    #instructionsContent p { margin-bottom: 10px; }
-    #instructionsContent p:last-child { margin-bottom: 0; }
 
     #result .feedback-icon {
         position: absolute;
@@ -433,7 +448,7 @@
     .comment-item { position: relative; background-color: #003300; border: 1px solid var(--cor-borda-clara); border-radius: 6px; padding: 10px 15px; margin-bottom: 10px; word-wrap: break-word; transition: background-color 0.3s ease; }
     .comment-item strong { color: var(--cor-destaque); } /* Estilo padrão para o nome, será sobrescrito por .admin-username se aplicável */
     .comment-item span.timestamp { font-size: 0.8em; color: var(--cor-texto-secundario); display: block; margin-top: 5px; }
-    .comment-item .admin-delete-comment-btn { 
+    .comment-item .admin-delete-comment-btn {
         background-color: var(--cor-botao-admin-perigo);
         color: white;
         border: none;
@@ -442,7 +457,7 @@
         border-radius: 4px;
         cursor: pointer;
         margin-left: 10px;
-        float: right; 
+        float: right;
     }
     .comment-item .admin-delete-comment-btn:hover {
         background-color: var(--cor-botao-admin-perigo-hover);
@@ -482,7 +497,7 @@
         border-radius: 4px;
         cursor: pointer;
         margin-left: 10px; /* Aumentado para separar mais os botões */
-        width: auto; 
+        width: auto;
     }
     #adminProductManagementSection .product-list-admin li .edit-product-btn {
       background-color: var(--cor-botao-hover); /* Cor diferente para editar */
@@ -499,6 +514,11 @@
         color: var(--cor-aviso); /* Amarelo */
         font-weight: bold;
         /* text-shadow: 0 0 4px rgba(255, 170, 0, 0.5); */ /* Opcional: brilho sutil */
+    }
+    .cooperator-username {
+        color: var(--cor-link); /* Verde claro (mesma cor dos links e da msg de boas-vindas para cooperador) */
+        font-weight: bold;
+        /* text-shadow: 0 0 4px rgba(136, 255, 136, 0.4); */ /* Opcional: brilho sutil */
     }
 
   </style>
@@ -538,10 +558,75 @@
       <li class="menu-section">
         <h2 tabindex="0" data-target="instructionsContent" data-type="accordion">Instruções</h2>
         <div class="subfolder" id="instructionsContent">
-          <p>Digite um código ou o nome do produto no campo "Terminal ButcherCode" e clique em "Executar".</p>
-          <p>Se digitar o código, aparecerá o nome do produto correspondente.</p>
-          <p>Se digitar o nome do produto, aparecerá o código.</p>
-          <p>Use o menu lateral para consultar os códigos e aprender.</p>
+          <h4>Como Usar o ButcherCode:</h4>
+          <p>Bem-vindo! Aqui você encontra uma ferramenta completa para códigos de produtos de açougue.</p>
+          <ul>
+              <li><strong>Navegação:</strong> Utilize o menu lateral (ícone de hambúrguer <i class="fas fa-bars"></i> no canto superior esquerdo) para acessar todas as seções.</li>
+              <li><strong>Consultar Códigos/Produtos:</strong>
+                  <ul>
+                      <li>Acesse "Terminal de Consulta" no menu.</li>
+                      <li>Digite um código (ex: "14601") para ver o nome do produto.</li>
+                      <li>Digite o nome de um produto (ex: "Acém") para ver o código.</li>
+                      <li>Você também pode navegar pelas listas de "Códigos Bovinos" e "Códigos Suínos" no menu para ver os itens e clicar para auto-preencher no terminal.</li>
+                  </ul>
+              </li>
+              <li><strong>GameCode:</strong>
+                  <ul>
+                      <li>Acesse "GameCode" no menu.</li>
+                      <li>Teste seus conhecimentos sobre os códigos! Responda às perguntas antes que o tempo acabe.</li>
+                  </ul>
+              </li>
+              <li><strong>Comentários e Feedback:</strong>
+                  <ul>
+                      <li>Acesse "Comentários e Feedback" no menu.</li>
+                      <li>Veja o que outros usuários estão dizendo.</li>
+                      <li>Para postar seu próprio comentário, você precisa estar logado.</li>
+                  </ul>
+              </li>
+              <li><strong>Meu Perfil (Logado):</strong>
+                  <ul>
+                      <li>Acesse "Meu Perfil" no menu após o login.</li>
+                      <li>Visualize seu nome de usuário e identificador de conta.</li>
+                      <li>Você pode alterar seu nome de usuário.</li>
+                  </ul>
+              </li>
+          </ul>
+
+          <h4>Tipos de Usuário e Permissões:</h4>
+          <p>O ButcherCode possui diferentes níveis de acesso para garantir a organização e a qualidade dos dados:</p>
+          <ul>
+              <li>
+                  <strong>🥩 Usuário Comum:</strong>
+                  <ul>
+                      <li>Consultar códigos e nomes de produtos.</li>
+                      <li>Jogar o GameCode.</li>
+                      <li>Visualizar comentários.</li>
+                      <li>Após o login: Postar comentários e gerenciar o próprio perfil (alterar nome de usuário).</li>
+                  </ul>
+              </li>
+              <li>
+                  <strong>🔪 Cooperador (Nome destacado em <span style="color: var(--cor-link); font-weight: bold;">verde claro</span>):</strong>
+                  <ul>
+                      <li>Todas as permissões de um Usuário Comum.</li>
+                      <li>Após o login: Adicionar novos produtos (código, nome e categoria) através da seção "Adicionar Produto".</li>
+                      <li>Seu nome terá um destaque especial nos comentários e na mensagem de boas-vindas.</li>
+                  </ul>
+              </li>
+              <li>
+                  <strong>👑 Administrador (Nome destacado em <span class="admin-username" style="color: var(--cor-aviso); font-weight: bold;">amarelo</span>):</strong>
+                  <ul>
+                      <li>Todas as permissões de um Cooperador.</li>
+                      <li>Após o login:
+                          <ul>
+                              <li>Acessar "Gerenciar Produtos (Admin)" para editar (nome, categoria) e excluir produtos existentes. <em>Atenção: códigos de produtos não podem ser alterados na edição.</em></li>
+                              <li>Excluir comentários de qualquer usuário na seção de "Comentários e Feedback".</li>
+                          </ul>
+                      </li>
+                      <li>Seu nome terá um destaque especial (ex: <span style="color: var(--cor-aviso); font-weight: bold;">NomeAdmin</span>) nos comentários e em outras áreas.</li>
+                  </ul>
+              </li>
+          </ul>
+          <p>Use o sistema com responsabilidade. Em caso de dúvidas ou problemas, deixe um feedback!</p>
         </div>
       </li>
       <li class="menu-section">
@@ -636,7 +721,7 @@
     <section id="userProfileSection">
         <h2>Meu Perfil</h2>
         <p>Olá, <span id="usernameDisplay"></span>!</p>
-        <p>Identificador de conta (não é um email real): <span id="userEmailDisplay"></span></p> 
+        <p>Identificador de conta (não é um email real): <span id="userEmailDisplay"></span></p>
         <p id="adminStatusText" style="color: var(--cor-destaque); font-weight: bold; display: none;">Você é um Administrador.</p>
         <button id="editUsernameButton">Alterar Nome de Usuário</button>
         <input type="text" id="newUsernameInput" placeholder="Novo nome de usuário" style="display:none; margin-top: 10px;" />
@@ -720,7 +805,7 @@
     const authModalTitle = document.getElementById('authModalTitle');
     const authPrompt = document.getElementById('authPrompt');
     const passwordInput = document.getElementById('passwordInput');
-    const usernameInputDOM = document.getElementById('usernameInput'); 
+    const usernameInputDOM = document.getElementById('usernameInput');
     const authSubmit = document.getElementById('authSubmit');
     const registerButton = document.getElementById('registerButton');
     const authError = document.getElementById('authError');
@@ -747,7 +832,7 @@
     const newUsernameInput = document.getElementById('newUsernameInput');
     const saveUsernameButton = document.getElementById('saveUsernameButton');
     const usernameUpdateFeedback = document.getElementById('usernameUpdateFeedback');
-    const adminStatusText = document.getElementById('adminStatusText'); 
+    const adminStatusText = document.getElementById('adminStatusText');
 
     const mainTerminalSection = document.getElementById('mainTerminalSection');
     const inputCode = document.getElementById('inputCode');
@@ -817,8 +902,8 @@
     let isCurrentUserAdmin = false; // Será derivado de currentUserRole
     let currentUserRole = 'user';   // Papéis: 'user', 'cooperator', 'admin'
     let activeAccordionItem = null;
-    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289'; 
-    const BASKET_NAME = 'butcher_products'; 
+    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289';
+    const BASKET_NAME = 'butcher_products';
     let productData = { bovinos: {}, suinos: {}, meta: { version: 1, last_updated: "" } };
     let productsInverseNormalized = {};
     const GAME_STATE_KEY = "game_code_state";
@@ -878,14 +963,14 @@
 
         if (adminProductManagementMenuItem) adminProductManagementMenuItem.style.display = isAdmin ? 'block' : 'none';
         if (adminStatusText) adminStatusText.style.display = isAdmin ? 'block' : 'none';
-        
+
         const addProductMenuItemEl = document.getElementById('addProductMenuItem');
         if (addProductMenuItemEl) {
             addProductMenuItemEl.style.display = canAddProducts && isLoggedIn ? 'block' : 'none';
         }
 
         if (mainContent.classList.contains('show-comments')) {
-            loadComments(); 
+            loadComments();
         }
         if (mainContent.classList.contains('show-admin-products') && !isAdmin) {
             showSection('initialScreen');
@@ -893,9 +978,9 @@
         const addProductSectionEl = document.getElementById('addProductSection');
         const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
         if (mainContent.classList.contains('show-add-product')) {
-            if (editingCode && !isAdmin) { 
+            if (editingCode && !isAdmin) {
                 showSection('initialScreen');
-            } else if (!editingCode && (!isLoggedIn || !canAddProducts)) { 
+            } else if (!editingCode && (!isLoggedIn || !canAddProducts)) {
                 showSection('initialScreen');
             }
         }
@@ -927,17 +1012,17 @@
             const isCooperator = currentUserRole === 'cooperator';
             const canAdd = isAdmin || isCooperator;
 
-            if (!currentUser) { 
+            if (!currentUser) {
                 showAuthModal('Você precisa fazer login para acessar esta funcionalidade.');
                 return;
             }
 
-            if (!editingCode && !canAdd) { 
+            if (!editingCode && !canAdd) {
                 showAuthModal('Você não tem permissão para adicionar produtos.', 'Acesso Negado');
-                if (currentUser) setTimeout(() => showSection('initialScreen'), 0); 
+                if (currentUser) setTimeout(() => showSection('initialScreen'), 0);
                 return;
             }
-            if (editingCode && !isAdmin) { 
+            if (editingCode && !isAdmin) {
                  showAuthModal('Você não tem permissão para editar produtos.', 'Acesso Negado');
                  if (currentUser) setTimeout(() => showSection('initialScreen'), 0);
                  return;
@@ -945,14 +1030,14 @@
 
             mainContent.classList.add('show-add-product');
             if(backToHomeAddProductButton) backToHomeAddProductButton.style.display = 'block';
-            
-            if (addProductSectionEl && !editingCode) { 
-                if(inputNewCode) inputNewCode.focus(); 
-                resetAddProductForm(); 
+
+            if (addProductSectionEl && !editingCode) {
+                if(inputNewCode) inputNewCode.focus();
+                resetAddProductForm();
             }
         } else if (sectionId === 'commentsSection') {
             mainContent.classList.add('show-comments');
-            loadComments(); 
+            loadComments();
             if(backToHomeCommentsButton) backToHomeCommentsButton.style.display = 'block';
 
             if (currentUser) {
@@ -968,7 +1053,7 @@
                     loginToCommentMessage.style.display = 'block';
                     loginToCommentMessage.innerHTML = 'Você precisa <a href="#" id="loginLinkFromComments" style="color: var(--cor-link); text-decoration: underline;">fazer login</a> para comentar.';
                     const loginLink = document.getElementById('loginLinkFromComments');
-                    if (loginLink && !loginLink.dataset.listenerAttached) { 
+                    if (loginLink && !loginLink.dataset.listenerAttached) {
                         loginLink.addEventListener('click', (e) => {
                             e.preventDefault();
                             showAuthModal('Faça login para poder comentar.');
@@ -987,10 +1072,10 @@
                 getDoc(doc(db, 'users', currentUser.uid)).then(docSnap => {
                     const userData = docSnap.exists() ? docSnap.data() : null;
                     const displayName = userData && userData.username ? userData.username : (currentUser.email ? currentUser.email.split('@')[0] : 'Usuário');
-                    
+
                     if(usernameDisplay) {
                        usernameDisplay.textContent = displayName;
-                       if (currentUserRole === 'admin') { 
+                       if (currentUserRole === 'admin') {
                            usernameDisplay.classList.add('admin-username');
                        } else {
                            usernameDisplay.classList.remove('admin-username');
@@ -1009,10 +1094,10 @@
                 });
             }
             if(backToHomeProfileButton) backToHomeProfileButton.style.display = 'block';
-        } else if (sectionId === 'adminProductManagementSection') { 
-            if (!currentUser || currentUserRole !== 'admin') { 
+        } else if (sectionId === 'adminProductManagementSection') {
+            if (!currentUser || currentUserRole !== 'admin') {
                 showAuthModal('Acesso restrito a administradores.');
-                if (currentUser && currentUserRole !== 'admin') setTimeout(() => showSection('initialScreen'),0); 
+                if (currentUser && currentUserRole !== 'admin') setTimeout(() => showSection('initialScreen'),0);
                 return;
             }
             mainContent.classList.add('show-admin-products');
@@ -1028,7 +1113,7 @@
         if (sidebar) sidebar.classList.remove('open');
         document.body.classList.remove('sidebar-open');
     }
-    
+
     function showAuthModal(reasonMessage = '', generalPrompt = 'Faça login ou crie uma conta para prosseguir:') {
         if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!'; // Título padrão
         if (reasonMessage && authPrompt) { // Permite sobrescrever o prompt se reasonMessage for fornecida
@@ -1038,11 +1123,11 @@
         }
         if(authError) authError.textContent = '';
         if(authModalOverlay) authModalOverlay.classList.add('show');
-        
+
         // Resetar para o estado padrão de "Entrar" / "Criar Conta"
         if(authSubmit) authSubmit.textContent = 'Entrar';
         if(registerButton) registerButton.textContent = 'Criar Conta';
-        
+
         if(usernameInputDOM) {
           usernameInputDOM.value = ''; // Limpa o campo de usuário
           usernameInputDOM.focus();
@@ -1057,21 +1142,21 @@
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 const userData = userDocSnap.exists() ? userDocSnap.data() : null;
-                
+
                 const displayName = userData && userData.username ? userData.username : (user.email ? user.email.split('@')[0] : 'Usuário');
-                
-                currentUserRole = userData && userData.role ? userData.role : 'user'; 
-                isCurrentUserAdmin = currentUserRole === 'admin'; 
+
+                currentUserRole = userData && userData.role ? userData.role : 'user';
+                isCurrentUserAdmin = currentUserRole === 'admin';
 
                 let welcomeDisplayName = displayName;
-                if (isCurrentUserAdmin) { 
+                if (isCurrentUserAdmin) {
                     welcomeDisplayName = `<span class="admin-username">${displayName}</span>`;
                 } else if (currentUserRole === 'cooperator') {
                     welcomeDisplayName = `<span style="color: var(--cor-link);">${displayName} (Cooperador)</span>`;
                 }
 
                 if(welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo, ${welcomeDisplayName}! <br>Vamos desenrolar!`;
-                
+
                 if (userProfileSection && userProfileSection.style.display !== 'none' && usernameDisplay) {
                     usernameDisplay.textContent = displayName;
                     if (isCurrentUserAdmin) {
@@ -1081,7 +1166,7 @@
                     }
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
-                
+
             } catch (error) {
                 console.error("Erro ao carregar dados do usuário no Firestore:", error);
                 const fallbackUsername = user.email ? user.email.split('@')[0] : 'Usuário';
@@ -1091,8 +1176,8 @@
                     usernameDisplay.classList.remove('admin-username');
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
-                
-                currentUserRole = 'user'; 
+
+                currentUserRole = 'user';
                 isCurrentUserAdmin = false;
             }
 
@@ -1105,26 +1190,29 @@
         } else { // Usuário deslogado
             currentUser = null;
             isCurrentUserAdmin = false;
-            currentUserRole = 'user'; 
-            if(welcomeMessage) welcomeMessage.innerHTML = "Bem-vindo ao ButcherCode! <br>Faça login ou crie uma conta para começar.";
+            currentUserRole = 'user';
+            // ALTERAÇÃO DA MENSAGEM DE INÍCIO
+            if(welcomeMessage) {
+              welcomeMessage.innerHTML = "Boas-vindas ao ButcherCode! <br>Sua central de códigos de açougue. Explore, jogue e aprenda!";
+            }
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
             if(loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = 'block';
-            
+
             if(usernameDisplay) {
                 usernameDisplay.textContent = '';
                 usernameDisplay.classList.remove('admin-username');
             }
             if(userEmailDisplay) userEmailDisplay.textContent = '';
-            
+
             const isRestrictedSectionForGuests = mainContent.classList.contains('show-profile') ||
                                                 mainContent.classList.contains('show-add-product') ||
                                                 mainContent.classList.contains('show-admin-products');
             if (isRestrictedSectionForGuests) {
                  showSection('initialScreen');
             } else if (mainContent.classList.contains('show-comments')) {
-                showSection('commentsSection'); 
+                showSection('commentsSection');
             }
         }
         updateUserAccessUI(); // Atualiza a UI com base no estado de login/papel
@@ -1145,8 +1233,8 @@
 
     if(authSubmit) {
         authSubmit.addEventListener('click', async () => {
-            const usernameVal = usernameInputDOM.value.trim(); 
-            const passwordVal = passwordInput.value.trim(); 
+            const usernameVal = usernameInputDOM.value.trim();
+            const passwordVal = passwordInput.value.trim();
             if(authError) authError.textContent = '';
 
             if (authSubmit.textContent === 'Voltar para Login') { // Se está no modo "Criar Conta" e clica para voltar
@@ -1201,8 +1289,8 @@
 
     if(registerButton) {
         registerButton.addEventListener('click', async () => {
-            const usernameVal = usernameInputDOM.value.trim(); 
-            const passwordVal = passwordInput.value.trim(); 
+            const usernameVal = usernameInputDOM.value.trim();
+            const passwordVal = passwordInput.value.trim();
             if(authError) authError.textContent = '';
 
             if (registerButton.textContent === 'Criar Conta') { // Se está no modo "Login" e clica para criar conta
@@ -1233,13 +1321,13 @@
                     const fakeEmail = generateFakeEmail(usernameVal);
                     const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, passwordVal);
                     const user = userCredential.user;
-                    
+
                     await setDoc(doc(db, 'users', user.uid), {
                         username: usernameVal,
                         email: fakeEmail,
                         createdAt: serverTimestamp(),
-                        isAdmin: false, 
-                        role: 'user'    
+                        isAdmin: false,
+                        role: 'user'
                     });
                     // onAuthStateChanged cuidará de fechar o modal e atualizar a UI
                 } catch (error) {
@@ -1257,7 +1345,7 @@
             }
         });
     }
-    
+
     // Event Listeners para os novos links de login/registro rápido
     if (loginRegisterSidebarButton) {
         loginRegisterSidebarButton.addEventListener('click', () => {
@@ -1365,17 +1453,17 @@
                   await updateDoc(userDocRef, {
                       username: newUsernameVal
                   });
-                  
+
                   const displayName = newUsernameVal;
                   if(usernameDisplay) {
                     usernameDisplay.textContent = displayName;
-                    if (currentUserRole === 'admin') { 
+                    if (currentUserRole === 'admin') {
                         usernameDisplay.classList.add('admin-username');
                     } else {
                         usernameDisplay.classList.remove('admin-username');
                     }
                   }
-                  
+
                   let welcomeDisplayName = displayName;
                   if (currentUserRole === 'admin') {
                         welcomeDisplayName = `<span class="admin-username">${displayName}</span>`;
@@ -1403,17 +1491,17 @@
           }
       });
     }
-    
+
     async function loadProductData() {
         try {
             const response = await fetch(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET_NAME}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     console.warn("Pantry basket não encontrado ou vazio. Usando dados padrão e tentando criar.");
-                    productData = { 
-                        bovinos: {"14601":"Acém","14625":"Alcatra com Maminha","1762":"Bisteca com osso","14694":"Colchão Duro","26390":"Colchão Mole"}, 
-                        suinos: {"11549":"Bisteca Suína","18159":"Pé Suíno"}, 
-                        meta: { version: 0, last_updated: new Date().toISOString() } 
+                    productData = {
+                        bovinos: {"14601":"Acém","14625":"Alcatra com Maminha","1762":"Bisteca com osso","14694":"Colchão Duro","26390":"Colchão Mole"},
+                        suinos: {"11549":"Bisteca Suína","18159":"Pé Suíno"},
+                        meta: { version: 0, last_updated: new Date().toISOString() }
                     };
                     // await saveProductData(); // Comentado para evitar loop se save falhar e load for chamado no catch de save
                 } else {
@@ -1439,7 +1527,7 @@
             };
         } finally {
              rebuildProductIndexesAndSidebar();
-             if (mainContent.classList.contains('show-admin-products') && currentUserRole === 'admin') { 
+             if (mainContent.classList.contains('show-admin-products') && currentUserRole === 'admin') {
                 populateAdminProductLists();
             }
         }
@@ -1464,7 +1552,7 @@
         } catch (error) {
             console.error("Erro ao salvar dados no Pantry:", error);
             const feedbackEl = document.getElementById('addProductFeedback') || document.getElementById('adminProductManagementFeedback');
-            if(feedbackEl) { 
+            if(feedbackEl) {
                  feedbackEl.textContent = 'Erro ao salvar dados online.';
                  feedbackEl.style.color = 'var(--cor-erro)';
             } else {
@@ -1485,7 +1573,7 @@
             listElement.appendChild(li);
             return;
         }
-        Object.entries(data).sort(([,a],[,b]) => a.localeCompare(b)).forEach(([code, name]) => { 
+        Object.entries(data).sort(([,a],[,b]) => a.localeCompare(b)).forEach(([code, name]) => {
             const li = document.createElement('li');
             li.classList.add('item');
             li.textContent = `${code.padStart(5, '0')} - ${name}`;
@@ -1517,7 +1605,7 @@
         }
         populateSidebarList(bovinosList, productData.bovinos);
         populateSidebarList(suinosList, productData.suinos);
-        
+
         if (currentUserRole === 'admin' && mainContent.classList.contains('show-admin-products')) {
             populateAdminProductLists();
         }
@@ -1538,13 +1626,13 @@
         playSound(isSuccess ? 'terminalSuccess' : 'terminalError');
         setTimeout(() => icon.classList.add('show'), 50);
         setTimeout(() => { icon.classList.remove('show'); icon.remove(); }, 1500);
-        if (text.length > (resultDiv.offsetWidth / parseFloat(getComputedStyle(resultDiv).fontSize)) * 0.8 ) { 
+        if (text.length > (resultDiv.offsetWidth / parseFloat(getComputedStyle(resultDiv).fontSize)) * 0.8 ) {
             marqueeSpan.classList.add('marquee');
             void resultDiv.offsetWidth; resultDiv.classList.add('scrolling');
         }
     }
 
-    function buscarCodigoOuNome(inputVal) { 
+    function buscarCodigoOuNome(inputVal) {
       const texto = inputVal.trim();
       if (!texto) return { result: "Nenhum valor digitado.", found: false };
       if (/^\d+$/.test(texto)) {
@@ -1563,7 +1651,7 @@
     if(btnExecute && inputCode) {
       btnExecute.addEventListener('click', () => {
         const valor = inputCode.value;
-        const { result: res, found } = buscarCodigoOuNome(valor); 
+        const { result: res, found } = buscarCodigoOuNome(valor);
         displayResult(res, found);
       });
       inputCode.addEventListener('keydown', e => { if (e.key === 'Enter') btnExecute.click(); });
@@ -1571,7 +1659,7 @@
         if(resultDiv) { resultDiv.innerHTML = ''; resultDiv.classList.remove('scrolling', 'success', 'error'); }
       });
     }
-    
+
     function resetAddProductForm() {
         if(inputNewCode) inputNewCode.value = '';
         if(inputNewName) inputNewName.value = '';
@@ -1589,23 +1677,23 @@
     }
 
     function handleSetupEditProduct(event) {
-        if (!currentUser || currentUserRole !== 'admin') { 
+        if (!currentUser || currentUserRole !== 'admin') {
             showAuthModal('Apenas administradores podem editar produtos.');
             return;
         }
         const { code, name, category } = event.target.dataset;
 
-        showSection('addProductSection'); 
+        showSection('addProductSection');
 
         if(inputNewCode) {
             inputNewCode.value = code;
-            inputNewCode.readOnly = true; 
+            inputNewCode.readOnly = true;
         }
         if(inputNewName) inputNewName.value = name;
         if(selectNewCategory) selectNewCategory.value = category;
 
         if(btnAddNewProduct) btnAddNewProduct.textContent = 'Salvar Alterações';
-        
+
         const addProductSectionEl = document.getElementById('addProductSection');
         if (addProductSectionEl) {
             addProductSectionEl.dataset.editingCode = code;
@@ -1628,7 +1716,7 @@
               showAuthModal('Você precisa estar logado.');
               return;
           }
-          
+
           const addProductSectionEl = document.getElementById('addProductSection');
           const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
           const originalCategory = addProductSectionEl ? addProductSectionEl.dataset.originalCategory : null;
@@ -1636,8 +1724,8 @@
           const newNameVal = inputNewName.value.trim();
           const categoryVal = selectNewCategory.value;
 
-          if (editingCode) { 
-              if (currentUserRole !== 'admin') { 
+          if (editingCode) {
+              if (currentUserRole !== 'admin') {
                   addProductFeedback.textContent = 'Apenas administradores podem editar produtos.';
                   addProductFeedback.style.color = 'var(--cor-erro)';
                   setTimeout(() => resetAddProductForm(), 3000);
@@ -1683,7 +1771,7 @@
                   rebuildProductIndexesAndSidebar();
                   setTimeout(() => {
                       resetAddProductForm();
-                      showSection('adminProductManagementSection'); 
+                      showSection('adminProductManagementSection');
                   }, 1500);
               } else {
                   addProductFeedback.textContent = 'Erro ao salvar alterações no Pantry. Recarregando dados originais...';
@@ -1691,14 +1779,14 @@
                   await loadProductData();
                   setTimeout(() => resetAddProductForm(), 3000);
               }
-          } else { 
+          } else {
               const canAddProducts = currentUserRole === 'admin' || currentUserRole === 'cooperator';
               if (!canAddProducts) {
                   addProductFeedback.textContent = 'Você não tem permissão para adicionar novos produtos.';
                   addProductFeedback.style.color = 'var(--cor-erro)';
                   setTimeout(() => {
                       resetAddProductForm();
-                      showSection('initialScreen'); 
+                      showSection('initialScreen');
                   }, 2000);
                   return;
               }
@@ -1707,7 +1795,7 @@
               if (!newCodeVal || !newNameVal || !categoryVal) {
                   addProductFeedback.textContent = 'Preencha todos os campos.'; addProductFeedback.style.color = 'var(--cor-aviso)'; return;
               }
-              if (inputNewCode.readOnly) { 
+              if (inputNewCode.readOnly) {
                   inputNewCode.readOnly = false;
               }
               const formattedCode = newCodeVal.padStart(5, '0');
@@ -1750,26 +1838,33 @@
                 commentsList.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Nenhum comentário ainda. Seja o primeiro a deixar um!</p>'; return;
             }
             commentsList.innerHTML = '';
-            querySnapshot.forEach(docSnap => { 
+            querySnapshot.forEach(docSnap => {
                 const comment = docSnap.data();
-                const commentId = docSnap.id; 
-                const div = document.createElement('div'); 
+                const commentId = docSnap.id;
+                const div = document.createElement('div');
                 div.classList.add('comment-item');
-                
+
                 const strongElement = document.createElement('strong');
                 const commenterNameText = comment.username || 'Anônimo';
 
-                if (comment.isAuthorAdmin) { 
+                // ALTERAÇÃO: Aplicar estilo com base em comment.authorRole
+                if (comment.authorRole === 'admin') {
                     const adminSpan = document.createElement('span');
-                    adminSpan.classList.add('admin-username');
+                    adminSpan.classList.add('admin-username'); // Classe CSS existente para admin
                     adminSpan.textContent = commenterNameText;
                     strongElement.appendChild(adminSpan);
+                } else if (comment.authorRole === 'cooperator') {
+                    const cooperatorSpan = document.createElement('span');
+                    cooperatorSpan.classList.add('cooperator-username'); // Nova classe CSS para cooperador
+                    cooperatorSpan.textContent = commenterNameText;
+                    strongElement.appendChild(cooperatorSpan);
                 } else {
-                    strongElement.textContent = commenterNameText;
+                    strongElement.textContent = commenterNameText; // Usuário comum ou authorRole ausente
                 }
-                strongElement.appendChild(document.createTextNode(': ')); 
+                strongElement.appendChild(document.createTextNode(': '));
 
-                const commentTextNode = document.createTextNode(comment.comment + " "); 
+
+                const commentTextNode = document.createTextNode(comment.comment + " ");
 
                 const date = comment.timestamp && comment.timestamp.toDate ? new Date(comment.timestamp.toDate()) : new Date();
                 const formattedDate = date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -1780,18 +1875,18 @@
                 div.appendChild(strongElement);
                 div.appendChild(commentTextNode);
                 div.appendChild(timestampSpan);
-                
-                if (currentUserRole === 'admin') { 
+
+                if (currentUserRole === 'admin') {
                     const deleteBtn = document.createElement('button');
                     deleteBtn.textContent = 'Apagar';
-                    deleteBtn.classList.add('admin-delete-comment-btn'); 
+                    deleteBtn.classList.add('admin-delete-comment-btn');
                     deleteBtn.onclick = async () => {
                         if (confirm('Tem certeza que deseja apagar este comentário? Esta ação é irreversível.')) {
                             try {
                                 await deleteDoc(doc(db, 'comments', commentId));
                                 commentsFeedback.textContent = 'Comentário apagado com sucesso!';
                                 commentsFeedback.style.color = 'var(--cor-sucesso)';
-                                loadComments(); 
+                                loadComments();
                             } catch (e) {
                                 console.error("Erro ao apagar comentário:", e);
                                 commentsFeedback.textContent = `Erro ao apagar: ${e.message}`;
@@ -1809,7 +1904,7 @@
             commentsList.innerHTML = '<p style="text-align: center; color: var(--cor-erro);">Erro ao carregar comentários.</p>';
         }
     }
-    
+
     if(submitCommentButton && commentInput && commentsFeedback) {
       submitCommentButton.addEventListener('click', async () => {
           if (!currentUser) {
@@ -1827,14 +1922,17 @@
               const userDocSnap = await getDoc(userDocRef);
               const userData = userDocSnap.exists() ? userDocSnap.data() : null;
               const username = userData && userData.username ? userData.username : (currentUser.email ? currentUser.email.split('@')[0] : 'Anônimo');
-              const authorIsAdminForDisplay = userData && userData.role === 'admin'; 
+
+              // ALTERAÇÃO: Adicionar a role atual do usuário ao comentário
+              const userRoleForComment = currentUserRole;
 
               await addDoc(collection(db, 'comments'), {
-                  userId: currentUser.uid, 
-                  username: username, 
-                  comment: commentText, 
+                  userId: currentUser.uid,
+                  username: username,
+                  comment: commentText,
                   timestamp: serverTimestamp(),
-                  isAuthorAdmin: authorIsAdminForDisplay 
+                  isAuthorAdmin: userData && userData.role === 'admin', // Mantido para compatibilidade se necessário
+                  authorRole: userRoleForComment // NOVO CAMPO
               });
               commentsFeedback.textContent = 'Comentário enviado com sucesso!'; commentsFeedback.style.color = 'var(--cor-sucesso)';
               commentInput.value = ''; loadComments();
@@ -1847,7 +1945,7 @@
     }
 
     function populateAdminProductLists() {
-        if (currentUserRole !== 'admin' || !adminBovinosList || !adminSuinosList) return; 
+        if (currentUserRole !== 'admin' || !adminBovinosList || !adminSuinosList) return;
 
         adminBovinosList.innerHTML = '';
         adminSuinosList.innerHTML = '';
@@ -1857,7 +1955,7 @@
             const infoSpan = document.createElement('span');
             infoSpan.classList.add('product-info');
             infoSpan.textContent = `${code.padStart(5, '0')} - ${name}`;
-            
+
             const editBtn = document.createElement('button');
             editBtn.textContent = 'Editar';
             editBtn.classList.add('edit-product-btn');
@@ -1874,7 +1972,7 @@
             deleteBtn.addEventListener('click', handleDeleteProduct);
 
             li.appendChild(infoSpan);
-            li.appendChild(editBtn); 
+            li.appendChild(editBtn);
             li.appendChild(deleteBtn);
             return li;
         };
@@ -1897,7 +1995,7 @@
     }
 
     async function handleDeleteProduct(event) {
-        if (currentUserRole !== 'admin') { 
+        if (currentUserRole !== 'admin') {
             if(adminProductManagementFeedback) {
                 adminProductManagementFeedback.textContent = 'Apenas administradores podem excluir produtos.';
                 adminProductManagementFeedback.style.color = 'var(--cor-erro)';
@@ -1930,13 +2028,13 @@
                         adminProductManagementFeedback.textContent = `Produto ${codeToDelete} excluído com sucesso!`;
                         adminProductManagementFeedback.style.color = 'var(--cor-sucesso)';
                     }
-                    rebuildProductIndexesAndSidebar(); 
+                    rebuildProductIndexesAndSidebar();
                 } else {
                     if(adminProductManagementFeedback) {
                         adminProductManagementFeedback.textContent = 'Erro ao excluir produto do Pantry. Recarregando dados originais...';
                         adminProductManagementFeedback.style.color = 'var(--cor-erro)';
                     }
-                    await loadProductData(); 
+                    await loadProductData();
                 }
             } else {
                 if(adminProductManagementFeedback) {
@@ -1956,7 +2054,7 @@
 
     document.querySelectorAll('[data-type="main-content"]').forEach(el => {
         const target = el.dataset.target;
-        if (target) { 
+        if (target) {
             el.addEventListener('click', () => {
                 if (target === 'addProductSection') {
                     const isAdmin = currentUserRole === 'admin';
@@ -1979,7 +2077,7 @@
             });
         }
     });
-    
+
     document.querySelectorAll('.back-to-home-button').forEach(button => {
         button.addEventListener('click', (e) => {
             if (e.target.id === 'backToHomeAddProduct' || mainContent.classList.contains('show-add-product')) {
@@ -2005,7 +2103,7 @@
         // Não adicionar listener de clique para o novo item de login/registro aqui,
         // pois ele tem um comportamento diferente (não usa data-target/data-type da mesma forma)
         // e já terá seu próprio listener (loginRegisterSidebarButton).
-        if (title.id === 'loginRegisterSidebarButton') return; 
+        if (title.id === 'loginRegisterSidebarButton') return;
 
         title.addEventListener('click', () => {
           const targetId = title.dataset.target;
@@ -2020,7 +2118,7 @@
               activeAccordionItem = targetElement.classList.contains('open') ? targetElement : null;
               clearInterval(timerInterval); clearInterval(tickSoundInterval); timeLeft = TIME_PER_QUESTION;
               if(progressBar) progressBar.style.width = '100%';
-          } else if (contentType === 'main-content' && targetId !== 'logoutButton') { 
+          } else if (contentType === 'main-content' && targetId !== 'logoutButton') {
               if (mainContent.classList.contains('show-add-product') && targetId !== 'addProductSection') {
                   resetAddProductForm();
               }
@@ -2183,7 +2281,7 @@
     if(backToHomeAdminProductsButton) backToHomeAdminProductsButton.addEventListener('click', () => showSection('initialScreen'));
 
 
-    loadProductData(); 
+    loadProductData();
     showSection('initialScreen');
     // updateUserAccessUI(); // Chamado dentro de onAuthStateChanged e no final do DOMContentLoaded para garantir
   });
