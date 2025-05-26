@@ -424,7 +424,7 @@
       margin-bottom: 20px;
     }
 
-    #emailInput, #passwordInput, #usernameInput { /* Renomeados de passwordInput */
+    #passwordInput, #usernameInput { /* Removido emailInput */
       width: calc(100% - 24px);
       padding: 12px;
       margin-bottom: 15px;
@@ -437,7 +437,7 @@
       transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 
-    #emailInput:focus, #passwordInput:focus, #usernameInput:focus {
+    #passwordInput:focus, #usernameInput:focus { /* Removido emailInput */
       outline: none;
       box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
     }
@@ -846,8 +846,7 @@
     <div id="authModal">
       <h2 id="authModalTitle">Bem-vindo, Mestre Açougueiro!</h2>
       <p id="authPrompt">Faça login ou crie uma conta para prosseguir:</p>
-      <input type="text" id="usernameInput" placeholder="Nome de Usuário" autocomplete="off" style="display:none;" />
-      <input type="email" id="emailInput" placeholder="Seu Email" autocomplete="email" />
+      <input type="text" id="usernameInput" placeholder="Seu Nome de Usuário" autocomplete="off" />
       <input type="password" id="passwordInput" placeholder="Sua Senha" autocomplete="current-password" />
       <div id="authError"></div>
       <button id="authSubmit">Entrar</button>
@@ -962,7 +961,7 @@
     <section id="userProfileSection">
         <h2>Meu Perfil</h2>
         <p>Olá, <span id="usernameDisplay"></span>!</p>
-        <p>Você está logado com o email: <span id="userEmailDisplay"></span></p>
+        <p>Identificador de conta (não é um email real): <span id="userEmailDisplay"></span></p> 
         <button id="editUsernameButton">Alterar Nome de Usuário</button>
         <input type="text" id="newUsernameInput" placeholder="Novo nome de usuário" style="display:none; margin-top: 10px;" />
         <button id="saveUsernameButton" style="display:none;">Salvar Nome de Usuário</button>
@@ -1019,7 +1018,7 @@
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, getDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, getDoc, updateDoc, setDoc, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
   // Sua configuração do Firebase (MANTENHA SEUS VALORES AQUI)
   const firebaseConfig = {
@@ -1044,7 +1043,7 @@
     const authModal = document.getElementById('authModal');
     const authModalTitle = document.getElementById('authModalTitle');
     const authPrompt = document.getElementById('authPrompt');
-    const emailInput = document.getElementById('emailInput');
+    // const emailInput = document.getElementById('emailInput'); // Removido
     const passwordInput = document.getElementById('passwordInput');
     const usernameInput = document.getElementById('usernameInput');
     const authSubmit = document.getElementById('authSubmit');
@@ -1059,7 +1058,7 @@
     // Elementos de perfil
     const userProfileSection = document.getElementById('userProfileSection');
     const usernameDisplay = document.getElementById('usernameDisplay');
-    const userEmailDisplay = document.getElementById('userEmailDisplay');
+    const userEmailDisplay = document.getElementById('userEmailDisplay'); // Este exibirá o e-mail falso
     const editUsernameButton = document.getElementById('editUsernameButton');
     const newUsernameInput = document.getElementById('newUsernameInput');
     const saveUsernameButton = document.getElementById('saveUsernameButton');
@@ -1171,6 +1170,13 @@
             .trim();
     }
 
+    // Função para gerar um e-mail "falso" a partir do nome de usuário
+    function generateFakeEmail(username) {
+        // Usa um domínio fixo. Certifique-se de que este domínio não existe de verdade.
+        // Ou, se existir, que você tenha controle sobre ele para evitar conflitos.
+        return `${normalizeText(username).replace(/[^a-z0-9]/g, '')}@butchercode.com`;
+    }
+
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -1226,8 +1232,8 @@
             // Atualiza o display do username no perfil caso tenha sido alterado
             getDoc(doc(db, 'users', currentUser.uid)).then(docSnap => {
                 const userData = docSnap.data();
-                usernameDisplay.textContent = userData && userData.username ? userData.username : currentUser.email.split('@')[0];
-                userEmailDisplay.textContent = currentUser.email;
+                usernameDisplay.textContent = userData && userData.username ? userData.username : 'Carregando...'; // Exibe o username real
+                userEmailDisplay.textContent = currentUser.email; // Exibe o email falso
             }).catch(e => console.error("Erro ao carregar dados do perfil:", e));
             backToHomeProfileButton.style.display = 'block';
         } else if (sectionId === 'initialScreen') {
@@ -1242,11 +1248,11 @@
         document.body.classList.remove('sidebar-open');
     }
 
-    // --- Funções de Autenticação Firebase ---
+    // --- Funções de Autenticação Firebase (modificadas para username) ---
     function showAuthModal(message = '') {
         authError.textContent = message;
         authModalOverlay.classList.add('show');
-        emailInput.focus();
+        usernameInput.focus(); // Foca no input do username
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -1257,7 +1263,7 @@
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDocSnap = await getDoc(userDocRef);
                 const userData = userDocSnap.exists() ? userDocSnap.data() : null;
-                const displayName = userData && userData.username ? userData.username : user.email.split('@')[0];
+                const displayName = userData && userData.username ? userData.username : 'Usuário'; // Usa o username do Firestore
                 
                 welcomeMessage.innerHTML = `Bem-vindo, ${displayName}! <br>Vamos desenrolar!`;
                 welcomeMessage.classList.add('show');
@@ -1268,7 +1274,7 @@
                 
                 // Atualiza informações do perfil
                 usernameDisplay.textContent = displayName;
-                userEmailDisplay.textContent = user.email;
+                userEmailDisplay.textContent = user.email; // Ainda exibe o email "falso" do Firebase Auth
 
                 // Carrega comentários se o usuário estiver logado
                 loadComments();
@@ -1276,7 +1282,7 @@
             } catch (error) {
                 console.error("Erro ao carregar dados do usuário no Firestore:", error);
                 // Mesmo com erro no Firestore, o usuário está autenticado
-                welcomeMessage.innerHTML = `Bem-vindo, ${user.email.split('@')[0]}! <br>Vamos desenrolar!`;
+                welcomeMessage.innerHTML = `Bem-vindo, ${user.email.split('@')[0]}! <br>Vamos desenrolar!`; // Fallback para o email se o username não for carregado
                 welcomeMessage.classList.add('show');
                 initialScreenOptions.classList.add('show');
                 authModalOverlay.classList.remove('show');
@@ -1294,14 +1300,12 @@
             showAuthModal(''); // Exibe o modal para login/registro
             authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
             authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
-            emailInput.value = '';
-            passwordInput.value = '';
             usernameInput.value = '';
-            usernameInput.style.display = 'none';
+            passwordInput.value = '';
             authSubmit.textContent = 'Entrar';
             registerButton.style.display = 'block';
             logoutSection.style.display = 'none';
-            emailInput.focus();
+            usernameInput.focus();
             showSection('initialScreen'); // Volta para a tela inicial
             usernameDisplay.textContent = '';
             userEmailDisplay.textContent = '';
@@ -1309,34 +1313,53 @@
     });
 
     authSubmit.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
+        const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
         authError.textContent = '';
 
         if (authSubmit.textContent === 'Voltar para Login') {
-            usernameInput.style.display = 'none';
             authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
             authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
             authSubmit.textContent = 'Entrar';
             registerButton.textContent = 'Criar Conta';
             authError.textContent = '';
-            emailInput.focus();
+            usernameInput.focus();
             return;
         }
 
-        if (!email || !password) {
-            authError.textContent = 'Por favor, insira e-mail e senha.';
+        if (!username || !password) {
+            authError.textContent = 'Por favor, insira nome de usuário e senha.';
             return;
         }
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            // Buscar o email falso associado ao username no Firestore
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('username', '==', username));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                authError.textContent = 'Nome de usuário ou senha inválidos.';
+                return;
+            }
+
+            // Assumimos que o username é único, pegamos o primeiro resultado
+            const userData = querySnapshot.docs[0].data();
+            const fakeEmail = userData.email; // O email armazenado no Firestore, que é o falso
+
+            if (!fakeEmail) { // Caso o email falso não esteja no Firestore (erro na criação original)
+                authError.textContent = 'Erro na conta. Por favor, contate o suporte.';
+                console.error('Usuário encontrado no Firestore sem email falso:', userData);
+                return;
+            }
+
+            await signInWithEmailAndPassword(auth, fakeEmail, password);
             // onAuthStateChanged cuidará da interface
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             let errorMessage = "Erro no login.";
-            if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                errorMessage = "E-mail ou senha inválidos.";
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                errorMessage = "Nome de usuário ou senha inválidos.";
             } else if (error.code === 'auth/too-many-requests') {
                 errorMessage = "Muitas tentativas de login. Tente novamente mais tarde.";
             } else {
@@ -1347,13 +1370,11 @@
     });
 
     registerButton.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
-        const password = passwordInput.value.trim();
         const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
         authError.textContent = '';
 
         if (registerButton.textContent === 'Criar Conta') {
-            usernameInput.style.display = 'block';
             authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
             authModalTitle.textContent = 'Criar Nova Conta';
             authSubmit.textContent = 'Voltar para Login';
@@ -1364,29 +1385,40 @@
                 authError.textContent = 'Por favor, insira um nome de usuário.';
                 return;
             }
-            if (!email || !password) {
-                authError.textContent = 'Por favor, insira e-mail e senha.';
+            if (!password) {
+                authError.textContent = 'Por favor, insira uma senha.';
                 return;
             }
+
+            // Verificar se o nome de usuário já existe no Firestore
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('username', '==', username));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                authError.textContent = 'Este nome de usuário já está em uso.';
+                return;
+            }
+
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const fakeEmail = generateFakeEmail(username); // Gera o email falso
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password);
                 const user = userCredential.user;
-                // Salva o nome de usuário no Firestore. setDoc é usado aqui para criar/sobrescrever o documento.
+                
+                // Salva o nome de usuário REAL e o email FALSO no Firestore
                 await setDoc(doc(db, 'users', user.uid), {
                     username: username,
-                    email: user.email,
+                    email: fakeEmail, // Armazenar o email falso para referência futura
                     createdAt: serverTimestamp()
                 });
                 // onAuthStateChanged cuidará da interface
             } catch (error) {
                 console.error("Erro ao registrar:", error);
                 let errorMessage = "Erro no registro.";
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = "Este e-mail já está em uso.";
+                if (error.code === 'auth/email-already-in-use') { // Isso pode acontecer se o email falso gerado já existir (improvável, mas possível)
+                    errorMessage = "Um erro inesperado ocorreu. Tente outro nome de usuário.";
                 } else if (error.code === 'auth/weak-password') {
                     errorMessage = "A senha deve ter pelo menos 6 caracteres.";
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = "E-mail inválido.";
                 } else {
                     errorMessage = `Erro: ${error.message}`;
                 }
@@ -1414,7 +1446,7 @@
         if (currentUser) {
             getDoc(doc(db, 'users', currentUser.uid)).then(docSnap => {
                 const userData = docSnap.data();
-                newUsernameInput.value = userData && userData.username ? userData.username : currentUser.email.split('@')[0];
+                newUsernameInput.value = userData && userData.username ? userData.username : 'Carregando...';
                 newUsernameInput.focus();
             }).catch(e => console.error("Erro ao carregar nome de usuário para edição:", e));
         }
@@ -1428,8 +1460,27 @@
             usernameUpdateFeedback.style.color = 'var(--cor-erro)';
             return;
         }
+
         if (currentUser) {
             try {
+                // Primeiro, verificar se o novo nome de usuário já existe para outro UID
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('username', '==', newUsername));
+                const querySnapshot = await getDocs(q);
+
+                let usernameExists = false;
+                querySnapshot.forEach(doc => {
+                    if (doc.id !== currentUser.uid) { // Verifica se não é o próprio usuário
+                        usernameExists = true;
+                    }
+                });
+
+                if (usernameExists) {
+                    usernameUpdateFeedback.textContent = 'Este nome de usuário já está em uso por outro usuário.';
+                    usernameUpdateFeedback.style.color = 'var(--cor-erro)';
+                    return;
+                }
+
                 const userDocRef = doc(db, 'users', currentUser.uid);
                 await updateDoc(userDocRef, {
                     username: newUsername
@@ -1722,7 +1773,7 @@
             const userDocRef = doc(db, 'users', currentUser.uid);
             const userDocSnap = await getDoc(userDocRef);
             const userData = userDocSnap.exists() ? userDocSnap.data() : null;
-            const username = userData && userData.username ? userData.username : currentUser.email.split('@')[0];
+            const username = userData && userData.username ? userData.username : 'Anônimo'; // Pega o username real do Firestore
 
             await addDoc(collection(db, 'comments'), {
                 userId: currentUser.uid,
@@ -1765,6 +1816,7 @@
                 // Adiciona uma verificação para timestamp, caso seja nulo ou indefinido
                 const date = comment.timestamp && comment.timestamp.toDate ? new Date(comment.timestamp.toDate()) : new Date();
                 const formattedDate = date.toLocaleString('pt-BR');
+                // Usa o username do comentário diretamente
                 div.innerHTML = `<strong>${comment.username || 'Anônimo'}:</strong> ${comment.comment} <span class="timestamp">${formattedDate}</span>`;
                 commentsList.appendChild(div);
             });
