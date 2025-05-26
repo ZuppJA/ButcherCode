@@ -550,8 +550,7 @@
       <li class="menu-section">
         <h2 tabindex="0" data-target="gameCodeSection" data-type="main-content">GameCode</h2>
       </li>
-      <li class="menu-section">
-        <h2 tabindex="0" data-target="addProductSection" data-type="main-content">Adicionar Produto</h2>
+      <li class="menu-section" id="addProductMenuItem" style="display:none;"> <h2 tabindex="0" data-target="addProductSection" data-type="main-content">Adicionar Produto</h2>
       </li>
       <li class="menu-section">
         <h2 tabindex="0" data-target="commentsSection" data-type="main-content">Comentários e Feedback</h2>
@@ -685,9 +684,9 @@
   // --- IMPORTANTE: ATENÇÃO À SEGURANÇA! ---
   // As chaves de API e IDs de Pantry/Firebase estão diretamente no código do frontend.
   // Para Firebase: Use Regras de Segurança MUITO RÍGIDAS.
-  // Para Pantry (para escrita por admins): Ações de escrita (como apagar/editar produtos)
-  // são feitas diretamente pelo cliente. Para maior segurança, use um backend (Cloud Functions)
-  // como intermediário para validar o admin e interagir com o Pantry.
+  // Para Pantry (para escrita por admins/cooperadores): Ações de escrita são feitas diretamente pelo cliente.
+  // Para maior segurança, use um backend (Cloud Functions) como intermediário para validar
+  // o papel do usuário e interagir com o Pantry.
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
@@ -798,10 +797,11 @@
 
 
     let currentUser = null;
-    let isCurrentUserAdmin = false; 
+    let isCurrentUserAdmin = false; // Será derivado de currentUserRole
+    let currentUserRole = 'user';   // Papéis: 'user', 'cooperator', 'admin'
     let activeAccordionItem = null;
-    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289';
-    const BASKET_NAME = 'butcher_products';
+    const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289'; // Seu Pantry ID
+    const BASKET_NAME = 'butcher_products'; // Seu nome de cesta
     let productData = { bovinos: {}, suinos: {}, meta: { version: 1, last_updated: "" } };
     let productsInverseNormalized = {};
     const GAME_STATE_KEY = "game_code_state";
@@ -846,15 +846,45 @@
       }
     }
 
-    function updateAdminUI(isAdmin) {
+    // Função para atualizar a UI com base nas permissões do usuário
+    function updateUserAccessUI() {
+        const isAdmin = currentUserRole === 'admin';
+        const isCooperator = currentUserRole === 'cooperator';
+        const canAddProducts = isAdmin || isCooperator;
+
+        // Visibilidade do item de menu "Gerenciar Produtos (Admin)"
         if (adminProductManagementMenuItem) adminProductManagementMenuItem.style.display = isAdmin ? 'block' : 'none';
+        
+        // Visibilidade do texto "Você é um Administrador" no perfil
         if (adminStatusText) adminStatusText.style.display = isAdmin ? 'block' : 'none';
         
-        if (mainContent.classList.contains('show-comments')) {
-            loadComments();
+        // Visibilidade do item de menu "Adicionar Produto"
+        const addProductMenuItemEl = document.getElementById('addProductMenuItem'); // Usar o ID do LI
+        if (addProductMenuItemEl) {
+            addProductMenuItemEl.style.display = canAddProducts ? 'block' : 'none';
         }
-        if (mainContent.classList.contains('show-admin-products') && isAdmin) {
-            populateAdminProductLists();
+
+        // Se a seção de comentários estiver visível, recarrega para mostrar/ocultar botões de apagar (admin)
+        if (mainContent.classList.contains('show-comments')) {
+            loadComments(); 
+        }
+
+        // Se a seção de gerenciamento de produtos admin estiver visível e o usuário não for admin, redireciona
+        if (mainContent.classList.contains('show-admin-products') && !isAdmin) {
+            showSection('initialScreen');
+        }
+        
+        // Se a seção de adicionar produtos estiver visível e o usuário não tiver permissão, redireciona
+        const addProductSectionEl = document.getElementById('addProductSection');
+        const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
+        if (mainContent.classList.contains('show-add-product')) {
+            if (editingCode && !isAdmin) { // Editando é só admin
+                showSection('initialScreen');
+                // alert("Você não tem permissão para editar produtos."); // Opcional: alerta
+            } else if (!editingCode && !canAddProducts) { // Adicionando é admin ou cooperador
+                showSection('initialScreen');
+                // alert("Você não tem permissão para adicionar produtos."); // Opcional: alerta
+            }
         }
     }
 
@@ -878,23 +908,36 @@
             if(startGameButton) startGameButton.focus();
             if(backToHomeGameButton) backToHomeGameButton.style.display = 'block';
         } else if (sectionId === 'addProductSection') {
-            if (!currentUser) { // Adicionar produto (sem estar em modo edição) requer login
-                const addProductSectionEl = document.getElementById('addProductSection');
-                const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
-                if (!editingCode) { // Só exige login se não estiver vindo de um "editar" (que já checa admin)
-                    showAuthModal('Você precisa fazer login para adicionar produtos.');
-                    return;
-                }
+            const addProductSectionEl = document.getElementById('addProductSection');
+            const editingCode = addProductSectionEl ? addProductSectionEl.dataset.editingCode : null;
+            const isAdmin = currentUserRole === 'admin';
+            const isCooperator = currentUserRole === 'cooperator';
+            const canAdd = isAdmin || isCooperator;
+
+            if (!currentUser) { 
+                showAuthModal('Você precisa fazer login para acessar esta funcionalidade.');
+                return;
             }
-             // Se for admin editando, a checagem de !isCurrentUserAdmin é feita em handleSetupEditProduct
+
+            if (!editingCode && !canAdd) { // Tentando ADICIONAR sem permissão
+                showAuthModal('Você não tem permissão para adicionar produtos.', 'Acesso Negado');
+                if (currentUser) setTimeout(() => showSection('initialScreen'), 0); 
+                return;
+            }
+            if (editingCode && !isAdmin) { // Tentando EDITAR sem ser admin
+                 showAuthModal('Você não tem permissão para editar produtos.', 'Acesso Negado');
+                 if (currentUser) setTimeout(() => showSection('initialScreen'), 0);
+                 return;
+            }
+
             mainContent.classList.add('show-add-product');
             if(backToHomeAddProductButton) backToHomeAddProductButton.style.display = 'block';
-            // Foco será setado por handleSetupEditProduct ou no modo de adição normal
-            const addProductSectionEl = document.getElementById('addProductSection');
-            if (addProductSectionEl && !addProductSectionEl.dataset.editingCode) {
-                if(inputNewCode) inputNewCode.focus(); // Foco no código se for ADIÇÃO
-                resetAddProductForm(); // Garante que o formulário está limpo para adição
+            
+            if (addProductSectionEl && !editingCode) { // Modo Adição
+                if(inputNewCode) inputNewCode.focus(); 
+                resetAddProductForm(); 
             }
+            // Foco e preenchimento para edição são feitos por handleSetupEditProduct
 
         } else if (sectionId === 'commentsSection') {
             mainContent.classList.add('show-comments');
@@ -936,14 +979,14 @@
                     
                     if(usernameDisplay) {
                        usernameDisplay.textContent = displayName;
-                       if (userData && userData.isAdmin === true) {
+                       if (currentUserRole === 'admin') { // Usa currentUserRole
                            usernameDisplay.classList.add('admin-username');
                        } else {
                            usernameDisplay.classList.remove('admin-username');
                        }
                     }
                     if(userEmailDisplay && currentUser.email) userEmailDisplay.textContent = currentUser.email;
-                    if(adminStatusText) adminStatusText.style.display = (userData && userData.isAdmin === true) ? 'block' : 'none';
+                    if(adminStatusText) adminStatusText.style.display = (currentUserRole === 'admin') ? 'block' : 'none';
                 }).catch(e => {
                     console.error("Erro ao carregar dados do perfil:", e);
                     if(usernameDisplay && currentUser.email) {
@@ -956,9 +999,9 @@
             }
             if(backToHomeProfileButton) backToHomeProfileButton.style.display = 'block';
         } else if (sectionId === 'adminProductManagementSection') { 
-            if (!currentUser || !isCurrentUserAdmin) {
+            if (!currentUser || currentUserRole !== 'admin') { // Acesso restrito a administradores
                 showAuthModal('Acesso restrito a administradores.');
-                 if (!isCurrentUserAdmin && currentUser) showSection('initialScreen'); 
+                if (currentUser && currentUserRole !== 'admin') setTimeout(() => showSection('initialScreen'),0); 
                 return;
             }
             mainContent.classList.add('show-admin-products');
@@ -1003,16 +1046,21 @@
                 const userData = userDocSnap.exists() ? userDocSnap.data() : null;
                 
                 const displayName = userData && userData.username ? userData.username : (user.email ? user.email.split('@')[0] : 'Usuário');
-                isCurrentUserAdmin = userData && userData.isAdmin === true; 
+                
+                currentUserRole = userData && userData.role ? userData.role : 'user'; // Carrega o papel do usuário
+                isCurrentUserAdmin = currentUserRole === 'admin'; // Deriva isCurrentUserAdmin
 
                 let welcomeDisplayName = displayName;
-                if (isCurrentUserAdmin) {
+                if (isCurrentUserAdmin) { // ou currentUserRole === 'admin'
                     welcomeDisplayName = `<span class="admin-username">${displayName}</span>`;
+                } else if (currentUserRole === 'cooperator') {
+                    // Estilo opcional para cooperador
+                    welcomeDisplayName = `<span style="color: var(--cor-link);">${displayName} (Cooperador)</span>`;
                 }
+
 
                 if(welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo, ${welcomeDisplayName}! <br>Vamos desenrolar!`;
                 
-                // Atualiza o nome no perfil se a seção de perfil estiver visível
                 if (userProfileSection && userProfileSection.style.display !== 'none' && usernameDisplay) {
                     usernameDisplay.textContent = displayName;
                     if (isCurrentUserAdmin) {
@@ -1023,7 +1071,7 @@
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
                 
-                updateAdminUI(isCurrentUserAdmin); 
+                updateUserAccessUI(); 
 
             } catch (error) {
                 console.error("Erro ao carregar dados do usuário no Firestore:", error);
@@ -1034,8 +1082,10 @@
                     usernameDisplay.classList.remove('admin-username');
                 }
                 if(userEmailDisplay && user.email) userEmailDisplay.textContent = user.email;
+                
+                currentUserRole = 'user'; // Reseta em caso de erro
                 isCurrentUserAdmin = false;
-                updateAdminUI(false);
+                updateUserAccessUI();
             }
 
             if(welcomeMessage) welcomeMessage.classList.add('show');
@@ -1045,8 +1095,9 @@
             if (logoutSection) logoutSection.style.display = 'block';
         } else {
             currentUser = null;
-            isCurrentUserAdmin = false; 
-            if(welcomeMessage) welcomeMessage.innerHTML = "Bem-vindo ao ButcherCode! <br>Explore as funcionalidades. O login é necessário apenas para adicionar produtos ou ver seu perfil.";
+            isCurrentUserAdmin = false;
+            currentUserRole = 'user'; // Papel padrão para usuário deslogado
+            if(welcomeMessage) welcomeMessage.innerHTML = "Bem-vindo ao ButcherCode! <br>Explore as funcionalidades. O login é necessário para algumas interações.";
             if(welcomeMessage) welcomeMessage.classList.add('show');
             if(initialScreenOptions) initialScreenOptions.classList.add('show');
             if(authModalOverlay) authModalOverlay.classList.remove('show');
@@ -1058,13 +1109,15 @@
             }
             if(userEmailDisplay) userEmailDisplay.textContent = '';
             
-            updateAdminUI(false); 
+            updateUserAccessUI(); 
 
-            if (mainContent.classList.contains('show-profile') || 
-                mainContent.classList.contains('show-add-product') ||
-                mainContent.classList.contains('show-admin-products')) { 
+            const isRestrictedSectionForGuests = mainContent.classList.contains('show-profile') ||
+                                                mainContent.classList.contains('show-add-product') ||
+                                                mainContent.classList.contains('show-admin-products');
+            if (isRestrictedSectionForGuests) {
                  showSection('initialScreen');
             } else if (mainContent.classList.contains('show-comments')) {
+                // Permite ver comentários mesmo deslogado, mas o formulário será desabilitado
                 showSection('commentsSection'); 
             }
         }
@@ -1176,7 +1229,8 @@
                         username: usernameVal,
                         email: fakeEmail,
                         createdAt: serverTimestamp(),
-                        isAdmin: false 
+                        isAdmin: false, // Pode manter ou remover se role for o principal
+                        role: 'user'    // Define o papel padrão para novos usuários
                     });
                 } catch (error) {
                     console.error("Erro ao registrar:", error);
@@ -1198,6 +1252,7 @@
         logoutButton.addEventListener('click', async () => {
             try {
                 await signOut(auth);
+                // onAuthStateChanged cuidará de resetar currentUserRole e atualizar a UI
             } catch (error) {
                 console.error("Erro ao fazer logout:", error);
                 alert("Erro ao fazer logout.");
@@ -1259,14 +1314,10 @@
                       username: newUsernameVal
                   });
                   
-                  // Atualiza o nome exibido no perfil e na mensagem de boas-vindas
                   const displayName = newUsernameVal;
                   if(usernameDisplay) {
                     usernameDisplay.textContent = displayName;
-                    // Mantém o estilo de admin se for o caso
-                    const userDocSnap = await getDoc(userDocRef);
-                    const updatedUserData = userDocSnap.data();
-                     if (updatedUserData && updatedUserData.isAdmin === true) {
+                    if (currentUserRole === 'admin') { // Reavalia estilo com base no role
                         usernameDisplay.classList.add('admin-username');
                     } else {
                         usernameDisplay.classList.remove('admin-username');
@@ -1274,8 +1325,10 @@
                   }
                   
                   let welcomeDisplayName = displayName;
-                  if (isCurrentUserAdmin) { // isCurrentUserAdmin já deve estar correto
+                  if (currentUserRole === 'admin') {
                         welcomeDisplayName = `<span class="admin-username">${displayName}</span>`;
+                  } else if (currentUserRole === 'cooperator') {
+                        welcomeDisplayName = `<span style="color: var(--cor-link);">${displayName} (Cooperador)</span>`;
                   }
                   if(welcomeMessage) welcomeMessage.innerHTML = `Bem-vindo, ${welcomeDisplayName}! <br>Vamos desenrolar!`;
 
@@ -1337,7 +1390,7 @@
             };
         } finally {
              rebuildProductIndexesAndSidebar();
-             if (mainContent.classList.contains('show-admin-products') && isCurrentUserAdmin) { 
+             if (mainContent.classList.contains('show-admin-products') && currentUserRole === 'admin') { 
                 populateAdminProductLists();
             }
         }
@@ -1416,7 +1469,7 @@
         populateSidebarList(bovinosList, productData.bovinos);
         populateSidebarList(suinosList, productData.suinos);
         
-        if (isCurrentUserAdmin && mainContent.classList.contains('show-admin-products')) {
+        if (currentUserRole === 'admin' && mainContent.classList.contains('show-admin-products')) {
             populateAdminProductLists();
         }
     }
@@ -1470,7 +1523,6 @@
       });
     }
     
-    // --- Funções de Edição e Adição de Produto ---
     function resetAddProductForm() {
         if(inputNewCode) inputNewCode.value = '';
         if(inputNewName) inputNewName.value = '';
@@ -1488,7 +1540,7 @@
     }
 
     function handleSetupEditProduct(event) {
-        if (!currentUser || !isCurrentUserAdmin) {
+        if (!currentUser || currentUserRole !== 'admin') { // Só admin pode iniciar edição
             showAuthModal('Apenas administradores podem editar produtos.');
             return;
         }
@@ -1536,7 +1588,7 @@
           const categoryVal = selectNewCategory.value;
 
           if (editingCode) { // Modo de Edição
-              if (!isCurrentUserAdmin) { // Segurança extra
+              if (currentUserRole !== 'admin') { // Segurança extra: só admin edita
                   addProductFeedback.textContent = 'Apenas administradores podem editar produtos.';
                   addProductFeedback.style.color = 'var(--cor-erro)';
                   setTimeout(() => resetAddProductForm(), 3000);
@@ -1591,6 +1643,17 @@
                   setTimeout(() => resetAddProductForm(), 3000);
               }
           } else { // Modo de Adição
+              const canAddProducts = currentUserRole === 'admin' || currentUserRole === 'cooperator';
+              if (!canAddProducts) {
+                  addProductFeedback.textContent = 'Você não tem permissão para adicionar novos produtos.';
+                  addProductFeedback.style.color = 'var(--cor-erro)';
+                  setTimeout(() => {
+                      resetAddProductForm();
+                      showSection('initialScreen'); 
+                  }, 2000);
+                  return;
+              }
+
               const newCodeVal = inputNewCode.value.trim();
               if (!newCodeVal || !newNameVal || !categoryVal) {
                   addProductFeedback.textContent = 'Preencha todos os campos.'; addProductFeedback.style.color = 'var(--cor-aviso)'; return;
@@ -1626,8 +1689,6 @@
           }
       });
     }
-    // --- Fim Funções de Edição e Adição ---
-
 
     async function loadComments() {
         if (!commentsList || !db) return;
@@ -1649,7 +1710,7 @@
                 const strongElement = document.createElement('strong');
                 const commenterNameText = comment.username || 'Anônimo';
 
-                if (comment.isAuthorAdmin) { 
+                if (comment.isAuthorAdmin) { // Mantém isAuthorAdmin para estilização, ou poderia usar comment.authorRole === 'admin'
                     const adminSpan = document.createElement('span');
                     adminSpan.classList.add('admin-username');
                     adminSpan.textContent = commenterNameText;
@@ -1671,7 +1732,7 @@
                 div.appendChild(commentTextNode);
                 div.appendChild(timestampSpan);
                 
-                if (isCurrentUserAdmin) {
+                if (currentUserRole === 'admin') { // Só admin pode apagar comentários
                     const deleteBtn = document.createElement('button');
                     deleteBtn.textContent = 'Apagar';
                     deleteBtn.classList.add('admin-delete-comment-btn'); 
@@ -1717,11 +1778,16 @@
               const userDocSnap = await getDoc(userDocRef);
               const userData = userDocSnap.exists() ? userDocSnap.data() : null;
               const username = userData && userData.username ? userData.username : (currentUser.email ? currentUser.email.split('@')[0] : 'Anônimo');
-              const authorIsAdmin = userData && userData.isAdmin === true; 
+              // A informação de isAuthorAdmin no comentário é para fins de exibição (e.g., destacar nome)
+              // A permissão de apagar é verificada por currentUserRole
+              const authorIsAdminForDisplay = userData && userData.role === 'admin'; 
 
               await addDoc(collection(db, 'comments'), {
-                  userId: currentUser.uid, username: username, comment: commentText, timestamp: serverTimestamp(),
-                  isAuthorAdmin: authorIsAdmin // Adicionado
+                  userId: currentUser.uid, 
+                  username: username, 
+                  comment: commentText, 
+                  timestamp: serverTimestamp(),
+                  isAuthorAdmin: authorIsAdminForDisplay // Usado para estilizar o nome do autor do comentário
               });
               commentsFeedback.textContent = 'Comentário enviado com sucesso!'; commentsFeedback.style.color = 'var(--cor-sucesso)';
               commentInput.value = ''; loadComments();
@@ -1734,7 +1800,7 @@
     }
 
     function populateAdminProductLists() {
-        if (!isCurrentUserAdmin || !adminBovinosList || !adminSuinosList) return;
+        if (currentUserRole !== 'admin' || !adminBovinosList || !adminSuinosList) return; // Só admin
 
         adminBovinosList.innerHTML = '';
         adminSuinosList.innerHTML = '';
@@ -1748,7 +1814,6 @@
             const editBtn = document.createElement('button');
             editBtn.textContent = 'Editar';
             editBtn.classList.add('edit-product-btn');
-            // editBtn.style.marginLeft = '10px'; // Removido, pois o CSS já cuida
             editBtn.dataset.code = code;
             editBtn.dataset.name = name;
             editBtn.dataset.category = category;
@@ -1785,7 +1850,7 @@
     }
 
     async function handleDeleteProduct(event) {
-        if (!isCurrentUserAdmin) {
+        if (currentUserRole !== 'admin') { // Só admin
             if(adminProductManagementFeedback) {
                 adminProductManagementFeedback.textContent = 'Apenas administradores podem excluir produtos.';
                 adminProductManagementFeedback.style.color = 'var(--cor-erro)';
@@ -1845,13 +1910,32 @@
     document.querySelectorAll('[data-type="main-content"]').forEach(el => {
         const target = el.dataset.target;
         if (target) { 
-            el.addEventListener('click', () => showSection(target));
+            el.addEventListener('click', () => {
+                 // Adiciona verificação de permissão antes de mostrar a seção "Adicionar Produto" pelo menu
+                if (target === 'addProductSection') {
+                    const isAdmin = currentUserRole === 'admin';
+                    const isCooperator = currentUserRole === 'cooperator';
+                    if (!currentUser) {
+                        showAuthModal('Você precisa fazer login para adicionar produtos.');
+                        return;
+                    }
+                    if (!(isAdmin || isCooperator)) {
+                        showAuthModal('Você não tem permissão para adicionar produtos.', 'Acesso Negado');
+                        return;
+                    }
+                } else if (target === 'adminProductManagementSection') {
+                    if (currentUserRole !== 'admin') {
+                        showAuthModal('Acesso restrito a administradores.', 'Acesso Negado');
+                        return;
+                    }
+                }
+                showSection(target);
+            });
         }
     });
     
     document.querySelectorAll('.back-to-home-button').forEach(button => {
         button.addEventListener('click', (e) => {
-            // Se estiver voltando da seção de adicionar/editar produto, reseta o formulário
             if (e.target.id === 'backToHomeAddProduct' || mainContent.classList.contains('show-add-product')) {
                  resetAddProductForm();
             }
@@ -1886,10 +1970,12 @@
               clearInterval(timerInterval); clearInterval(tickSoundInterval); timeLeft = TIME_PER_QUESTION;
               if(progressBar) progressBar.style.width = '100%';
           } else if (contentType === 'main-content' && targetId !== 'logoutButton') { 
-              // Se estiver saindo da seção de adicionar/editar produto pelo sidebar, reseta o formulário
               if (mainContent.classList.contains('show-add-product') && targetId !== 'addProductSection') {
                   resetAddProductForm();
               }
+              // As verificações de permissão para 'addProductSection' e 'adminProductManagementSection'
+              // já estão no listener dos elementos 'data-type="main-content"' acima.
+              // A função showSection também fará verificações.
               showSection(targetId);
               document.querySelectorAll('#sidebar .subfolder').forEach(folder => {
                   folder.classList.remove('open'); if(folder.previousElementSibling) folder.previousElementSibling.classList.remove('open');
@@ -2050,7 +2136,8 @@
 
 
     loadProductData(); 
-    showSection('initialScreen');
+    showSection('initialScreen'); // Mostra a tela inicial primeiro
+    updateUserAccessUI(); // Chama para configurar a UI inicial com base no estado de login/papel
   });
 </script>
 </body>
