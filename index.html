@@ -199,14 +199,16 @@
 
     main {
       margin: 100px 30px 30px 30px;
-      max-width: 700px;
+      max-width: 700px; /* Pode precisar ajustar se o artigo for muito largo */
       transition: margin-left 0.3s ease, background-color 0.3s ease;
       padding: 20px;
       background-color: var(--cor-fundo-secundario);
       border-radius: 8px;
     }
     #mainTerminalSection, #gameCodeSection, #initialScreen, #addProductSection,
-    #commentsSection, #userProfileSection, #adminProductManagementSection { display: none; }
+    #commentsSection, #userProfileSection, #adminProductManagementSection,
+    #artigoCarneBovinaSection /* Adicionado aqui */ { display: none; }
+
 
     main.show-terminal #mainTerminalSection { display: block; }
     main.show-game #gameCodeSection { display: block; }
@@ -215,6 +217,7 @@
     main.show-comments #commentsSection { display: block; }
     main.show-profile #userProfileSection { display: block; }
     main.show-admin-products #adminProductManagementSection { display: block; }
+    main.show-artigo-carne #artigoCarneBovinaSection { display: block; } /* Adicionado aqui */
 
 
     label {
@@ -513,13 +516,102 @@
     .admin-username {
         color: var(--cor-aviso); /* Amarelo */
         font-weight: bold;
-        /* text-shadow: 0 0 4px rgba(255, 170, 0, 0.5); */ /* Opcional: brilho sutil */
     }
     .cooperator-username {
-        color: var(--cor-link); /* Verde claro (mesma cor dos links e da msg de boas-vindas para cooperador) */
+        color: var(--cor-link); /* Verde claro */
         font-weight: bold;
-        /* text-shadow: 0 0 4px rgba(136, 255, 136, 0.4); */ /* Opcional: brilho sutil */
     }
+
+    /* ESTILOS ADICIONAIS PARA O ARTIGO E SEU TESTE */
+    #conteudoArtigoCarne {
+        text-align: left;
+        padding: 15px;
+        border: 1px solid var(--cor-input-borda);
+        border-radius: 6px;
+        background-color: var(--cor-input-fundo);
+        margin-bottom: 30px;
+    }
+    #conteudoArtigoCarne h1, /* H1 pode não ser usado dentro do article se h2 já é o título da seção */
+    #conteudoArtigoCarne h2, /* Se h2 é o título da seção, usar h3, h4 dentro do article */
+    #conteudoArtigoCarne h3,
+    #conteudoArtigoCarne h4,
+    #conteudoArtigoCarne h5,
+    #conteudoArtigoCarne h6 {
+        color: var(--cor-destaque);
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+     #conteudoArtigoCarne p, #conteudoArtigoCarne li {
+        line-height: 1.7;
+        margin-bottom: 1em;
+    }
+    #conteudoArtigoCarne ul {
+        list-style-position: inside;
+        padding-left: 20px; /* Adiciona um recuo para listas dentro do artigo */
+    }
+    #conteudoArtigoCarne ul ul { /* Para sub-listas */
+        list-style-type: circle; /* Ou outro de sua preferência */
+        margin-left: 20px;
+    }
+
+    #testeConhecimentoArtigo {
+        margin-top: 30px;
+        padding: 15px;
+        background-color: var(--cor-fundo-secundario);
+        border-radius: 6px;
+        color: var(--cor-texto-secundario);
+        text-align: center;
+    }
+    #testeConhecimentoArtigo h3 { /* Título do Quiz dentro da seção */
+        font-size: 1.8rem;
+        color: var(--cor-botao-texto);
+        margin-bottom: 20px;
+    }
+    #artigo-options button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 8px;
+        background-color: var(--cor-botao-fundo);
+        color: var(--cor-botao-texto);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: 'Source Code Pro', monospace;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    #artigo-options button:hover:not(:disabled) {
+        background-color: var(--cor-botao-hover);
+    }
+    #artigo-options button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    #artigo-feedback {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        min-height: 3em;
+        font-weight: normal;
+        text-align: left; /* Para melhor leitura da explicação */
+    }
+    #artigo-feedback.correct-explanation {
+        color: var(--cor-sucesso);
+        background-color: rgba(0, 255, 0, 0.1);
+        border: 1px solid var(--cor-sucesso);
+    }
+    #artigo-feedback.incorrect-explanation {
+        color: var(--cor-texto-principal);
+        background-color: rgba(255, 102, 102, 0.1);
+        border: 1px solid var(--cor-erro);
+    }
+    #artigo-feedback strong {
+        color: var(--cor-destaque); /* Destaque para "Correto!" ou "Incorreto." */
+    }
+    #artigo-feedback strong.correct-answer-text { /* Destaque para o texto da resposta correta */
+        color: var(--cor-sucesso);
+    }
+
 
   </style>
 </head>
@@ -576,6 +668,11 @@
                       <li>Teste seus conhecimentos sobre os códigos! Responda às perguntas antes que o tempo acabe.</li>
                   </ul>
               </li>
+              <li><strong>O Fascinante Mundo da Carne Bovina:</strong> <ul>
+                      <li>Acesse "O Fascinante Mundo da Carne Bovina" no menu.</li>
+                      <li>Leia um artigo detalhado e teste seus conhecimentos com um quiz interativo ao final.</li>
+                  </ul>
+              </li>
               <li><strong>Comentários e Feedback:</strong>
                   <ul>
                       <li>Acesse "Comentários e Feedback" no menu.</li>
@@ -599,8 +696,7 @@
                   <strong>🥩 Usuário Comum:</strong>
                   <ul>
                       <li>Consultar códigos e nomes de produtos.</li>
-                      <li>Jogar o GameCode.</li>
-                      <li>Visualizar comentários.</li>
+                      <li>Jogar o GameCode e o quiz do artigo.</li> <li>Visualizar comentários.</li>
                       <li>Após o login: Postar comentários e gerenciar o próprio perfil (alterar nome de usuário).</li>
                   </ul>
               </li>
@@ -634,6 +730,9 @@
       </li>
       <li class="menu-section">
         <h2 tabindex="0" data-target="gameCodeSection" data-type="main-content">GameCode</h2>
+      </li>
+      <li class="menu-section">
+        <h2 tabindex="0" data-target="artigoCarneBovinaSection" data-type="main-content">O Fascinante Mundo da Carne Bovina</h2>
       </li>
       <li class="menu-section" id="loginRegisterSidebarItem" style="display:none;">
         <h2 tabindex="0" id="loginRegisterSidebarButton" style="color: var(--cor-link); cursor:pointer; border-bottom: 1px solid var(--cor-link);">Login / Criar Conta</h2>
@@ -773,6 +872,142 @@
         </div>
         <button class="back-to-home-button" id="backToHomeGame">Voltar ao Início</button>
     </section>
+
+    <section id="artigoCarneBovinaSection">
+        <h2 style="text-align: center; font-size: 1.8rem; margin-bottom: 20px; border-bottom: 1px solid var(--cor-destaque); padding-bottom: 10px;">O Fascinante Mundo da Carne Bovina</h2>
+        <article id="conteudoArtigoCarne">
+            <h3>O Fascinante Mundo da Carne Bovina: Uma Análise Aprofundada</h3>
+            <p>A carne bovina transcende a mera nutrição; é um pilar cultural e gastronômico em diversas sociedades, com o Brasil se destacando como um dos maiores produtores e consumidores. A complexidade por trás de um simples bife é imensa, envolvendo genética, manejo animal, processos bioquímicos e rigorosas práticas de beneficiamento. Este artigo aprofunda os aspectos mais específicos e detalhados da carne bovina, desde as nuances de seus cortes e tipos até a ciência por trás de sua qualidade e as melhores práticas de manuseio.</p>
+            <h4>I. A Anatomia Bovina e a Magia dos Cortes: Além do Básico</h4>
+            <p>Cada corte de carne bovina é uma expressão única da função muscular e da composição tecidual do animal. A sua localização na carcaça e a proporção de gordura, músculo e tecido conjuntivo determinam suas características culinárias.</p>
+            <ul>
+                <li><strong>Composição Muscular e Tecido Conjuntivo:</strong> A maciez da carne é inversamente proporcional à quantidade de trabalho que o músculo realiza. Cortes do dianteiro (e.g., músculo, pescoço, acém) provêm de regiões de grande movimentação e sustentação de peso. Por isso, possuem fibras musculares mais longas e espessas e um alto teor de colágeno (um tipo de tecido conjuntivo). O colágeno, quando submetido a cozimento lento e úmido (acima de 70°C), hidrolisa-se e se transforma em gelatina, amaciando a carne e conferindo suculência e um sabor mais profundo. Em contrapartida, cortes do traseiro (e.g., filé mignon, contrafilé, alcatra) vêm de músculos menos exigidos, resultando em fibras mais curtas, menos colágeno e maior maciez intrínseca para preparos rápidos.</li>
+                <li><strong>O Marmoreio (Gordura Intramuscular):</strong> Uma das métricas mais valorizadas na carne de alta qualidade, o marmoreio refere-se à gordura entremeada nas fibras musculares, visível como pequenos veios brancos. Essa gordura, composta principalmente por ácidos graxos insaturados, possui um baixo ponto de fusão. Durante o cozimento, ela se derrete e se distribui pelas fibras, lubrificando-as e contribuindo diretamente para a suculência, maciez e um sabor amanteigado e complexo. Raças como Angus e Wagyu são geneticamente predispostas a um marmoreio superior.</li>
+                <li><strong>Nervo e Elastina:</strong> Em contraste com o colágeno, o que popularmente chamamos de "nervo" na carne são, na verdade, tendões ou membranas de elastina. A elastina é um tecido conjuntivo que, ao contrário do colágeno, não se dissolve ou amolece significativamente com o calor do cozimento, permanecendo rígida e elástica. Por isso, a remoção desses "nervos" durante o aparo é crucial para evitar uma textura indesejável na carne pronta.</li>
+            </ul>
+            <h4>II. Raças e Classificações: O Diferencial na Origem</h4>
+            <p>A genética e o manejo do gado são fatores primordiais que influenciam a qualidade final da carne, moldando seu perfil sensorial e nutricional.</p>
+            <ul>
+                <li><strong>Zebuínos vs. Taurinos:</strong>
+                    <ul>
+                        <li>Nelore (Zebuíno): Predominante no Brasil (80% do rebanho), o Nelore é valorizado por sua rusticidade, resistência a parasitas e doenças, e adaptação a climas tropicais. Tradicionalmente, a carne Nelore possui menor marmoreio natural e fibras mais longas, resultando em um sabor mais pronunciado de "carne" e uma textura que pode ser mais firme se não for devidamente maturada ou preparada. No entanto, o intenso investimento em melhoramento genético e técnicas de manejo (e.g., confinamento, dietas controladas) tem revolucionado a qualidade da carne Nelore, produzindo animais mais jovens com melhor acabamento de gordura e maior maciez.</li>
+                        <li>Angus (Taurino): Originária da Escócia, a raça Angus (especialmente a Black Angus) é globalmente reconhecida por sua excelente capacidade de marmoreio. Isso a torna extremamente suculenta, macia e com um sabor mais delicado e característico.</li>
+                        <li>Wagyu: Um grupo de raças japonesas (incluindo as linhagens para o famoso Kobe Beef) geneticamente programadas para o mais alto nível de marmoreio. A gordura intramuscular do Wagyu tem um ponto de fusão muito baixo, resultando em uma carne que literalmente "derrete na boca", com um sabor doce e complexo. O Kobe Beef é uma marca específica de Wagyu com critérios de criação e localização extremamente rigorosos.</li>
+                    </ul>
+                </li>
+                <li><strong>Novilho Precoce:</strong> Esta classificação refere-se a animais jovens (geralmente abatidos antes dos 24 meses de idade) que atingiram o peso e o acabamento ideal devido a um manejo nutricional e genético aprimorado. A carne de novilho precoce é caracterizada por sua maciez superior, fibras mais finas e, muitas vezes, melhor marmoreio, independentemente da raça, embora seja uma prática comum em raças taurinas e nos programas de qualidade Nelore.</li>
+            </ul>
+            <h4>III. Os Segredos da Maciez: Tipos de Maturação da Carne</h4>
+            <p>A maturação é um processo natural e controlado de "envelhecimento" da carne após o abate. Seu objetivo é aprimorar significativamente a maciez, sabor e suculência do produto final. É como um bom vinho, que melhora com o tempo! Isso acontece por meio da ação de enzimas que já existem na própria carne, que agem como pequenas "tesouras" biológicas, quebrando as fibras musculares e o tecido conectivo.</p>
+            <h5>1. A Ciência por Trás do Amaciamento</h5>
+            <p>Após o abate, o músculo passa por um estágio de enrijecimento (conhecido como rigor mortis). A maturação começa quando as enzimas naturalmente presentes na carne, principalmente as calpaínas e, em menor grau, as catepsinas, começam a agir. Elas degradam as proteínas das fibras musculares e o colágeno, tornando a carne mais tenra. Este processo é fundamental para que a carne atinja seu potencial máximo de maciez e sabor.</p>
+            <h5>2. Tipos de Maturação</h5>
+            <ul>
+                <li><strong>Maturação Úmida (Wet-Aged):</strong>
+                    <ul>
+                        <li>Processo: É o método mais comum e eficiente na indústria. A carne é embalada a vácuo (sem ar) imediatamente após a desossa e o resfriamento inicial. Ela permanece refrigerada (geralmente entre 0°C e 4°C) por um período que varia de 10 a 28 dias, ou até mais.</li>
+                        <li>Benefícios: A ausência de oxigênio na embalagem a vácuo inibe o crescimento de bactérias aeróbicas indesejadas, enquanto as enzimas trabalham para amaciar as fibras. A umidade da carne é retida, resultando em um produto final notavelmente mais macio e suculento. O sabor é intensificado de forma limpa, sem as notas mais complexas que a maturação a seco oferece. Este método tem pouca perda de peso da carne, o que o torna mais acessível.</li>
+                    </ul>
+                </li>
+                <li><strong>Maturação a Seco (Dry-Aged):</strong>
+                    <ul>
+                        <li>Processo: Este é um método mais artesanal e sofisticado, realizado sem embalagem. Grandes cortes de carne (muitas vezes com osso e uma boa camada de gordura para proteção) são pendurados ou armazenados em câmaras frias com temperatura, umidade e ventilação rigorosamente controladas (temperatura em torno de 0°C a 4°C, umidade relativa entre 75% e 85%, e fluxo de ar constante) por um período que pode variar de 21 a mais de 100 dias. Durante esse tempo, forma-se uma "casca" escura e seca na superfície da carne, que é removida antes do consumo.</li>
+                        <li>Benefícios: Produz uma carne com sabor exclusivo, complexo e concentrado (com notas que podem lembrar nozes, queijo, umami ou até manteiga) e uma textura excepcional e maciez superior. A perda controlada de umidade na superfície da carne faz com que os sabores se concentrem e se intensifiquem, e a ação enzimática, por um período mais longo, aprofunda a maciez. Embora seja mais caro devido à perda de peso da carne (a "casca" é descartada) e aos custos de manutenção das câmaras, o resultado é uma experiência gastronômica única, valorizada em alta gastronomia.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4>IV. Processos de Beneficiamento: Da Carcaça ao Corte Consumível</h4>
+            <p>A transformação da carcaça em cortes seguros e de alta qualidade é um processo multifacetado e altamente regulamentado.</p>
+            <ul>
+                <li><strong>Abate e Inspeção Ante Mortem e Post Mortem:</strong> O processo começa em frigoríficos com licenças do SIF (Serviço de Inspeção Federal), que garante o bem-estar animal no pré-abate e a inspeção da saúde do animal antes (ante mortem) e após (post mortem) o abate, garantindo a ausência de doenças e contaminantes.</li>
+                <li><strong>Sangria e Evisceração:</strong> A completa drenagem do sangue (sangria) é vital para a qualidade e conservação da carne. A evisceração (remoção dos órgãos internos) é seguida de inspeção para identificar quaisquer patologias.</li>
+                <li><strong>Esfolamento e Limpeza:</strong> A remoção da pele e a lavagem meticulosa da carcaça são cruciais para a higiene e a prevenção da contaminação superficial.</li>
+                <li><strong>Resfriamento (Pré-Resfriamento):</strong> Esta etapa rápida e controlada reduz a temperatura da carcaça para cerca de 0°C a 4°C. Isso não apenas inibe o crescimento microbiano, mas também permite o estabelecimento do rigor mortis de forma controlada, essencial para a posterior maturação.</li>
+                <li><strong>Divisão e Desossa:</strong> A carcaça é dividida em meias, depois em quartos, e então habilmente desossada. É aqui que os diferentes cortes primários são extraídos e padronizados de acordo com as especificações do mercado.</li>
+                <li><strong>Aparo (Trimming):</strong> Os cortes são meticulosamente limpos, com a remoção de excessos de gordura, nervos e outras imperfeições. Isso otimiza a apresentação, o rendimento e a experiência de consumo.</li>
+                <li><strong>Embalagem e Congelamento:</strong>
+                    <ul>
+                        <li>Embalagem a Vácuo: O método mais eficaz para prolongar a vida útil, removendo o oxigênio e criando um ambiente anaeróbico que impede o crescimento da maioria das bactérias deterioradoras. É fundamental para a maturação úmida.</li>
+                        <li>Atmosfera Modificada (MAP): Embalagens que utilizam uma mistura de gases (oxigênio, dióxido de carbono, nitrogênio) para controlar o crescimento microbiano e manter a cor e o frescor da carne por mais tempo.</li>
+                        <li>Filme PVC/Bandejas de Isopor: Comum para venda de carne fresca no varejo, o filme é permeável ao oxigênio, mantendo a coloração vermelha viva, mas com vida útil limitada.</li>
+                        <li>Congelamento Rápido: Cortes destinados a longo armazenamento são submetidos a congelamento rápido (a -18°C ou menos), que forma cristais de gelo menores, minimizando o dano celular e preservando a textura.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h4>V. Armazenamento Doméstico e Segurança Alimentar: Protegendo a Qualidade</h4>
+            <p>A qualidade da carne é mantida desde a indústria até a casa do consumidor, com a correta manipulação e armazenamento sendo essenciais.</p>
+            <ul>
+                <li><strong>Refrigeração Ótima:</strong> Carne fresca deve ser armazenada entre 0°C e 4°C. Embalagens a vácuo lacradas podem ter vida útil de semanas a meses, mas, uma vez abertas, a carne deve ser consumida em 2-3 dias. A carne em bandejas comuns deve ser consumida em 1-2 dias.</li>
+                <li><strong>Congelamento Profundo:</strong> Para armazenamento prolongado, temperaturas de -18°C ou abaixo são cruciais. Cortes magros podem durar até 12 meses, enquanto os mais gordurosos (e a carne moída) duram de 3-4 meses devido à oxidação da gordura. O uso de embalagens herméticas que eliminam o ar é fundamental para prevenir a "queimadura por congelamento".</li>
+                <li><strong>Descongelamento Seguro:</strong> O método mais seguro é descongelar na geladeira, pois a baixa temperatura inibe o crescimento bacteriano. Métodos mais rápidos, como água fria corrente (com a carne embalada e vedada) ou micro-ondas (para cozimento imediato), são alternativas. Jamais descongele carne em temperatura ambiente, pois isso cria uma zona de risco para a proliferação bacteriana. Recongelar carne descongelada (especialmente em temperatura ambiente) é desaconselhável, pois compromete a qualidade e a segurança.</li>
+                <li><strong>Prevenção da Contaminação Cruzada:</strong> A separação de alimentos crus e cozidos é imperativa. Utilize tábuas e utensílios diferentes para carne crua e outros ingredientes, e higienize as mãos e superfícies que entraram em contato com a carne crua.</li>
+            </ul>
+            <h4>VI. Métodos de Preparo da Carne: Da Grelha ao Cozido Lento</h4>
+            <p>A escolha do método de cozimento deve realçar as características intrínsecas de cada corte, transformando a carne em pratos memoráveis.</p>
+            <ul>
+                <li><strong>Grelhados e Churrasco:</strong>
+                    <ul>
+                        <li>O que é: Cocção em calor direto e intenso (grelha, chapa ou frigideira), focando em uma crosta saborosa por fora e um interior suculento.</li>
+                        <li>Cortes ideais: Cortes naturalmente macios ou com bom marmoreio como Picanha, Contrafilé (Ancho, Chorizo), Filé Mignon, Maminha, Alcatra (Miolo/Baby Beef), Fraldinha, Bananinha.</li>
+                    </ul>
+                </li>
+                <li><strong>Assados de Forno:</strong>
+                    <ul>
+                        <li>O que é: Peças inteiras ou grandes pedaços de carne assados lentamente no forno, permitindo um cozimento uniforme e o desenvolvimento de sabores.</li>
+                        <li>Cortes ideais: Para rosbifes, Filé Mignon, Lagarto, Contrafilé, Miolo da Alcatra. Para outros assados, Maminha, Fraldinha, Ponta de Peito (Brisket), Costela (no forno), Cupim. O controle da temperatura interna (com termômetro culinário) é crucial para o ponto desejado.</li>
+                    </ul>
+                </li>
+                <li><strong>Cozidos e Ensopados:</strong>
+                    <ul>
+                        <li>O que é: Cocção lenta e prolongada em panela (comum ou de pressão), com líquidos e temperos, ideal para amaciar cortes mais fibrosos.</li>
+                        <li>Cortes ideais: Cortes mais "todo dia" e fibrosos, ricos em colágeno, que se beneficiam do cozimento longo para amaciar e liberar sabor: Músculo (incluindo Ossobuco), Acém, Paleta, Pescoço, Coxão Duro, Costela.</li>
+                    </ul>
+                </li>
+                <li><strong>Carne Moída:</strong>
+                    <ul>
+                        <li>O que é: Versátil e prática, a carne moída é a base para molhos, recheios, almôndegas, hambúrgueres e quibes.</li>
+                        <li>Cortes ideais: Praticamente qualquer corte pode ser moído, mas os mais comuns para o dia a dia são Acém, Patinho, Coxão Mole, Coxão Duro, Paleta.</li>
+                    </ul>
+                </li>
+                <li><strong>Bifes com Preparações Específicas:</strong>
+                    <ul>
+                        <li>Bife à Milanesa e à Parmegiana: Bifes finos, empanados e fritos (Milanesa), que podem ser gratinados com molho e queijo (Parmegiana). Patinho e Coxão Mole são ideais.</li>
+                        <li>Bife à Rolê: Fatias finas de carne (como Coxão Mole ou Patinho) recheadas e enroladas, cozidas lentamente em um molho.</li>
+                        <li>Picadinho: Carne cortada em cubos pequenos e cozida em molho, perfeita para refeições rápidas e saborosas. Patinho e Coxão Mole são bons cortes.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h5>Conclusão: Uma Apreciação Culinária e Científica</h5>
+            <p>A carne bovina, em sua complexidade, oferece uma vasta gama de possibilidades culinárias. A maturação, com sua base bioquímica de ação enzimática controlada, é um testemunho da ciência aplicada à gastronomia, elevando a maciez e o sabor a novos patamares. Já a diversidade de métodos de preparo, desde o controle de temperatura de um rosbife impecável até a transformação de cortes fibrosos em pratos que desmancham na boca, demonstra a arte e o cuidado necessários para transformar a matéria-prima em uma experiência gastronômica memorável. Entender esses detalhes aprofundados não só aprimora as habilidades na cozinha, mas também aumenta o apreço por cada peça de carne que chega à nossa mesa.</p>
+        </article>
+
+        <div id="testeConhecimentoArtigo">
+            <div id="artigo-game-start-screen">
+              <h3>Teste seus Conhecimentos sobre Carne Bovina!</h3>
+              <p>Pronto para testar o que aprendeu? São 50 perguntas para aprofundar seus conhecimentos.</p>
+              <p style="font-size: 0.9em; margin-top: 10px;">Responda no seu tempo. Ao final de cada pergunta, você verá a explicação.</p>
+              <button id="start-artigo-test-button" style="padding: 15px 30px; font-size: 1.3rem; margin-top:15px;">Iniciar Teste</button>
+            </div>
+
+            <div id="artigo-game-elements" style="display: none;">
+              <div id="artigo-question-counter" style="font-size: 0.9em; color: var(--cor-texto-secundario); margin-bottom: 10px;"></div>
+              <div id="artigo-question" style="font-size: 1.1rem; margin-bottom: 20px; min-height: 3em;"></div>
+              <div id="artigo-options" style="margin-bottom: 20px;"></div>
+              <div id="artigo-feedback"></div>
+              <div id="artigo-score-display" style="margin-top: 15px; font-weight: bold; font-size: 1.05rem; min-height: 1.5em;"></div>
+              <button id="artigo-next-question" style="display: none; margin-top:15px; padding: 10px 20px; background-color: var(--cor-botao-fundo);">Próxima Pergunta</button>
+              <button id="artigo-end-test-button" style="margin-top:15px; padding: 10px 20px; background-color: var(--cor-critico); color: #fff;">Finalizar Teste</button>
+            </div>
+
+            <div id="artigo-game-end-screen" style="display: none; padding: 20px;">
+              <h3 style="font-size: 1.8rem; color: var(--cor-botao-texto); margin-bottom: 20px;">Teste Finalizado!</h3>
+              <p id="artigo-final-score-message" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+              <button id="artigo-restart-test-button" style="padding: 15px 30px; font-size: 1.3rem;">Reiniciar Teste</button>
+            </div>
+        </div>
+        <button class="back-to-home-button" id="backToHomeArtigoCarne">Voltar ao Início</button>
+    </section>
+
   </main>
 
 <script type="module">
@@ -818,7 +1053,6 @@
     const logoutButton = document.getElementById('logoutButton');
     const userProfileMenuItem = document.getElementById('userProfileMenuItem');
 
-    // Novos elementos para login/registro rápido
     const loginRegisterSidebarItem = document.getElementById('loginRegisterSidebarItem');
     const loginRegisterSidebarButton = document.getElementById('loginRegisterSidebarButton');
     const loginRegisterInitialScreen = document.getElementById('loginRegisterInitialScreen');
@@ -849,7 +1083,6 @@
     const addProductFeedback = document.getElementById('addProductFeedback');
     const backToHomeAddProductButton = document.getElementById('backToHomeAddProduct');
     const addProductSectionTitle = document.querySelector('#addProductSection h2');
-
 
     const commentsSectionDOM = document.getElementById('commentsSection');
     const commentLabel = document.getElementById('commentLabel');
@@ -897,10 +1130,9 @@
     const adminProductManagementFeedback = document.getElementById('adminProductManagementFeedback');
     const backToHomeAdminProductsButton = document.getElementById('backToHomeAdminProducts');
 
-
     let currentUser = null;
-    let isCurrentUserAdmin = false; // Será derivado de currentUserRole
-    let currentUserRole = 'user';   // Papéis: 'user', 'cooperator', 'admin'
+    let isCurrentUserAdmin = false;
+    let currentUserRole = 'user';
     let activeAccordionItem = null;
     const PANTRY_ID = '4f7072cc-f2b3-4852-a675-8fa440048289';
     const BASKET_NAME = 'butcher_products';
@@ -920,6 +1152,83 @@
         terminalSuccess: new Audio('images/sounds/terminal-success.mp3'),
         terminalError: new Audio('images/sounds/terminal-error.mp3')
     };
+
+    // >>> INÍCIO DAS NOVAS CONSTANTES E VARIÁVEIS PARA O TESTE DO ARTIGO <<<
+    const artigoCarneBovinaSection = document.getElementById('artigoCarneBovinaSection');
+    const startArtigoTestButton = document.getElementById('start-artigo-test-button');
+    const artigoGameStartScreen = document.getElementById('artigo-game-start-screen');
+    const artigoGameElements = document.getElementById('artigo-game-elements');
+    const artigoGameEndScreen = document.getElementById('artigo-game-end-screen');
+    const artigoQuestionCounterElement = document.getElementById('artigo-question-counter');
+    const artigoQuestionElement = document.getElementById('artigo-question');
+    const artigoOptionsElement = document.getElementById('artigo-options');
+    const artigoFeedbackElement = document.getElementById('artigo-feedback');
+    const artigoScoreDisplayElement = document.getElementById('artigo-score-display');
+    const artigoNextQuestionButton = document.getElementById('artigo-next-question');
+    const artigoEndTestButton = document.getElementById('artigo-end-test-button');
+    const artigoFinalScoreMessage = document.getElementById('artigo-final-score-message');
+    const artigoRestartTestButton = document.getElementById('artigo-restart-test-button');
+    const backToHomeArtigoCarneButton = document.getElementById('backToHomeArtigoCarne');
+
+
+    let currentArtigoQuestionIndex = 0;
+    let artigoScore = 0;
+    let artigoQuestionsAnswered = 0;
+    let perguntasArtigoCarneBovina = [];
+
+    const dadosPerguntasArtigo = [
+        { pergunta: "Qual é o corte bovino universalmente reconhecido como o mais macio do boi, ideal para medalhões e rosbifes?", alternativas: ["Picanha", "Contrafilé", "Filé Mignon", "Maminha"], respostaCorreta: "Filé Mignon", explicacao: "O Filé Mignon é o músculo menos trabalhado do boi, resultando em fibras muito finas e pouca gordura, o que lhe confere maciez excepcional." },
+        { pergunta: "Qual componente do tecido conjuntivo se dissolve e se transforma em gelatina, amaciando a carne durante o cozimento lento e úmido?", alternativas: ["Elastina", "Gordura intramuscular", "Colágeno", "Proteína miofibrilar"], respostaCorreta: "Colágeno", explicacao: "O colágeno, presente em maior quantidade em cortes mais fibrosos, é o principal tecido conjuntivo que se hidrolisa em gelatina com calor úmido prolongado, tornando a carne macia." },
+        { pergunta: "Qual termo se refere à gordura entremeada nas fibras musculares da carne, contribuindo para sua suculência e sabor?", alternativas: ["Nervo", "Rigor mortis", "Marmoreio", "Tendão"], respostaCorreta: "Marmoreio", explicacao: "O marmoreio é a gordura intramuscular que se apresenta como veios brancos. Sua presença é um indicador de qualidade, pois ela derrete no cozimento, adicionando suculência e sabor." },
+        { pergunta: "Qual raça bovina é predominante no rebanho brasileiro e conhecida por sua rusticidade e adaptação a climas tropicais?", alternativas: ["Angus", "Hereford", "Wagyu", "Nelore"], respostaCorreta: "Nelore", explicacao: "O Nelore é a raça zebuína mais representativa no Brasil, adaptada às condições tropicais do país e base da pecuária de corte nacional." },
+        { pergunta: "O que a maturação úmida (Wet-Aged) da carne envolve?", alternativas: ["Exposição da carne ao ar em câmaras controladas.", "Embalagem da carne a vácuo e refrigeração.", "Congelamento rápido da carne após o abate.", "Cura da carne com sal e especiarias."], respostaCorreta: "Embalagem da carne a vácuo e refrigeração.", explicacao: "Na maturação úmida, a carne é selada a vácuo para que as enzimas ajam em um ambiente sem oxigênio, promovendo o amaciamento e a retenção de umidade." },
+        { pergunta: "Qual tipo de maturação resulta em sabores mais complexos e concentrados, com notas que podem lembrar nozes ou queijo?", alternativas: ["Maturação Úmida", "Congelamento", "Dry-Aged", "Curetage"], respostaCorreta: "Dry-Aged", explicacao: "A maturação a seco (Dry-Aged), ao expor a carne ao ar em condições controladas, permite a desidratação e o desenvolvimento de sabores únicos e complexos, além de uma maciez excepcional." },
+        { pergunta: "Qual órgão brasileiro é responsável pela inspeção sanitária da carne nos frigoríficos?", alternativas: ["ANVISA", "IBAMA", "MAPA", "SIF"], respostaCorreta: "SIF", explicacao: "O Serviço de Inspeção Federal (SIF) é o órgão do Ministério da Agricultura, Pecuária e Abastecimento (MAPA) responsável por fiscalizar a qualidade e segurança dos produtos de origem animal." },
+        { pergunta: "Qual é a temperatura ideal de refrigeração para a carne fresca para inibir o crescimento bacteriano?", alternativas: ["5°C a 10°C", "0°C a 4°C", "-5°C a 0°C", "10°C a 15°C"], respostaCorreta: "0°C a 4°C", explicacao: "Manter a carne nesta faixa de temperatura é crucial para retardar a proliferação da maioria das bactérias e manter a carne segura." },
+        { pergunta: "Por que não é recomendado descongelar carne bovina em temperatura ambiente?", alternativas: ["A carne perde o sabor.", "O crescimento bacteriano acelera na superfície.", "A carne fica muito seca.", "A carne fica dura."], respostaCorreta: "O crescimento bacteriano acelera na superfície.", explicacao: "A temperatura ambiente permite que a superfície da carne entre rapidamente na \"zona de perigo\" de temperatura, onde as bactérias se multiplicam rapidamente, aumentando o risco de doenças." },
+        { pergunta: "Qual corte bovino é um clássico para \"carne louca\" e rosbife, conhecido por seu formato cilíndrico e por ser magro?", alternativas: ["Maminha", "Fraldinha", "Lagarto", "Coxão Mole"], respostaCorreta: "Lagarto", explicacao: "O Lagarto é um corte magro e cilíndrico que se presta muito bem a assados inteiros como rosbife e também pode ser desfiado para \"carne louca\"." },
+        { pergunta: "O que é o \"nervo\" na carne, no contexto culinário?", alternativas: ["Uma fibra muscular muito longa.", "Tendões ou membranas de tecido conjuntivo denso que não amolecem com o calor.", "Um tipo de gordura intermuscular.", "Uma veia ou artéria do animal."], respostaCorreta: "Tendões ou membranas de tecido conjuntivo denso que não amolecem com o calor.", explicacao: "Diferente do colágeno, o que popularmente se chama de \"nervo\" são tendões ou membranas de elastina, que permanecem rígidas e podem prejudicar a textura se não forem removidas." },
+        { pergunta: "Qual é a principal característica da carne de \"Novilho Precoce\"?", alternativas: ["É sempre de raça Nelore.", "É de animais mais velhos e robustos.", "É de animais jovens com carne mais macia e fibras finas.", "É uma carne exclusiva para exportação."], respostaCorreta: "É de animais jovens com carne mais macia e fibras finas.", explicacao: "Novilho Precoce refere-se a animais jovens que atingem o peso de abate mais cedo devido ao manejo aprimorado, resultando em uma carne naturalmente mais macia e de melhor qualidade." },
+        { pergunta: "Para um rosbife, qual a temperatura interna ideal para um ponto malpassado (rare), ao retirar do forno?", alternativas: ["65°C a 70°C", "52°C a 55°C", "70°C a 75°C", "45°C a 50°C"], respostaCorreta: "52°C a 55°C", explicacao: "Para um rosbife malpassado, a carne deve ser retirada do forno quando o termômetro atingir esta faixa, permitindo o cozimento residual e um centro rosado e suculento." },
+        { pergunta: "Qual é o benefício de deixar o rosbife descansar por alguns minutos após sair do forno?", alternativas: ["Para a carne esfriar mais rápido.", "Para as fibras se contraírem e a carne ficar mais firme.", "Para os sucos se redistribuírem pelas fibras, garantindo mais suculência.", "Para a crosta ficar mais crocante."], respostaCorreta: "Para os sucos se redistribuírem pelas fibras, garantindo mais suculência.", explicacao: "O descanso permite que os sucos, que se concentraram no centro da peça durante o cozimento, se espalhem novamente por toda a carne, resultando em um rosbife mais suculento ao ser fatiado." },
+        { pergunta: "Qual corte bovino é um dos campeões de versatilidade e custo-benefício para o dia a dia, bom para carne moída e ensopados?", alternativas: ["Filé Mignon", "Picanha", "Acém", "Ancho"], respostaCorreta: "Acém", explicacao: "O Acém é um corte do dianteiro, muito versátil e econômico, ideal para uma variedade de pratos cotidianos devido à sua boa textura e sabor." },
+        { pergunta: "Qual é a principal característica da carne Wagyu que a torna tão valorizada?", alternativas: ["Sua resistência a doenças.", "Seu alto teor de colágeno.", "Seu excepcional marmoreio.", "Seu baixo custo de produção."], respostaCorreta: "Seu excepcional marmoreio.", explicacao: "A carne Wagyu é famosa mundialmente pelo seu intenso marmoreio, que confere uma maciez, suculência e sabor únicos." },
+        { pergunta: "Qual processo de beneficiamento da carne bovina envolve a remoção da pele do animal?", alternativas: ["Evisceração", "Sangria", "Esfolamento", "Desossa"], respostaCorreta: "Esfolamento", explicacao: "O esfolamento é a etapa onde a pele do animal é removida, preparando a carcaça para as próximas fases de processamento." },
+        { pergunta: "A carne \"fibrosa\" se beneficia mais de qual tipo de cozimento para amaciar?", alternativas: ["Grelhado rápido", "Fritura por imersão", "Cozimento lento e úmido", "Assado em alta temperatura"], respostaCorreta: "Cozimento lento e úmido", explicacao: "Cortes fibrosos, ricos em colágeno, exigem cozimento lento e úmido para que o colágeno se transforme em gelatina, amaciando a carne e liberando sabor." },
+        { pergunta: "Qual corte bovino é ideal para a tradicional \"rabada\"?", alternativas: ["Lagarto", "Coxão Mole", "Rabo", "Maminha"], respostaCorreta: "Rabo", explicacao: "O Rabo bovino é o ingrediente clássico da rabada, um prato que se beneficia do longo cozimento para amaciar o colágeno e liberar o sabor característico." },
+        { pergunta: "Qual a principal diferença entre maturação úmida e maturação a seco, em termos de sabor?", alternativas: ["Sabor idêntico, apenas a técnica muda.", "Maturação úmida tem sabor mais complexo; a seco é mais simples.", "Maturação a seco desenvolve sabores mais complexos e intensos.", "Maturação úmida é mais doce; a seco é mais salgada."], respostaCorreta: "Maturação a seco desenvolve sabores mais complexos e intensos.", explicacao: "A maturação a seco, devido à desidratação controlada e processos de oxidação, concentra e complexifica os sabores da carne de forma mais pronunciada do que a maturação úmida." },
+        { pergunta: "Qual o objetivo da \"sangria\" no processo de abate?", alternativas: ["Remover a pele do animal.", "Drenar completamente o sangue da carcaça para qualidade e conservação.", "Inspecionar a saúde do animal.", "Resfriar a carcaça rapidamente."], respostaCorreta: "Drenar completamente o sangue da carcaça para qualidade e conservação.", explicacao: "A sangria completa é vital para a higiene e a durabilidade da carne, pois a presença de sangue nos tecidos pode acelerar a deterioração." },
+        { pergunta: "O que significa o termo \"carne todo dia\"?", alternativas: ["Cortes nobres para ocasiões especiais.", "Cortes comuns, versáteis e geralmente mais acessíveis para o consumo diário.", "Carne que deve ser consumida imediatamente após a compra.", "Carne congelada para uso frequente."], respostaCorreta: "Cortes comuns, versáteis e geralmente mais acessíveis para o consumo diário.", explicacao: "\"Carne todo dia\" é uma expressão popular para cortes como acém, patinho e coxão mole, que são econômicos e adaptáveis a diversas receitas cotidianas." },
+        { pergunta: "Qual corte bovino é ideal para o \"bife à milanesa\" e \"bife à parmegiana\"?", alternativas: ["Costela", "Lagarto", "Patinho", "Cupim"], respostaCorreta: "Patinho", explicacao: "O Patinho é um corte magro e macio que pode ser facilmente afinado para ser empanado e frito, resultando em bifes milanesa ou parmegiana de ótima qualidade." },
+        { pergunta: "Qual a temperatura ideal para o congelamento profundo da carne bovina?", alternativas: ["0°C", "-5°C", "-18°C ou abaixo", "-10°C"], respostaCorreta: "-18°C ou abaixo", explicacao: "Esta temperatura é o padrão para congelamento eficiente, minimizando a formação de grandes cristais de gelo e preservando a qualidade da carne por mais tempo." },
+        { pergunta: "Por que é importante embalar a carne a vácuo ao congelar em casa?", alternativas: ["Para a carne cozinhar mais rápido.", "Para adicionar sabor à carne.", "Para evitar a \"queimadura por congelamento\" (desidratação).", "Para deixar a carne mais fibrosa."], respostaCorreta: "Para evitar a \"queimadura por congelamento\" (desidratação).", explicacao: "A embalagem a vácuo elimina o ar e previne a desidratação da superfície da carne, que causa as manchas secas e descoloridas da queimadura por congelamento." },
+        { pergunta: "Qual é o processo em que enzimas naturais da carne atuam, quebrando fibras musculares e o colágeno, resultando em maior maciez e sabor?", alternativas: ["Cozimento", "Marinada", "Maturação", "Selagem"], respostaCorreta: "Maturação", explicacao: "A maturação é o processo bioquímico pós-abate onde as enzimas da própria carne degradam as proteínas e o colágeno, amaciando-a e desenvolvendo seu sabor." },
+        { pergunta: "Qual corte bovino é rico em colágeno e é a base para caldos e sopas, além de ser o \"Ossobuco\" quando cortado com o osso?", alternativas: ["Contrafilé", "Músculo", "Picanha", "Fraldinha"], respostaCorreta: "Músculo", explicacao: "O Músculo, tanto dianteiro quanto traseiro, é um corte com alto teor de colágeno, que se dissolve em gelatina com cozimento longo, enriquecendo caldos e ensopados e tornando a carne muito macia." },
+        { pergunta: "Qual método de descongelamento é considerado o mais seguro para a carne bovina?", alternativas: ["Em temperatura ambiente.", "Em água quente.", "Na geladeira.", "No micro-ondas e deixar no balcão."], respostaCorreta: "Na geladeira.", explicacao: "Descongelar na geladeira mantém a carne em uma temperatura segura (abaixo de 5°C) durante todo o processo, inibindo o crescimento bacteriano." },
+        { pergunta: "O que são as calpaínas no contexto da maturação da carne?", alternativas: ["Um tipo de bactéria prejudicial.", "Enzimas que endurecem a carne.", "Enzimas proteases que degradam as fibras musculares e amaciam a carne.", "Um tipo de gordura da carne."], respostaCorreta: "Enzimas proteases que degradam as fibras musculares e amaciam a carne.", explicacao: "As calpaínas são enzimas endógenas cruciais no processo de maturação, responsáveis por quebrar as proteínas miofibrilares, o que aumenta a maciez da carne." },
+        { pergunta: "Qual é o principal problema ao recongelar carne que já foi descongelada em temperatura ambiente?", alternativas: ["A carne não mudará de cor.", "O sabor da carne será aprimorado.", "Aumenta o risco de proliferação bacteriana e compromete a qualidade.", "A carne ficará mais macia."], respostaCorreta: "Aumenta o risco de proliferação bacteriana e compromete a qualidade.", explicacao: "O descongelamento em temperatura ambiente permite o crescimento de bactérias. Recongelar não mata essas bactérias e, ao descongelar novamente, elas podem atingir níveis perigosos." },
+        { pergunta: "Qual é o corte bovino que possui uma protuberância na parte superior do pescoço, rica em gordura e colágeno, muito apreciada em churrascos de longo cozimento?", alternativas: ["Pescoço", "Cupim", "Acém", "Ponta de Peito"], respostaCorreta: "Cupim", explicacao: "O Cupim é um corte característico de raças zebuínas, como o Nelore, e é conhecido por sua riqueza em gordura e colágeno que se torna incrivelmente macia após cozimento lento." },
+        { pergunta: "O que indica o termo \"Carne Grill\" em relação a um corte bovino?", alternativas: ["Que a carne deve ser cozida lentamente na panela.", "Que é um corte ideal para preparo rápido na grelha ou chapa.", "Que a carne é exclusivamente para assados de forno.", "Que a carne precisa ser moída antes do preparo."], respostaCorreta: "Que é um corte ideal para preparo rápido na grelha ou chapa.", explicacao: "\"Carne Grill\" refere-se a cortes que são naturalmente macios e se prestam bem a cozimentos rápidos em alta temperatura, como o churrasco, para desenvolver uma crosta e manter a suculência." },
+        { pergunta: "Qual dos seguintes métodos de preparo é mais adequado para cortes mais fibrosos, como o Músculo e o Pescoço?", alternativas: ["Grelhar rapidamente", "Fritar por imersão", "Cozimento lento e úmido (ensopados, panela de pressão)", "Assar em alta temperatura por pouco tempo"], respostaCorreta: "Cozimento lento e úmido (ensopados, panela de pressão)", explicacao: "Cortes fibrosos contêm muito colágeno, que só amolece e se transforma em gelatina com calor úmido e prolongado, tornando a carne tenra." },
+        { pergunta: "Qual o objetivo da \"contaminação cruzada\"?", alternativas: ["Transferir sabores entre alimentos.", "Prevenir a transferência de bactérias de alimentos crus para outros.", "Transferir bactérias de alimentos crus para outros alimentos.", "Aumentar a vida útil dos alimentos."], respostaCorreta: "Transferir bactérias de alimentos crus para outros alimentos.", explicacao: "A contaminação cruzada é a transferência indesejada de microrganismos de um alimento (geralmente cru) para outro (especialmente pronto para consumo), através de superfícies ou utensílios. A prevenção é o objetivo, não a contaminação em si." },
+        { pergunta: "Qual corte bovino é um clássico para assados lentos de panela e ensopados, conhecido por suas fibras longas, mas que fica macio após cozimento prolongado?", alternativas: ["Filé Mignon", "Lagarto", "Fraldinha", "Costela"], respostaCorreta: "Costela", explicacao: "A Costela, com suas fibras longas e bastante gordura e colágeno, é ideal para cozimentos lentos (no forno, panela de pressão ou churrasco demorado), que a tornam incrivelmente macia e saborosa." },
+        { pergunta: "O que é a \"Bananinha\" no contexto dos cortes bovinos?", alternativas: ["Uma parte da alcatra.", "Um corte entre os ossos da costela, ótimo para churrasco.", "Um corte do dianteiro para carne moída.", "Uma peça de carne moída com formato específico."], respostaCorreta: "Um corte entre os ossos da costela, ótimo para churrasco.", explicacao: "A Bananinha é um corte pequeno e saboroso, retirado do espaço entre as costelas, que se presta muito bem ao churrasco devido à sua gordura e cozimento rápido." },
+        { pergunta: "Qual o benefício do uso da embalagem a vácuo para a carne?", alternativas: ["Aumentar a proliferação de bactérias.", "Alterar a cor da carne para mais escura.", "Prolongar a vida útil e permitir a maturação úmida.", "Adicionar sabor artificial à carne."], respostaCorreta: "Prolongar a vida útil e permitir a maturação úmida.", explicacao: "A embalagem a vácuo remove o oxigênio, inibindo o crescimento de bactérias aeróbicas e criando um ambiente ideal para as enzimas agirem no processo de maturação úmida, além de aumentar a durabilidade." },
+        { pergunta: "O que acontece com a carne \"fibrosa\" quando cozida lentamente em calor úmido?", alternativas: ["Ela se torna mais rígida e seca.", "Ela se dissolve e se transforma em gelatina, tornando-a macia.", "Ela perde todo o seu sabor.", "Ela fica com sabor amargo."], respostaCorreta: "Ela se dissolve e se transforma em gelatina, tornando-a macia.", explicacao: "O calor úmido prolongado atua sobre o colágeno das fibras, transformando-o em gelatina, o que amacia a carne fibrosa." },
+        { pergunta: "Qual a principal característica da carne de \"Novilho Precoce\" em termos de qualidade?", alternativas: ["É sempre de raças zebuínas.", "Apresenta maior teor de gordura externa.", "É mais macia e tem fibras mais finas devido ao abate precoce.", "Não pode ser maturada."], respostaCorreta: "É mais macia e tem fibras mais finas devido ao abate precoce.", explicacao: "A carne de novilho precoce vem de animais jovens que atingiram rapidamente o peso ideal, resultando em uma carne naturalmente mais tenra e de qualidade superior." },
+        { pergunta: "O que as \"calpaínas\" fazem na carne durante o processo de maturação?", alternativas: ["Causam a oxidação da gordura.", "Degradação das proteínas das fibras musculares, amaciando a carne.", "Ativam o rigor mortis.", "Adicionam sabor salgado à carne."], respostaCorreta: "Degradação das proteínas das fibras musculares, amaciando a carne.", explicacao: "As calpaínas são as principais enzimas proteases endógenas que atuam no amaciamento da carne, quebrando as proteínas das fibras musculares pós-abate." },
+        { pergunta: "Qual o objetivo do \"aparo\" (trimming) dos cortes de carne no frigorífico?", alternativas: ["Adicionar peso à carne.", "Padronizar o produto, removendo excesso de gordura e nervos.", "Deixar a carne mais fibrosa.", "Acelerar o processo de congelamento."], respostaCorreta: "Padronizar o produto, removendo excesso de gordura e nervos.", explicacao: "O aparo visa limpar o corte, retirando partes indesejáveis para melhorar a apresentação, o rendimento e a experiência de consumo." },
+        { pergunta: "Qual corte é ideal para rosbife devido ao seu formato cilíndrico e característica magra, permitindo fatias uniformes?", alternativas: ["Coxão Mole", "Lagarto", "Maminha", "Ponta de Peito"], respostaCorreta: "Lagarto", explicacao: "O Lagarto tem um formato cilíndrico e é magro, o que o torna perfeito para ser assado inteiro como rosbife e fatiado em rodelas uniformes." },
+        { pergunta: "O que é o rigor mortis no contexto da carne?", alternativas: ["O processo de embalagem a vácuo.", "O enrijecimento dos músculos do animal após o abate.", "A maturação a seco.", "A transformação do colágeno em gelatina."], respostaCorreta: "O enrijecimento dos músculos do animal após o abate.", explicacao: "O rigor mortis é o endurecimento natural dos músculos que ocorre após o abate, antes que as enzimas comecem a amaciar a carne na maturação." },
+        { pergunta: "Qual a principal característica da carne Nelore que a diferencia de raças como Angus e Wagyu em termos de marmoreio natural?", alternativas: ["Possui marmoreio muito superior.", "Não possui marmoreio.", "Possui naturalmente menos gordura entremeada.", "É a única raça que pode ser maturada."], respostaCorreta: "Possui naturalmente menos gordura entremeada.", explicacao: "A carne Nelore, por ser de uma raça zebuína, naturalmente tem menos gordura intramuscular (marmoreio) do que raças taurinas como Angus e Wagyu, embora a qualidade venha melhorando com o manejo." },
+        { pergunta: "Qual a importância de deixar a carne descansar após assar ou grelhar?", alternativas: ["Para a carne esfriar mais rápido.", "Para as fibras se contraírem e a carne ficar mais firme.", "Para os sucos se redistribuírem, garantindo mais suculência ao fatiar.", "Para a crosta ficar mais crocante."], respostaCorreta: "Para os sucos se redistribuírem, garantindo mais suculência ao fatiar.", explicacao: "O descanso permite que os sucos, que se concentram no centro da carne durante o cozimento, se redistribuam por toda a peça, resultando em uma carne mais suculenta quando cortada." },
+        { pergunta: "Qual é um dos principais benefícios da maturação a seco em termos de sabor?", alternativas: ["Sabor mais suave e delicado.", "Sabores concentrados e complexos, com notas de nozes/queijo.", "Sabor salgado intenso.", "Sabor neutro para absorver temperos."], respostaCorreta: "Sabores concentrados e complexos, com notas de nozes/queijo.", explicacao: "A desidratação e a ação enzimática prolongada na maturação a seco resultam em um desenvolvimento de sabor muito mais intenso e com notas aromáticas complexas." },
+        { pergunta: "Qual técnica de preparo envolve fatias finas de carne recheadas e enroladas, cozidas lentamente em um molho?", alternativas: ["Bife à Milanesa", "Bife à Parmegiana", "Bife à Rolê", "Bife a Cavalo"], respostaCorreta: "Bife à Rolê", explicacao: "O bife à rolê é caracterizado pelo enrolamento da carne com um recheio, sendo depois cozido lentamente em molho para amaciar." },
+        { pergunta: "O que é a \"Aranha da Alcatra\"?", alternativas: ["Um corte grande e fibroso da alcatra.", "Uma pequena e macia peça da alcatra, ótima para bifes.", "Um tipo de gordura externa da alcatra.", "Um nervo que precisa ser removido da alcatra."], respostaCorreta: "Uma pequena e macia peça da alcatra, ótima para bifes.", explicacao: "A Aranha da Alcatra é uma pequena peça de carne, conhecida por sua surpreendente maciez e suculência, ideal para ser preparada como um bife rápido." },
+        { pergunta: "Qual o principal objetivo do resfriamento rápido (pré-resfriamento) da carcaça no frigorífico?", alternativas: ["Melhorar a cor da carne.", "Acelerar o processo de maturação.", "Inibir o crescimento bacteriano e permitir o rigor mortis.", "Reduzir o peso da carcaça para venda."], respostaCorreta: "Inibir o crescimento bacteriano e permitir o rigor mortis.", explicacao: "O resfriamento rápido é vital para a segurança alimentar, controlando a proliferação de microrganismos e permitindo que o processo de rigor mortis ocorra de forma adequada." },
+        { pergunta: "Qual corte bovino é um dos mais versáteis para fazer bifes, ensopados, strogonoff e carne moída, sendo macio e com pouca gordura?", alternativas: ["Coxão Duro", "Costela", "Coxão Mole", "Pescoço"], respostaCorreta: "Coxão Mole", explicacao: "O Coxão Mole é um corte do traseiro, de boa maciez e baixo teor de gordura, o que o torna extremamente versátil para uma variedade de preparos cotidianos." }
+    ];
+    // >>> FIM DAS NOVAS CONSTANTES E VARIÁVEIS PARA O TESTE DO ARTIGO <<<
 
     function playSound(soundName) {
         if (sounds[soundName]) {
@@ -954,9 +1263,8 @@
         const canAddProducts = isAdmin || isCooperator;
         const isLoggedIn = !!currentUser;
 
-        // Controla visibilidade dos itens de Login/Registro vs Perfil/Logout
         if (loginRegisterSidebarItem) loginRegisterSidebarItem.style.display = isLoggedIn ? 'none' : 'block';
-        if (loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = isLoggedIn ? 'none' : 'block'; // Corrected this line
+        if (loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = isLoggedIn ? 'none' : 'block';
 
         if (userProfileMenuItem) userProfileMenuItem.style.display = isLoggedIn ? 'block' : 'none';
         if (logoutSection) logoutSection.style.display = isLoggedIn ? 'block' : 'none';
@@ -986,13 +1294,22 @@
         }
     }
 
-
     function showSection(sectionId) {
-        mainContent.classList.remove('show-terminal', 'show-game', 'show-initial', 'show-add-product', 'show-comments', 'show-profile', 'show-admin-products');
+        mainContent.classList.remove('show-terminal', 'show-game', 'show-initial', 'show-add-product', 'show-comments', 'show-profile', 'show-admin-products', 'show-artigo-carne');
         document.querySelectorAll('.back-to-home-button').forEach(btn => btn.style.display = 'none');
 
         clearInterval(timerInterval); clearInterval(tickSoundInterval);
         timeLeft = TIME_PER_QUESTION; if (progressBar) progressBar.style.width = '100%';
+
+        if (mainContent.classList.contains('show-artigo-carne') && sectionId !== 'artigoCarneBovinaSection') {
+            if(artigoGameElements) artigoGameElements.style.display = 'none';
+            if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+            if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'block'; // Reset visual
+            currentArtigoQuestionIndex = 0;
+            artigoScore = 0;
+            artigoQuestionsAnswered = 0;
+        }
+
 
         if (sectionId === 'mainTerminalSection') {
             mainContent.classList.add('show-terminal');
@@ -1103,6 +1420,22 @@
             mainContent.classList.add('show-admin-products');
             populateAdminProductLists();
             if(backToHomeAdminProductsButton) backToHomeAdminProductsButton.style.display = 'block';
+        } else if (sectionId === 'artigoCarneBovinaSection') { // NOVA SEÇÃO
+            mainContent.classList.add('show-artigo-carne');
+            if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'block';
+            if(artigoGameElements) artigoGameElements.style.display = 'none';
+            if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+            if(backToHomeArtigoCarneButton) backToHomeArtigoCarneButton.style.display = 'block';
+            // Resetar estado do quiz do artigo ao entrar na seção, caso não tenha sido feito ao sair de outra.
+            currentArtigoQuestionIndex = 0;
+            artigoScore = 0;
+            artigoQuestionsAnswered = 0;
+            if(artigoFeedbackElement) artigoFeedbackElement.innerHTML = '';
+            if(artigoScoreDisplayElement) artigoScoreDisplayElement.textContent = '';
+            if(artigoNextQuestionButton) artigoNextQuestionButton.style.display = 'none';
+            if(artigoEndTestButton) artigoEndTestButton.style.display = 'block';
+            if(artigoEndTestButton) artigoEndTestButton.textContent = "Finalizar Teste";
+
         } else if (sectionId === 'initialScreen') {
             mainContent.classList.add('show-initial');
             if(welcomeMessage) welcomeMessage.classList.add('show');
@@ -1115,24 +1448,23 @@
     }
 
     function showAuthModal(reasonMessage = '', generalPrompt = 'Faça login ou crie uma conta para prosseguir:') {
-        if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!'; // Título padrão
-        if (reasonMessage && authPrompt) { // Permite sobrescrever o prompt se reasonMessage for fornecida
+        if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
+        if (reasonMessage && authPrompt) {
             authPrompt.textContent = reasonMessage;
-        } else if(authPrompt) { // Senão, usa o prompt geral ou o default do HTML
+        } else if(authPrompt) {
             authPrompt.textContent = generalPrompt;
         }
         if(authError) authError.textContent = '';
         if(authModalOverlay) authModalOverlay.classList.add('show');
 
-        // Resetar para o estado padrão de "Entrar" / "Criar Conta"
         if(authSubmit) authSubmit.textContent = 'Entrar';
         if(registerButton) registerButton.textContent = 'Criar Conta';
 
         if(usernameInputDOM) {
-          usernameInputDOM.value = ''; // Limpa o campo de usuário
+          usernameInputDOM.value = '';
           usernameInputDOM.focus();
         }
-        if(passwordInput) passwordInput.value = ''; // Limpa o campo de senha
+        if(passwordInput) passwordInput.value = '';
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -1187,11 +1519,10 @@
              if(loginRegisterInitialScreen) loginRegisterInitialScreen.style.display = 'none';
 
 
-        } else { // Usuário deslogado
+        } else {
             currentUser = null;
             isCurrentUserAdmin = false;
             currentUserRole = 'user';
-            // ALTERAÇÃO DA MENSAGEM DE INÍCIO
             if(welcomeMessage) {
               welcomeMessage.innerHTML = "Boas-vindas ao ButcherCode! <br>Sua central de códigos de açougue. Explore, jogue e aprenda!";
             }
@@ -1215,7 +1546,7 @@
                 showSection('commentsSection');
             }
         }
-        updateUserAccessUI(); // Atualiza a UI com base no estado de login/papel
+        updateUserAccessUI();
     });
 
     if (closeAuthModalButton) {
@@ -1237,7 +1568,7 @@
             const passwordVal = passwordInput.value.trim();
             if(authError) authError.textContent = '';
 
-            if (authSubmit.textContent === 'Voltar para Login') { // Se está no modo "Criar Conta" e clica para voltar
+            if (authSubmit.textContent === 'Voltar para Login') {
                 if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
                 if(authPrompt) authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
                 authSubmit.textContent = 'Entrar';
@@ -1246,7 +1577,6 @@
                 return;
             }
 
-            // Se o texto é "Entrar", tenta fazer login
             if (!usernameVal || !passwordVal) {
                 if(authError) authError.textContent = 'Por favor, insira nome de usuário e senha.';
                 return;
@@ -1271,7 +1601,6 @@
                     return;
                 }
                 await signInWithEmailAndPassword(auth, fakeEmail, passwordVal);
-                // onAuthStateChanged cuidará de fechar o modal e atualizar a UI
             } catch (error) {
                 console.error("Erro ao fazer login:", error);
                 let errorMessage = "Erro no login.";
@@ -1293,13 +1622,13 @@
             const passwordVal = passwordInput.value.trim();
             if(authError) authError.textContent = '';
 
-            if (registerButton.textContent === 'Criar Conta') { // Se está no modo "Login" e clica para criar conta
+            if (registerButton.textContent === 'Criar Conta') {
                 if(authModalTitle) authModalTitle.textContent = 'Criar Nova Conta';
                 if(authPrompt) authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
                 if(authSubmit) authSubmit.textContent = 'Voltar para Login';
                 registerButton.textContent = 'Registrar';
                 if(usernameInputDOM) usernameInputDOM.focus();
-            } else { // Se o texto é "Registrar", tenta registrar
+            } else {
                 if (!usernameVal) {
                     if(authError) authError.textContent = 'Por favor, insira um nome de usuário.';
                     return;
@@ -1329,7 +1658,6 @@
                         isAdmin: false,
                         role: 'user'
                     });
-                    // onAuthStateChanged cuidará de fechar o modal e atualizar a UI
                 } catch (error) {
                     console.error("Erro ao registrar:", error);
                     let errorMessage = "Erro no registro.";
@@ -1346,7 +1674,6 @@
         });
     }
 
-    // Event Listeners para os novos links de login/registro rápido
     if (loginRegisterSidebarButton) {
         loginRegisterSidebarButton.addEventListener('click', () => {
             showAuthModal('Faça login ou crie uma conta para continuar.');
@@ -1362,7 +1689,6 @@
         loginInitialLink.addEventListener('click', (e) => {
             e.preventDefault();
             showAuthModal('Bem-vindo de volta! Faça seu login ou crie uma conta.');
-            // Força o modal para o estado de login (textos)
             if(authModalTitle) authModalTitle.textContent = 'Bem-vindo, Mestre Açougueiro!';
             if(authPrompt) authPrompt.textContent = 'Faça login ou crie uma conta para prosseguir:';
             if(authSubmit) authSubmit.textContent = 'Entrar';
@@ -1377,7 +1703,6 @@
         registerInitialLink.addEventListener('click', (e) => {
             e.preventDefault();
             showAuthModal('Novo por aqui? Crie sua conta ou faça login se já tiver uma.');
-            // Força o modal para o estado de registro (textos), simulando o clique no botão "Criar Conta"
             if(authModalTitle) authModalTitle.textContent = 'Criar Nova Conta';
             if(authPrompt) authPrompt.textContent = 'Preencha seus dados para criar sua conta:';
             if(authSubmit) authSubmit.textContent = 'Voltar para Login';
@@ -1503,7 +1828,6 @@
                         suinos: {"11549":"Bisteca Suína","18159":"Pé Suíno"},
                         meta: { version: 0, last_updated: new Date().toISOString() }
                     };
-                    // await saveProductData(); // Comentado para evitar loop se save falhar e load for chamado no catch de save
                 } else {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -1514,12 +1838,10 @@
                 } else {
                     console.warn("Dados do Pantry em formato inesperado. Usando dados padrão.");
                     productData = { bovinos: {}, suinos: {}, meta: { version: 0, last_updated: new Date().toISOString() } };
-                    // await saveProductData(); // Comentado
                 }
             }
         } catch (error) {
             console.error("Erro ao carregar dados do Pantry:", error);
-            // Usar dados de fallback se o Pantry falhar completamente
              productData = {
                 "meta": { "version": 1, "last_updated": new Date().toISOString() },
                 "bovinos": { "14601": "Acém", "14625": "Alcatra com Maminha", "1762": "Bisteca com osso", "14694": "Colchão Duro", "26390": "Colchão Mole", "25812": "Contra Filé", "14793": "Coração da Alcatra", "4282": "Fígado", "14762": "Lagarto", "14809": "Miolo da Paleta", "14618": "Músculo do Dianteiro", "14816": "Paleta", "14823": "Patinho", "00260": "Picanha em Pedaços", "05418": "Picanha Grill", "16094": "Picanha Maturada", "07160": "Picanha Todo Dia", "06019": "Picanha Tradicional" },
@@ -1847,19 +2169,18 @@
                 const strongElement = document.createElement('strong');
                 const commenterNameText = comment.username || 'Anônimo';
 
-                // ALTERAÇÃO: Aplicar estilo com base em comment.authorRole
                 if (comment.authorRole === 'admin') {
                     const adminSpan = document.createElement('span');
-                    adminSpan.classList.add('admin-username'); // Classe CSS existente para admin
+                    adminSpan.classList.add('admin-username');
                     adminSpan.textContent = commenterNameText;
                     strongElement.appendChild(adminSpan);
                 } else if (comment.authorRole === 'cooperator') {
                     const cooperatorSpan = document.createElement('span');
-                    cooperatorSpan.classList.add('cooperator-username'); // Nova classe CSS para cooperador
+                    cooperatorSpan.classList.add('cooperator-username');
                     cooperatorSpan.textContent = commenterNameText;
                     strongElement.appendChild(cooperatorSpan);
                 } else {
-                    strongElement.textContent = commenterNameText; // Usuário comum ou authorRole ausente
+                    strongElement.textContent = commenterNameText;
                 }
                 strongElement.appendChild(document.createTextNode(': '));
 
@@ -1922,8 +2243,6 @@
               const userDocSnap = await getDoc(userDocRef);
               const userData = userDocSnap.exists() ? userDocSnap.data() : null;
               const username = userData && userData.username ? userData.username : (currentUser.email ? currentUser.email.split('@')[0] : 'Anônimo');
-
-              // ALTERAÇÃO: Adicionar a role atual do usuário ao comentário
               const userRoleForComment = currentUserRole;
 
               await addDoc(collection(db, 'comments'), {
@@ -1931,8 +2250,8 @@
                   username: username,
                   comment: commentText,
                   timestamp: serverTimestamp(),
-                  isAuthorAdmin: userData && userData.role === 'admin', // Mantido para compatibilidade se necessário
-                  authorRole: userRoleForComment // NOVO CAMPO
+                  isAuthorAdmin: userData && userData.role === 'admin',
+                  authorRole: userRoleForComment
               });
               commentsFeedback.textContent = 'Comentário enviado com sucesso!'; commentsFeedback.style.color = 'var(--cor-sucesso)';
               commentInput.value = ''; loadComments();
@@ -2046,7 +2365,6 @@
         }
     }
 
-
     if(butcherCodeTitle) butcherCodeTitle.addEventListener('click', () => showSection('initialScreen'));
     if(accessTerminalButton) accessTerminalButton.addEventListener('click', () => showSection('mainTerminalSection'));
     if(playGameCodeButton) playGameCodeButton.addEventListener('click', () => showSection('gameCodeSection'));
@@ -2083,6 +2401,12 @@
             if (e.target.id === 'backToHomeAddProduct' || mainContent.classList.contains('show-add-product')) {
                  resetAddProductForm();
             }
+            // Adicionado para resetar o teste do artigo se estiver voltando dele para o início
+            if (e.target.id === 'backToHomeArtigoCarne' || mainContent.classList.contains('show-artigo-carne')) {
+                if(artigoGameElements) artigoGameElements.style.display = 'none';
+                if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+                if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'block'; // Reset visual
+            }
             showSection('initialScreen');
         });
     });
@@ -2100,15 +2424,13 @@
     });
     if(sidebarTitles) {
       sidebarTitles.forEach(title => {
-        // Não adicionar listener de clique para o novo item de login/registro aqui,
-        // pois ele tem um comportamento diferente (não usa data-target/data-type da mesma forma)
-        // e já terá seu próprio listener (loginRegisterSidebarButton).
         if (title.id === 'loginRegisterSidebarButton') return;
 
         title.addEventListener('click', () => {
           const targetId = title.dataset.target;
           const contentType = title.dataset.type;
           const targetElement = document.getElementById(targetId);
+
           if (contentType === 'accordion' && targetElement) {
               if (activeAccordionItem && activeAccordionItem !== targetElement) {
                   activeAccordionItem.classList.remove('open');
@@ -2122,6 +2444,14 @@
               if (mainContent.classList.contains('show-add-product') && targetId !== 'addProductSection') {
                   resetAddProductForm();
               }
+              if (mainContent.classList.contains('show-artigo-carne') && targetId !== 'artigoCarneBovinaSection') {
+                  if(artigoGameElements) artigoGameElements.style.display = 'none';
+                  if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+                  if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'block';
+                  currentArtigoQuestionIndex = 0;
+                  artigoScore = 0;
+                  artigoQuestionsAnswered = 0;
+              }
               showSection(targetId);
               document.querySelectorAll('#sidebar .subfolder').forEach(folder => {
                   folder.classList.remove('open'); if(folder.previousElementSibling) folder.previousElementSibling.classList.remove('open');
@@ -2132,7 +2462,7 @@
       });
     }
 
-    // --- Game Logic ---
+    // --- Game Logic (GameCode) ---
     function generateQuestions() {
         const allProductsList = [];
         if (productData.bovinos) Object.entries(productData.bovinos).forEach(([code, name]) => allProductsList.push([code, name]));
@@ -2278,12 +2608,148 @@
     if(restartGameButton) restartGameButton.addEventListener('click', startGame);
     if(endGameButton) endGameButton.addEventListener('click', () => endGame(true));
 
-    if(backToHomeAdminProductsButton) backToHomeAdminProductsButton.addEventListener('click', () => showSection('initialScreen'));
+    // >>> INÍCIO DAS FUNÇÕES PARA O TESTE DO ARTIGO (REVISADO E SIMPLIFICADO) <<<
 
+    function startArtigoTest() {
+        currentArtigoQuestionIndex = 0;
+        artigoScore = 0;
+        artigoQuestionsAnswered = 0;
+        perguntasArtigoCarneBovina = [...dadosPerguntasArtigo];
+        shuffleArray(perguntasArtigoCarneBovina);
+
+        if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'none';
+        if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+        if(artigoGameElements) artigoGameElements.style.display = 'block';
+        if(artigoEndTestButton) artigoEndTestButton.style.display = 'block';
+        if(artigoEndTestButton) artigoEndTestButton.textContent = "Finalizar Teste";
+
+        displayArtigoQuestion();
+    }
+
+    function displayArtigoQuestion() {
+        if (currentArtigoQuestionIndex < perguntasArtigoCarneBovina.length) {
+            const currentQuestion = perguntasArtigoCarneBovina[currentArtigoQuestionIndex];
+            if(artigoQuestionElement) artigoQuestionElement.textContent = currentQuestion.pergunta;
+            if(artigoQuestionCounterElement) artigoQuestionCounterElement.textContent = `Pergunta ${currentArtigoQuestionIndex + 1} de ${perguntasArtigoCarneBovina.length}`;
+
+            if(artigoOptionsElement) artigoOptionsElement.innerHTML = '';
+            currentQuestion.alternativas.forEach(alt => {
+                const button = document.createElement('button');
+                button.textContent = alt;
+                button.addEventListener('click', () => handleArtigoAnswerOptionClick(alt, currentQuestion.respostaCorreta, currentQuestion.explicacao));
+                artigoOptionsElement.appendChild(button);
+            });
+
+            if(artigoFeedbackElement) {
+                artigoFeedbackElement.innerHTML = '';
+                artigoFeedbackElement.className = '';
+            }
+            if(artigoNextQuestionButton) artigoNextQuestionButton.style.display = 'none';
+            updateArtigoScoreDisplay();
+        } else {
+            endArtigoTest(false);
+        }
+    }
+
+    function handleArtigoAnswerOptionClick(selectedAnswer, correctAnswer, explanation) {
+        artigoQuestionsAnswered++;
+        const isCorrect = selectedAnswer === correctAnswer;
+
+        if (isCorrect) {
+            artigoScore++;
+            if(artigoFeedbackElement) {
+                artigoFeedbackElement.innerHTML = `<strong>Correto!</strong><br>${explanation}`;
+                artigoFeedbackElement.className = 'correct-explanation';
+            }
+            playSound('correct');
+        } else {
+            if(artigoFeedbackElement) {
+                artigoFeedbackElement.innerHTML = `<strong>Incorreto.</strong> A resposta correta era: <strong class="correct-answer-text">${correctAnswer}</strong>.<br>${explanation}`;
+                artigoFeedbackElement.className = 'incorrect-explanation';
+            }
+            playSound('incorrect');
+        }
+
+        if(artigoOptionsElement) {
+            artigoOptionsElement.querySelectorAll('button').forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correctAnswer) {
+                    button.style.backgroundColor = 'var(--cor-destaque)';
+                    button.style.color = '#000'; // Melhor contraste para o texto da resposta correta
+                } else if (button.textContent === selectedAnswer && !isCorrect) {
+                    button.style.backgroundColor = 'var(--cor-critico)';
+                }
+            });
+        }
+
+        updateArtigoScoreDisplay();
+        if (currentArtigoQuestionIndex < perguntasArtigoCarneBovina.length - 1) {
+            if(artigoNextQuestionButton) artigoNextQuestionButton.style.display = 'block';
+        } else {
+            if(artigoNextQuestionButton) artigoNextQuestionButton.style.display = 'none';
+            if(artigoEndTestButton) artigoEndTestButton.textContent = "Ver Resultado Final";
+        }
+    }
+
+    function nextArtigoQuestion() {
+        currentArtigoQuestionIndex++;
+        displayArtigoQuestion();
+        if(artigoEndTestButton) artigoEndTestButton.textContent = "Finalizar Teste";
+    }
+
+    function updateArtigoScoreDisplay() {
+        if (artigoQuestionsAnswered > 0) {
+            const percentage = ((artigoScore / artigoQuestionsAnswered) * 100).toFixed(0);
+            if(artigoScoreDisplayElement) artigoScoreDisplayElement.textContent = `Pontuação: ${artigoScore} de ${artigoQuestionsAnswered} respondidas (${percentage}%)`;
+        } else {
+            if(artigoScoreDisplayElement) artigoScoreDisplayElement.textContent = 'Responda a primeira pergunta para ver sua pontuação.';
+        }
+    }
+
+    function endArtigoTest(earlyExit = true) {
+        if(artigoGameElements) artigoGameElements.style.display = 'none';
+        if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'flex';
+
+        let message;
+        if (artigoQuestionsAnswered > 0) {
+            const percentage = ((artigoScore / artigoQuestionsAnswered) * 100).toFixed(0);
+            message = `Você acertou ${artigoScore} de ${artigoQuestionsAnswered} perguntas respondidas (${percentage}%).`;
+        } else {
+            message = "Você não respondeu nenhuma pergunta nesta tentativa.";
+        }
+        if(artigoFinalScoreMessage) artigoFinalScoreMessage.innerHTML = message;
+        playSound('gameEnd');
+    }
+
+    if(startArtigoTestButton) startArtigoTestButton.addEventListener('click', startArtigoTest);
+    if(artigoNextQuestionButton) artigoNextQuestionButton.addEventListener('click', nextArtigoQuestion);
+    if(artigoEndTestButton) artigoEndTestButton.addEventListener('click', () => endArtigoTest(true));
+    if(artigoRestartTestButton) {
+        artigoRestartTestButton.addEventListener('click', () => {
+            if(artigoGameEndScreen) artigoGameEndScreen.style.display = 'none';
+            if(artigoGameStartScreen) artigoGameStartScreen.style.display = 'block';
+            currentArtigoQuestionIndex = 0;
+            artigoScore = 0;
+            artigoQuestionsAnswered = 0;
+            if(artigoFeedbackElement) {
+                artigoFeedbackElement.innerHTML = '';
+                artigoFeedbackElement.className = '';
+            }
+            if(artigoScoreDisplayElement) artigoScoreDisplayElement.textContent = '';
+            if(artigoNextQuestionButton) artigoNextQuestionButton.style.display = 'none';
+            if(artigoEndTestButton) artigoEndTestButton.textContent = "Finalizar Teste";
+            if(artigoEndTestButton) artigoEndTestButton.style.display = 'block';
+        });
+    }
+    if(backToHomeArtigoCarneButton) {
+        backToHomeArtigoCarneButton.addEventListener('click', () => showSection('initialScreen'));
+    }
+    // >>> FIM DAS FUNÇÕES PARA O TESTE DO ARTIGO <<<
+
+    if(backToHomeAdminProductsButton) backToHomeAdminProductsButton.addEventListener('click', () => showSection('initialScreen'));
 
     loadProductData();
     showSection('initialScreen');
-    // updateUserAccessUI(); // Chamado dentro de onAuthStateChanged e no final do DOMContentLoaded para garantir
   });
 </script>
 </body>
