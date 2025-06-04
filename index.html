@@ -231,7 +231,7 @@
     main.show-comments #commentsSection { display: block; }
     main.show-profile #userProfileSection { display: block; }
     main.show-admin-products #adminProductManagementSection { display: block; }
-    main.show-admin-users #adminUserManagementSection { display: block; } /* Nova classe */
+    main.show-admin-users #adminUserManagementSection { display: block; } 
     main.show-games-hub #gamesHubSection { display: block; }
     main.show-flashcard-game #flashcardGameSection { display: block; }
     main.show-instructions #instructionsSection { display: block; }
@@ -298,7 +298,7 @@
       background: var(--cor-botao-primario-hover);
       transform: translateY(-1px);
     }
-    button.admin-delete-button, .delete-product-btn, .delete-user-btn { /* Adicionado .delete-user-btn */
+    button.admin-delete-button, .delete-product-btn, .delete-user-btn { 
         background-color: var(--cor-botao-admin-perigo-fundo);
         color: var(--cor-botao-primario-texto);
         padding: 6px 12px;
@@ -308,7 +308,7 @@
         width: auto;
         display: inline-block;
     }
-    button.admin-delete-button:hover, .delete-product-btn:hover, .delete-user-btn:hover { /* Adicionado .delete-user-btn */
+    button.admin-delete-button:hover, .delete-product-btn:hover, .delete-user-btn:hover { 
         background-color: var(--cor-botao-admin-perigo-hover);
     }
     .edit-product-btn {
@@ -502,13 +502,13 @@
     .back-to-home-button:hover { background-color: var(--cor-botao-secundario-hover); transform: translateY(-2px); }
 
     #addProductSection, #commentsSection, #userProfileSection, #adminProductManagementSection, 
-    #adminUserManagementSection, /* Nova seção */
+    #adminUserManagementSection, 
     #gamesHubSection, #flashcardGameSection, #instructionsSection {
       padding: 25px; background-color: var(--cor-fundo-secundario);
       border-radius: 8px; margin-top: 30px; color: var(--cor-texto-principal);
     }
     #addProductSection h2, #commentsSection h2, #userProfileSection h2, #adminProductManagementSection h2,
-    #adminUserManagementSection h2, /* Nova seção */
+    #adminUserManagementSection h2, 
     #gamesHubSection h2, #flashcardGameSection h2, #instructionsSection h2 {
       color: var(--cor-botao-primario-fundo); font-size: 1.6rem; margin-bottom: 20px;
       border-bottom: 1px solid var(--cor-borda-geral); padding-bottom: 10px;
@@ -546,15 +546,15 @@
     .profile-action-button:hover { background-color: var(--cor-botao-secundario-hover); transform: translateY(-1px); }
 
     #adminProductManagementSection .product-list-admin li,
-    #adminUserManagementSection .user-list-admin li { /* Estilo unificado para listas de admin */
+    #adminUserManagementSection .user-list-admin li { 
         background-color: #FAFAFA; border: 1px solid var(--cor-borda-geral); padding: 10px 15px;
         margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;
     }
     #adminProductManagementSection .product-list-admin li .product-info,
-    #adminUserManagementSection .user-list-admin li .user-info { /* Estilo unificado para info */
+    #adminUserManagementSection .user-list-admin li .user-info { 
         flex-grow: 1;
     }
-    #adminProductManagementFeedback, #adminUserManagementFeedback { /* Estilo unificado para feedback */
+    #adminProductManagementFeedback, #adminUserManagementFeedback { 
         margin-top: 15px; font-weight: bold; min-height: 20px; 
     }
     #adminProductManagementFeedback.correct, #adminUserManagementFeedback.correct { color: var(--cor-sucesso); }
@@ -806,7 +806,7 @@
         <div id="profileActions" style="margin-top: 25px; border-top: 1px solid var(--cor-borda-geral); padding-top: 20px;">
             <button id="showAddProductFromProfileButton" class="profile-action-button" style="display:none;">Adicionar Produto</button>
             <button id="showAdminManageProductsFromProfileButton" class="profile-action-button" style="display:none;">Gerenciar Produtos</button>
-            <button id="showAdminManageUsersFromProfileButton" class="profile-action-button" style="display:none;">Gerenciar Usuários</button> <!-- Novo Botão -->
+            <button id="showAdminManageUsersFromProfileButton" class="profile-action-button" style="display:none;">Gerenciar Usuários</button> 
         </div>
         <button class="back-to-home-button" id="backToHomeProfile" style="margin-top: 25px;">Voltar ao Início</button>
     </section>
@@ -822,7 +822,7 @@
         <button class="back-to-home-button" id="backToHomeAdminProducts">Voltar ao Início</button>
     </section>
 
-    <!-- Nova Seção para Gerenciamento de Usuários -->
+    
     <section id="adminUserManagementSection">
         <h2>Gerenciar Usuários (Admin)</h2>
         <p style="color: var(--cor-aviso); margin-bottom: 15px;">Atenção: Excluir um usuário aqui remove seus dados da aplicação (nome, papel), mas não apaga a conta de login do Firebase Auth. Para exclusão completa da conta, use o console do Firebase.</p>
@@ -1042,7 +1042,7 @@
     const cooperatorStatusText = document.getElementById('cooperatorStatusText');
     const showAddProductFromProfileButton = document.getElementById('showAddProductFromProfileButton');
     const showAdminManageProductsFromProfileButton = document.getElementById('showAdminManageProductsFromProfileButton');
-    const showAdminManageUsersFromProfileButton = document.getElementById('showAdminManageUsersFromProfileButton'); // Novo
+    const showAdminManageUsersFromProfileButton = document.getElementById('showAdminManageUsersFromProfileButton'); 
 
     const mainTerminalSection = document.getElementById('mainTerminalSection');
     const inputCode = document.getElementById('inputCode');
@@ -1052,11 +1052,11 @@
     const suinosList = document.getElementById('suinosList');
 
     const addProductSectionDOM = document.getElementById('addProductSection');
-    const inputNewCode = document.getElementById('inputNewCode');
-    const inputNewName = document.getElementById('inputNewName');
-    const selectNewCategory = document.getElementById('selectNewCategory');
-    const btnAddNewProduct = document.getElementById('btnAddNewProduct');
-    const addProductFeedback = document.getElementById('addProductFeedback');
+    // const inputNewCode = document.getElementById('inputNewCode'); // Já declarado acima
+    // const inputNewName = document.getElementById('inputNewName'); // Já declarado acima
+    // const selectNewCategory = document.getElementById('selectNewCategory'); // Já declarado acima
+    // const btnAddNewProduct = document.getElementById('btnAddNewProduct'); // Já declarado acima
+    // const addProductFeedback = document.getElementById('addProductFeedback'); // Já declarado acima
     const backToHomeAddProductButton = document.getElementById('backToHomeAddProduct');
     const addProductSectionTitle = document.querySelector('#addProductSection h2');
 
@@ -1117,7 +1117,7 @@
     const optionsElement = document.getElementById('options');
     const feedbackElement = document.getElementById('feedback');
     const scoreDisplayElement = document.getElementById('score-display');
-    const nextQuestionButton = document.getElementById('next-question');
+    // const nextQuestionButton = document.getElementById('next-question'); // Já declarado acima
     const progressBar = document.getElementById('progress-bar');
     const timerElement = document.getElementById('timer');
     const questionCounterElement = document.getElementById('question-counter');
@@ -1130,7 +1130,6 @@
     const adminProductManagementFeedback = document.getElementById('adminProductManagementFeedback');
     const backToHomeAdminProductsButton = document.getElementById('backToHomeAdminProducts');
 
-    // Novos seletores para Gerenciamento de Usuários
     const adminUserManagementSection = document.getElementById('adminUserManagementSection');
     const adminUserList = document.getElementById('adminUserList');
     const adminUserManagementFeedback = document.getElementById('adminUserManagementFeedback');
@@ -1155,6 +1154,7 @@
     let flashcardDifficulties = {}; 
     let currentFlashcard = null; 
     let allFlashcardProducts = [];
+    let isFlashcardTransitioning = false; 
 
 
     const sounds = {
@@ -1214,7 +1214,7 @@
         if (showAdminManageProductsFromProfileButton) {
             showAdminManageProductsFromProfileButton.style.display = isLoggedIn && isAdmin ? 'inline-block' : 'none';
         }
-        if (showAdminManageUsersFromProfileButton) { // Novo botão
+        if (showAdminManageUsersFromProfileButton) { 
             showAdminManageUsersFromProfileButton.style.display = isLoggedIn && isAdmin ? 'inline-block' : 'none';
         }
         if(adminStatusText) adminStatusText.style.display = isLoggedIn && isAdmin ? 'block' : 'none';
@@ -1227,7 +1227,7 @@
         if (mainContent.classList.contains('show-admin-products') && !isAdmin) {
             showSection('initialScreen');
         }
-         if (mainContent.classList.contains('show-admin-users') && !isAdmin) { // Novo
+         if (mainContent.classList.contains('show-admin-users') && !isAdmin) { 
             showSection('initialScreen');
         }
         const addProductSectionEl = document.getElementById('addProductSection');
@@ -1350,7 +1350,7 @@
                         else if (currentUserRole === 'cooperator') usernameDisplay.classList.add('cooperator-username');
                     }
                     if(userEmailDisplay && currentUser.email) userEmailDisplay.textContent = currentUser.email;
-                    updateUserAccessUI(); // Atualiza visibilidade dos botões de admin no perfil
+                    updateUserAccessUI(); 
                 }).catch(e => {
                     console.error("Erro ao carregar dados do perfil:", e);
                      const fallbackUsername = currentUser.email ? currentUser.email.split('@')[0] : 'Usuário';
@@ -1371,7 +1371,7 @@
             mainContent.classList.add('show-admin-products');
             populateAdminProductLists();
             targetButtonToDisplay = backToHomeAdminProductsButton;
-        } else if (sectionId === 'adminUserManagementSection') { // Nova seção
+        } else if (sectionId === 'adminUserManagementSection') { 
             if (!currentUser || currentUserRole !== 'admin') {
                 showAuthModal('Acesso restrito a administradores.');
                  if (currentUser && currentUserRole !== 'admin') setTimeout(() => showSection('initialScreen'),0);
@@ -1482,7 +1482,7 @@
             const isRestrictedSectionForGuests = mainContent.classList.contains('show-profile') ||
                                                  mainContent.classList.contains('show-add-product') ||
                                                  mainContent.classList.contains('show-admin-products') ||
-                                                 mainContent.classList.contains('show-admin-users'); // Nova seção
+                                                 mainContent.classList.contains('show-admin-users'); 
             if (isRestrictedSectionForGuests) {
                  showSection('initialScreen');
             } else if (mainContent.classList.contains('show-comments')) {
@@ -1600,7 +1600,7 @@
 
                     await setDoc(doc(db, 'users', user.uid), {
                         username: usernameVal,
-                        email: fakeEmail, // Armazena o email falso para referência
+                        email: fakeEmail, 
                         createdAt: serverTimestamp(),
                         role: 'user'
                     });
@@ -1776,7 +1776,7 @@
     if(showAdminManageProductsFromProfileButton) {
         showAdminManageProductsFromProfileButton.addEventListener('click', () => showSection('adminProductManagementSection', true));
     }
-    if(showAdminManageUsersFromProfileButton) { // Novo
+    if(showAdminManageUsersFromProfileButton) { 
         showAdminManageUsersFromProfileButton.addEventListener('click', () => showSection('adminUserManagementSection', true));
     }
 
@@ -2355,12 +2355,11 @@
                 return;
             }
 
-            adminUserList.innerHTML = ''; // Limpa a lista antes de popular
+            adminUserList.innerHTML = ''; 
             querySnapshot.forEach(docSnap => {
                 const userData = docSnap.data();
                 const userId = docSnap.id;
 
-                // Não listar o próprio administrador logado para evitar auto-exclusão acidental
                 if (userId === currentUser.uid) {
                     return; 
                 }
@@ -2372,7 +2371,7 @@
                 
                 const deleteUserBtn = document.createElement('button');
                 deleteUserBtn.textContent = 'Excluir Usuário';
-                deleteUserBtn.classList.add('delete-user-btn'); // Usar a mesma classe de estilo dos botões de perigo
+                deleteUserBtn.classList.add('delete-user-btn'); 
                 deleteUserBtn.dataset.userid = userId;
                 deleteUserBtn.dataset.username = userData.username || 'este usuário';
 
@@ -2414,8 +2413,7 @@
             return;
         }
         
-        // Confirmação antes de excluir
-        showCustomConfirm(`Tem certeza que deseja excluir o usuário "${usernameToDelete}" (ID: ${userIdToDelete})? Esta ação removerá os dados do usuário da aplicação.`, async () => {
+        showCustomConfirm(`Tem certeza que deseja excluir os dados do usuário "${usernameToDelete}" (ID: ${userIdToDelete}) da aplicação? A conta de login do Firebase não será afetada.`, async () => {
             try {
                 await deleteDoc(doc(db, 'users', userIdToDelete));
                 
@@ -2423,11 +2421,9 @@
                     adminUserManagementFeedback.textContent = `Dados do usuário "${usernameToDelete}" excluídos com sucesso do Firestore.`;
                     adminUserManagementFeedback.className = 'correct';
                 }
-                // Nota: A conta de autenticação do Firebase (Firebase Auth) NÃO é excluída aqui.
-                // Isso precisa ser feito separadamente, geralmente via Admin SDK ou console do Firebase.
                 console.warn(`Dados do usuário ${userIdToDelete} excluídos do Firestore. A conta de autenticação do Firebase Auth pode ainda existir.`);
                 
-                populateAdminUserList(); // Atualiza a lista de usuários
+                populateAdminUserList(); 
             } catch (error) {
                 console.error("Erro ao excluir dados do usuário do Firestore:", error);
                 if(adminUserManagementFeedback) {
@@ -2485,7 +2481,7 @@
     if(backToHomeFromGamesHubButton) backToHomeFromGamesHubButton.addEventListener('click', () => showSection('initialScreen'));
     if(backToGamesHubFromGameCodeButton) backToGamesHubFromGameCodeButton.addEventListener('click', () => showSection('gamesHubSection'));
     if(backToGamesHubFromFlashcardButton) backToGamesHubFromFlashcardButton.addEventListener('click', () => showSection('gamesHubSection'));
-    if(backToProfileFromUserAdminButton) backToProfileFromUserAdminButton.addEventListener('click', () => showSection('userProfileSection', true)); // Voltar ao perfil
+    if(backToProfileFromUserAdminButton) backToProfileFromUserAdminButton.addEventListener('click', () => showSection('userProfileSection', true)); 
     
     document.querySelectorAll('.back-to-home-button').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -2540,7 +2536,6 @@
     }
 
     // --- Lógica dos Jogos (GameCode e Flashcard) ---
-    // (Manter a lógica dos jogos como na versão anterior)
     function gameCodeGenerateQuestions() {
         const allProductsList = [];
         if (productData.bovinos) Object.entries(productData.bovinos).forEach(([code, name]) => allProductsList.push([code, name]));
@@ -2782,12 +2777,7 @@
 
     function getNextFlashcard() {
         if (allFlashcardProducts.length === 0) {
-            if(flashcardFrontContent) flashcardFrontContent.textContent = "Nenhum produto cadastrado.";
-            if(flashcardBackContent) flashcardBackContent.textContent = "";
-            if(flipCardButton) flipCardButton.style.display = 'none';
-            if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
-            if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
-            return null;
+            return null; 
         }
 
         const weightedList = [];
@@ -2804,52 +2794,83 @@
         
         shuffleArray(weightedList); 
 
+        let nextCard;
         if (weightedList.length === 0) { 
-             currentFlashcard = allFlashcardProducts[Math.floor(Math.random() * allFlashcardProducts.length)];
+             nextCard = allFlashcardProducts[Math.floor(Math.random() * allFlashcardProducts.length)];
         } else {
-            currentFlashcard = weightedList[Math.floor(Math.random() * weightedList.length)];
+            nextCard = weightedList[Math.floor(Math.random() * weightedList.length)];
         }
         
-        currentFlashcard.type = Math.random() < 0.5 ? 'codeToName' : 'nameToCode';
-        return currentFlashcard;
+        nextCard.type = Math.random() < 0.5 ? 'codeToName' : 'nameToCode';
+        return nextCard;
     }
+    
+    function resetAndPrepareFlashcardDOM() {
+        if (flashcardDiv) flashcardDiv.classList.remove('flipped');
+        
+        if(flashcardFrontLabel) flashcardFrontLabel.textContent = '';
+        if(flashcardFrontContent) flashcardFrontContent.textContent = 'Carregando...';
+        if(flashcardBackLabel) flashcardBackLabel.textContent = '';
+        if(flashcardBackContent) flashcardBackContent.textContent = '';
 
-    function displayFlashcard() {
-        if (!currentFlashcard) {
-            currentFlashcard = getNextFlashcard(); 
-            if (!currentFlashcard) { 
-                 if(flashcardFrontContent) flashcardFrontContent.textContent = "Sem cards disponíveis.";
-                 if(flashcardBackContent) flashcardBackContent.textContent = "";
-                 if(flipCardButton) flipCardButton.style.display = 'none';
-                 if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
-                 if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
-                 if(restartFlashcardButton) restartFlashcardButton.style.display = 'none';
-                 return;
-            }
-        }
-
-        flashcardDiv.classList.remove('flipped');
         if(flashcardFeedbackDiv) flashcardFeedbackDiv.textContent = '';
         if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
         if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
         if(flipCardButton) flipCardButton.style.display = 'block';
         if(restartFlashcardButton) restartFlashcardButton.style.display = 'block';
-        
         difficultyButtons.forEach(btn => btn.classList.remove('selected'));
+    }
 
-        if (currentFlashcard.type === 'codeToName') {
+    function populateFlashcardDOM(cardData) {
+        if (!cardData) {
+            if(flashcardFrontContent) flashcardFrontContent.textContent = "Sem mais cards!";
+            if(flashcardBackContent) flashcardBackContent.textContent = "Reinicie ou adicione produtos.";
+            if(flipCardButton) flipCardButton.style.display = 'none';
+            if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
+            if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
+            if(flashcardFeedbackDiv) {
+                flashcardFeedbackDiv.textContent = allFlashcardProducts.length === 0 ? 'Adicione produtos para jogar.' : 'Você viu todos os cards! Reinicie para ver novamente.';
+                flashcardFeedbackDiv.className = 'info';
+            }
+            return;
+        }
+
+        if (cardData.type === 'codeToName') {
             if(flashcardFrontLabel) flashcardFrontLabel.textContent = "Código do Produto:";
-            if(flashcardFrontContent) flashcardFrontContent.textContent = currentFlashcard.code.padStart(5, '0');
+            if(flashcardFrontContent) flashcardFrontContent.textContent = cardData.code.padStart(5, '0');
             if(flashcardBackLabel) flashcardBackLabel.textContent = "Nome do Produto:";
-            if(flashcardBackContent) flashcardBackContent.textContent = currentFlashcard.name;
+            if(flashcardBackContent) flashcardBackContent.textContent = cardData.name;
         } else { 
             if(flashcardFrontLabel) flashcardFrontLabel.textContent = "Nome do Produto:";
-            if(flashcardFrontContent) flashcardFrontContent.textContent = currentFlashcard.name;
+            if(flashcardFrontContent) flashcardFrontContent.textContent = cardData.name;
             if(flashcardBackLabel) flashcardBackLabel.textContent = "Código do Produto:";
-            if(flashcardBackContent) flashcardBackContent.textContent = currentFlashcard.code.padStart(5, '0');
+            if(flashcardBackContent) flashcardBackContent.textContent = cardData.code.padStart(5, '0');
         }
     }
 
+    function prepareAndShowNextFlashcard() {
+        if (isFlashcardTransitioning) return;
+        isFlashcardTransitioning = true;
+
+        const actuallyLoadNextCard = () => {
+            resetAndPrepareFlashcardDOM();
+            // Força o DOM a atualizar antes de buscar e popular o novo card
+            requestAnimationFrame(() => {
+                currentFlashcard = getNextFlashcard();
+                populateFlashcardDOM(currentFlashcard);
+                isFlashcardTransitioning = false;
+            });
+        };
+
+        if (flashcardDiv && flashcardDiv.classList.contains('flipped')) {
+            flashcardDiv.addEventListener('transitionend', actuallyLoadNextCard, { once: true });
+            flashcardDiv.classList.remove('flipped');
+            // Não tocar som aqui, pois o som de "flip" já toca ao virar
+        } else {
+            actuallyLoadNextCard();
+        }
+    }
+    
     function startFlashcardGame() {
         loadFlashcardDifficulties();
         prepareAllFlashcardProducts(); 
@@ -2865,30 +2886,38 @@
                  flashcardFeedbackDiv.className = 'info';
             }
             return;
-        } else {
-            if(restartFlashcardButton) restartFlashcardButton.style.display = 'block';
         }
-        
-        currentFlashcard = null; 
-        displayFlashcard(); 
+        prepareAndShowNextFlashcard(); 
     }
 
     if(flipCardButton) {
         flipCardButton.addEventListener('click', () => {
-            if (!currentFlashcard) return; 
+            if (!currentFlashcard || !flashcardDiv || isFlashcardTransitioning) return; 
+            
+            isFlashcardTransitioning = true;
             flashcardDiv.classList.toggle('flipped');
             playSound('flip');
-            if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'block';
-            if(nextFlashcardButton) nextFlashcardButton.style.display = 'block';
-            if(flipCardButton) flipCardButton.style.display = 'none';
+            
+            flashcardDiv.addEventListener('transitionend', () => {
+                isFlashcardTransitioning = false;
+                if (flashcardDiv.classList.contains('flipped')) { 
+                    if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'block';
+                    if(nextFlashcardButton) nextFlashcardButton.style.display = 'block';
+                    if(flipCardButton) flipCardButton.style.display = 'none';
 
-            const currentDifficulty = flashcardDifficulties[currentFlashcard.code];
-            difficultyButtons.forEach(btn => {
-                btn.classList.remove('selected');
-                if (btn.dataset.difficulty === currentDifficulty) {
-                    btn.classList.add('selected');
+                    const currentDifficulty = flashcardDifficulties[currentFlashcard.code];
+                    difficultyButtons.forEach(btn => {
+                        btn.classList.remove('selected');
+                        if (btn.dataset.difficulty === currentDifficulty) {
+                            btn.classList.add('selected');
+                        }
+                    });
+                } else { 
+                    if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
+                    if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
+                    if(flipCardButton) flipCardButton.style.display = 'block';
                 }
-            });
+            }, { once: true }); 
         });
     }
 
@@ -2911,8 +2940,7 @@
 
     if(nextFlashcardButton) {
         nextFlashcardButton.addEventListener('click', () => {
-            currentFlashcard = null; 
-            displayFlashcard();
+            prepareAndShowNextFlashcard();
         });
     }
     
