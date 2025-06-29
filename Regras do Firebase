@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Regras para a coleção 'users'
+    // Permite que qualquer usuário autenticado crie seu próprio documento de usuário (para registro).
+    // Permite que um usuário leia e atualize seu próprio documento de perfil.
+    // A exclusão de documentos de usuário é restrita apenas a administradores.
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Regras para a coleção 'comments'
+    // Permite que qualquer usuário autenticado leia os comentários.
+    // Permite que qualquer usuário autenticado crie um novo comentário.
+    // A exclusão de comentários é restrita apenas a administradores.
+    match /comments/{commentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // NOVAS REGRAS PARA A COLEÇÃO 'products'
+    // Cada documento nesta coleção representa um produto (ex: {code: "12345", name: "Acém", category: "bovinos"})
+    match /products/{productId} {
+      // Todos os usuários autenticados podem ler os produtos
+      allow read: if request.auth != null;
+
+      // Apenas administradores ou cooperadores podem criar novos produtos
+      allow create: if request.auth != null && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'cooperator'
+      );
+
+      // Apenas administradores podem atualizar produtos existentes
+      allow update: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+
+      // Apenas administradores podem excluir produtos
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Regra de fallback: Negar acesso por padrão a qualquer outra coleção não especificada acima.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
