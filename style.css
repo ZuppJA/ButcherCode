@@ -176,7 +176,8 @@ body.sidebar-open header h1#butcherCodeTitle {
   transition: border-color 0.3s ease, color 0.3s ease;
   color: var(--cor-sidebar-texto);
 }
-#sidebar h2::after {
+/* Removido o ícone de acordeão para h2 na sidebar, pois não haverá mais subpastas de produtos */
+/* #sidebar h2::after {
   content: "▶";
   position: absolute;
   right: 5px;
@@ -185,11 +186,13 @@ body.sidebar-open header h1#butcherCodeTitle {
   transition: transform 0.3s ease;
   color: var(--cor-sidebar-texto);
 }
-#sidebar h2.open::after { transform: translateY(-50%) rotate(90deg); }
+#sidebar h2.open::after { transform: translateY(-50%) rotate(90deg); } */
+
 
 .menu-sections { list-style: none; padding: 0; margin: 0; }
 .menu-section { margin-bottom: 25px; }
-.subfolder {
+/* Removido estilos para .subfolder e .subfolder .item, pois não estarão mais na sidebar */
+/* .subfolder {
   margin-left: 20px;
   display: none;
   margin-bottom: 12px;
@@ -207,13 +210,16 @@ body.sidebar-open header h1#butcherCodeTitle {
 }
 .subfolder .item:hover {
   background: var(--cor-sidebar-link-hover-fundo);
-}
+} */
 
+/* Esconde todas as seções por padrão */
 #mainTerminalSection, #gameCodeSection, #initialScreen, #addProductSection,
 #commentsSection, #userProfileSection, #adminProductManagementSection, #adminUserManagementSection,
-#gamesHubSection, #flashcardGameSection, #instructionsSection { display: none; }
+#gamesHubSection, #flashcardGameSection, #instructionsSection,
+#bovinosCodesSection, #suinosCodesSection { display: none; }
 
 
+/* Regras para mostrar as seções ativas */
 main.show-terminal #mainTerminalSection { display: block; }
 main.show-game #gameCodeSection { display: block; }
 main.show-initial #initialScreen { display: block; }
@@ -225,6 +231,8 @@ main.show-admin-users #adminUserManagementSection { display: block; }
 main.show-games-hub #gamesHubSection { display: block; }
 main.show-flashcard-game #flashcardGameSection { display: block; }
 main.show-instructions #instructionsSection { display: block; }
+main.show-bovinos-codes #bovinosCodesSection { display: block; } /* Nova regra */
+main.show-suinos-codes #suinosCodesSection { display: block; } /* Nova regra */
 
 
 label {
@@ -491,18 +499,63 @@ button.admin-delete-button:hover, .delete-product-btn:hover, .delete-user-btn:ho
 }
 .back-to-home-button:hover { background-color: var(--cor-botao-secundario-hover); transform: translateY(-2px); }
 
+/* Estilos para as novas seções de listagem de códigos */
+#bovinosCodesSection, #suinosCodesSection,
 #addProductSection, #commentsSection, #userProfileSection, #adminProductManagementSection,
 #adminUserManagementSection,
 #gamesHubSection, #flashcardGameSection, #instructionsSection {
   padding: 25px; background-color: var(--cor-fundo-secundario);
   border-radius: 8px; margin-top: 30px; color: var(--cor-texto-principal);
 }
+#bovinosCodesSection h2, #suinosCodesSection h2,
 #addProductSection h2, #commentsSection h2, #userProfileSection h2, #adminProductManagementSection h2,
 #adminUserManagementSection h2,
 #gamesHubSection h2, #flashcardGameSection h2, #instructionsSection h2 {
   color: var(--cor-botao-primario-fundo); font-size: 1.6rem; margin-bottom: 20px;
   border-bottom: 1px solid var(--cor-borda-geral); padding-bottom: 10px;
 }
+
+/* Estilo para as listas de produtos exibidas nas seções de códigos (bovinos/suínos) */
+.product-list-display {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-list-display .product-item {
+    background-color: #FAFAFA;
+    border: 1px solid var(--cor-borda-geral);
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.product-list-display .product-item:hover {
+    background-color: var(--cor-botao-secundario-hover);
+    transform: translateY(-1px);
+}
+
+.product-list-display .product-item .product-code {
+    font-weight: bold;
+    color: var(--cor-link-padrao);
+}
+
+.product-list-display .product-item .product-name {
+    color: var(--cor-texto-principal);
+}
+
+/* Estilo para as subcategorias na seção de códigos bovinos */
+.subcategory-title {
+    font-size: 1.3rem;
+    color: var(--cor-destaque);
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed var(--cor-borda-geral);
+    padding-bottom: 5px;
+}
+
 
 #addProductSection label { margin-bottom: 5px; color: var(--cor-texto-principal); }
 #addProductSection input[type="number"] { -moz-appearance: textfield; }
