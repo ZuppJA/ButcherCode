@@ -66,13 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputCode = document.getElementById('inputCode');
   const btnExecute = document.getElementById('btnExecute');
   const resultDiv = document.getElementById('result');
-  const bovinosList = document.getElementById('bovinosList');
-  const suinosList = document.getElementById('suinosList');
+  // Removidos bovinosList e suinosList da sidebar
+  // const bovinosList = document.getElementById('bovinosList');
+  // const suinosList = document.getElementById('suinosList');
 
   const addProductSectionDOM = document.getElementById('addProductSection');
   const inputNewCode = document.getElementById('inputNewCode');
   const inputNewName = document.getElementById('inputNewName');
   const selectNewCategory = document.getElementById('selectNewCategory');
+  const bovinoSubcategoryWrapper = document.getElementById('bovinoSubcategoryWrapper'); // NOVO
+  const selectNewSubcategory = document.getElementById('selectNewSubcategory'); // NOVO
   const btnAddNewProduct = document.getElementById('btnAddNewProduct');
   const addProductFeedback = document.getElementById('addProductFeedback');
   const backToHomeAddProductButton = document.getElementById('backToHomeAddProduct');
@@ -90,8 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainContent = document.querySelector('main');
   const hamburger = document.getElementById('hamburger');
   const sidebar = document.getElementById('sidebar');
-  const sidebarTitles = document.querySelectorAll('#sidebar h2[data-type="accordion"]');
+  // Removido o seletor para sidebarTitles que eram acordeões de produtos
+  // const sidebarTitles = document.querySelectorAll('#sidebar h2[data-type="accordion"]');
   const initialScreen = document.getElementById('initialScreen');
+
+  const accessBovinosCodesButton = document.getElementById('accessBovinosCodesButton'); // NOVO
+  const accessSuinosCodesButton = document.getElementById('accessSuinosCodesButton'); // NOVO
+  const bovinosCodesSection = document.getElementById('bovinosCodesSection'); // NOVO
+  const suinosCodesSection = document.getElementById('suinosCodesSection'); // NOVO
+  const backToHomeBovinosCodesButton = document.getElementById('backToHomeBovinosCodes'); // NOVO
+  const backToHomeSuinosCodesButton = document.getElementById('backToHomeSuinosCodes'); // NOVO
 
   const accessTerminalButton = document.getElementById('accessTerminalButton');
   const accessGamesButton = document.getElementById('accessGamesButton');
@@ -157,9 +168,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Variáveis Globais e Estado ---
   let currentUser = null;
   let currentUserRole = 'user';
-  let activeAccordionItem = null;
-  let productData = { bovinos: {}, suinos: {} };
-  let productsInverseNormalized = {};
+  // activeAccordionItem não é mais necessário para categorias de produtos na sidebar
+  // let activeAccordionItem = null;
+
+  // Estrutura de dados atualizada para incluir subcategorias de bovinos
+  let productData = {
+    bovinos: {
+      'Carne Bovina - Corte': {},
+      'Carne Bovina - Vácuo': {},
+      'Carne Bovina - Maturada': {},
+      'Carne Bovina - Fracionada': {},
+      'Carne Bovina - Bifes': {},
+      'Miúdos Bovinos': {}
+    },
+    suinos: {}
+  };
+  let productsInverseNormalized = {}; // Mantido para busca por nome
 
   const GAME_CODE_STATE_KEY = "game_code_state";
   const TIME_PER_QUESTION = 15;
@@ -262,7 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
       mainContent.classList.remove('show-terminal', 'show-game', 'show-initial',
                                   'show-add-product', 'show-comments', 'show-profile',
                                   'show-admin-products', 'show-admin-users', 'show-games-hub',
-                                  'show-flashcard-game', 'show-instructions');
+                                  'show-flashcard-game', 'show-instructions',
+                                  'show-bovinos-codes', 'show-suinos-codes'); // Adicionadas novas classes
+
       document.querySelectorAll('.back-to-home-button, .back-to-games-hub-button, #backToProfileFromUserAdmin').forEach(btn => {
           if(btn) btn.style.display = 'none';
       });
@@ -274,7 +300,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let targetButtonToDisplay = null;
 
-      if (sectionId === 'mainTerminalSection') {
+      // Novas seções de listagem de códigos
+      if (sectionId === 'bovinosCodesSection') {
+          mainContent.classList.add('show-bovinos-codes');
+          populateBovinosCodesSection(); // Popula a lista de bovinos
+          targetButtonToDisplay = backToHomeBovinosCodesButton;
+      } else if (sectionId === 'suinosCodesSection') {
+          mainContent.classList.add('show-suinos-codes');
+          populateSuinosCodesSection(); // Popula a lista de suínos
+          targetButtonToDisplay = backToHomeSuinosCodesButton;
+      }
+      // Fim das novas seções de listagem
+
+      else if (sectionId === 'mainTerminalSection') {
           mainContent.classList.add('show-terminal');
           targetButtonToDisplay = backToHomeTerminalButton;
       } else if (sectionId === 'gamesHubSection') {
@@ -542,10 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           try {
-              // REMOVIDO: Consulta Firestore para buscar fakeEmail.
-              // Agora o fakeEmail é gerado diretamente.
               const fakeEmail = generateFakeEmail(usernameVal);
-
               await signInWithEmailAndPassword(auth, fakeEmail, passwordVal);
               // Se o login for bem-sucedido, onAuthStateChanged cuidará da UI.
           } catch (error) {
@@ -588,8 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   return;
               }
 
-              // REMOVIDO: Consulta Firestore para verificar nome de usuário existente antes do registro.
-              // A unicidade será tratada pelo Firebase Auth via fakeEmail.
               try {
                   const fakeEmail = generateFakeEmail(usernameVal);
                   const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, passwordVal);
@@ -785,24 +818,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Dados iniciais para popular o Firestore se a coleção 'products' estiver vazia
   const initialProductData = [
-    { code: "14601", name: "Acém", category: "bovinos" },
-    { code: "14625", name: "Alcatra com Maminha", category: "bovinos" },
-    { code: "1762", name: "Bisteca com osso", category: "bovinos" },
-    { code: "14694", name: "Colchão Duro", category: "bovinos" },
-    { code: "26390", name: "Colchão Mole", category: "bovinos" },
-    { code: "25812", name: "Contra Filé", category: "bovinos" },
-    { code: "14793", name: "Coração da Alcatra", category: "bovinos" },
-    { code: "4282", name: "Fígado", category: "bovinos" },
-    { code: "14762", name: "Lagarto", category: "bovinos" },
-    { code: "14809", name: "Miolo da Paleta", category: "bovinos" },
-    { code: "14618", name: "Músculo do Dianteiro", category: "bovinos" },
-    { code: "14816", name: "Paleta", category: "bovinos" },
-    { code: "14823", name: "Patinho", category: "bovinos" },
-    { code: "00260", name: "Picanha em Pedaços", category: "bovinos" },
-    { code: "05418", name: "Picanha Grill", category: "bovinos" },
-    { code: "16094", name: "Picanha Maturada", category: "bovinos" },
-    { code: "07160", name: "Picanha Todo Dia", category: "bovinos" },
-    { code: "06019", name: "Picanha Tradicional", category: "bovinos" },
+    { code: "14601", name: "Acém", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14625", name: "Alcatra com Maminha", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "1762", name: "Bisteca com osso", category: "bovinos", subcategory: "Carne Bovina - Bifes" },
+    { code: "14694", name: "Colchão Duro", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "26390", name: "Colchão Mole", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "25812", name: "Contra Filé", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14793", name: "Coração da Alcatra", category: "bovinos", subcategory: "Carne Bovina - Bifes" },
+    { code: "4282", name: "Fígado", category: "bovinos", subcategory: "Miúdos Bovinos" },
+    { code: "14762", name: "Lagarto", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14809", name: "Miolo da Paleta", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14618", name: "Músculo do Dianteiro", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14816", name: "Paleta", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "14823", name: "Patinho", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "00260", name: "Picanha em Pedaços", category: "bovinos", subcategory: "Carne Bovina - Fracionada" },
+    { code: "05418", name: "Picanha Grill", category: "bovinos", subcategory: "Carne Bovina - Bifes" },
+    { code: "16094", name: "Picanha Maturada", category: "bovinos", subcategory: "Carne Bovina - Maturada" },
+    { code: "07160", name: "Picanha Todo Dia", category: "bovinos", subcategory: "Carne Bovina - Corte" },
+    { code: "06019", name: "Picanha Tradicional", category: "bovinos", subcategory: "Carne Bovina - Corte" },
     { code: "11549", name: "Bisteca Suína", category: "suinos" },
     { code: "23023", name: "Carne Suína Corte", category: "suinos" },
     { code: "15776", name: "Carne Suína Embalada", category: "suinos" },
@@ -817,25 +850,42 @@ document.addEventListener('DOMContentLoaded', () => {
           const productsColRef = collection(db, 'products');
           const productsSnapshot = await getDocs(productsColRef);
 
-          productData = { bovinos: {}, suinos: {} }; // Resetar dados em memória
+          // Resetar productData com a nova estrutura de subcategorias
+          productData = {
+            bovinos: {
+              'Carne Bovina - Corte': {},
+              'Carne Bovina - Vácuo': {},
+              'Carne Bovina - Maturada': {},
+              'Carne Bovina - Fracionada': {},
+              'Carne Bovina - Bifes': {},
+              'Miúdos Bovinos': {}
+            },
+            suinos: {}
+          };
 
           if (productsSnapshot.empty) {
               console.warn("Coleção 'products' vazia. Populando com dados iniciais...");
               for (const prod of initialProductData) {
-                  await addDoc(productsColRef, {
+                  const docData = {
                       code: prod.code,
                       name: prod.name,
                       category: prod.category,
                       createdAt: serverTimestamp(),
                       updatedAt: serverTimestamp()
-                  });
+                  };
+                  if (prod.category === 'bovinos' && prod.subcategory) {
+                      docData.subcategory = prod.subcategory;
+                  }
+                  await addDoc(productsColRef, docData);
               }
               // Após popular, recarregar para ter os IDs dos documentos
               const updatedSnapshot = await getDocs(productsColRef);
               updatedSnapshot.forEach(docSnap => {
                   const prod = docSnap.data();
                   if (prod.category === 'bovinos') {
-                      productData.bovinos[prod.code] = { name: prod.name, docId: docSnap.id };
+                      // Garante que a subcategoria existe ou usa um fallback
+                      const subcat = prod.subcategory && productData.bovinos[prod.subcategory] ? prod.subcategory : 'Carne Bovina - Corte';
+                      productData.bovinos[subcat][prod.code] = { name: prod.name, docId: docSnap.id };
                   } else if (prod.category === 'suinos') {
                       productData.suinos[prod.code] = { name: prod.name, docId: docSnap.id };
                   }
@@ -845,7 +895,8 @@ document.addEventListener('DOMContentLoaded', () => {
               productsSnapshot.forEach(docSnap => {
                   const prod = docSnap.data();
                   if (prod.category === 'bovinos') {
-                      productData.bovinos[prod.code] = { name: prod.name, docId: docSnap.id };
+                      const subcat = prod.subcategory && productData.bovinos[prod.subcategory] ? prod.subcategory : 'Carne Bovina - Corte';
+                      productData.bovinos[subcat][prod.code] = { name: prod.name, docId: docSnap.id };
                   } else if (prod.category === 'suinos') {
                       productData.suinos[prod.code] = { name: prod.name, docId: docSnap.id };
                   }
@@ -855,11 +906,20 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (error) {
           console.error("Erro ao carregar ou popular dados dos produtos no Firestore:", error);
           // Fallback para dados em memória se o Firestore falhar completamente
-          productData.bovinos = initialProductData.filter(p => p.category === 'bovinos').reduce((acc, p) => { acc[p.code] = { name: p.name, docId: null }; return acc; }, {});
+          // Nota: Este fallback não terá docIds, o que pode afetar a edição/exclusão
+          productData.bovinos = initialProductData.filter(p => p.category === 'bovinos').reduce((acc, p) => {
+              const subcat = p.subcategory && productData.bovinos[p.subcategory] ? p.subcategory : 'Carne Bovina - Corte';
+              if (!acc[subcat]) acc[subcat] = {};
+              acc[subcat][p.code] = { name: p.name, docId: null };
+              return acc;
+          }, {
+              'Carne Bovina - Corte': {}, 'Carne Bovina - Vácuo': {}, 'Carne Bovina - Maturada': {},
+              'Carne Bovina - Fracionada': {}, 'Carne Bovina - Bifes': {}, 'Miúdos Bovinos': {}
+          });
           productData.suinos = initialProductData.filter(p => p.category === 'suinos').reduce((acc, p) => { acc[p.code] = { name: p.name, docId: null }; return acc; }, {});
           console.warn("Usando dados iniciais em memória devido a erro no Firestore.");
       } finally {
-          rebuildProductIndexesAndSidebar();
+          rebuildProductIndexesAndDisplaySections(); // Renomeado
           prepareAllFlashcardProducts();
           if (mainContent.classList.contains('show-admin-products') && currentUserRole === 'admin') {
               populateAdminProductLists();
@@ -876,6 +936,7 @@ document.addEventListener('DOMContentLoaded', () => {
               await updateDoc(productRef, {
                   name: productDataToSave.name,
                   category: productDataToSave.category,
+                  subcategory: productDataToSave.subcategory || null, // Salva subcategoria ou null
                   updatedAt: serverTimestamp()
               });
               console.log("Produto atualizado no Firestore!");
@@ -885,6 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   code: productDataToSave.code,
                   name: productDataToSave.name,
                   category: productDataToSave.category,
+                  subcategory: productDataToSave.subcategory || null, // Salva subcategoria ou null
                   createdAt: serverTimestamp(),
                   updatedAt: serverTimestamp()
               });
@@ -902,68 +964,133 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 
-  // A função populateSidebarList permanece a mesma, mas agora recebe o objeto productData
-  // que é preenchido a partir do Firestore.
-  function populateSidebarList(listElement, data) {
-    if(!listElement) return;
-    listElement.innerHTML = '';
-    if (!data || Object.keys(data).length === 0) {
-      const li = document.createElement('li');
-      li.textContent = "Nenhum item nesta categoria.";
-      li.style.paddingLeft = "8px";
-      li.style.fontStyle = "italic";
-      listElement.appendChild(li);
-      return;
-    }
-    // Ordena os itens pelo nome para exibição na sidebar
-    Object.entries(data).sort(([,a],[,b]) => a.name.localeCompare(b.name)).forEach(([code, prodInfo]) => {
-      const li = document.createElement('li');
-      li.classList.add('item');
-      li.textContent = `${code.padStart(5, '0')} - ${prodInfo.name}`;
-      li.tabIndex = 0;
-      li.addEventListener('click', () => {
-        showSection('mainTerminalSection');
-        if(inputCode) inputCode.value = code.padStart(5, '0');
-        displayResult(prodInfo.name, true);
-        if(resultDiv) resultDiv.classList.remove('success', 'error');
-        if(hamburger) hamburger.classList.remove('open');
-        if(sidebar) sidebar.classList.remove('open');
-        document.body.classList.remove('sidebar-open');
-      });
-      listElement.appendChild(li);
-    });
-  }
+  // Removida a função populateSidebarList, pois a sidebar não terá mais as listas de produtos.
+  // function populateSidebarList(...) { ... }
 
-  function rebuildProductIndexesAndSidebar() {
+  // Função renomeada e ajustada para popular as novas seções de exibição de códigos
+  function rebuildProductIndexesAndDisplaySections() {
       productsInverseNormalized = {};
-      productData.bovinos = {}; // Resetar para garantir que apenas dados do Firestore sejam usados
-      productData.suinos = {};  // Resetar para garantir que apenas dados do Firestore sejam usados
+      // Resetar productData com a nova estrutura de subcategorias
+      productData = {
+        bovinos: {
+          'Carne Bovina - Corte': {},
+          'Carne Bovina - Vácuo': {},
+          'Carne Bovina - Maturada': {},
+          'Carne Bovina - Fracionada': {},
+          'Carne Bovina - Bifes': {},
+          'Miúdos Bovinos': {}
+        },
+        suinos: {}
+      };
 
-      // Carregar todos os produtos do Firestore para construir os índices e a sidebar
       const productsColRef = collection(db, 'products');
       getDocs(productsColRef).then(snapshot => {
           snapshot.forEach(docSnap => {
               const prod = docSnap.data();
               if (prod.category === 'bovinos') {
-                  productData.bovinos[prod.code] = { name: prod.name, docId: docSnap.id };
+                  const subcat = prod.subcategory && productData.bovinos[prod.subcategory] ? prod.subcategory : 'Carne Bovina - Corte';
+                  productData.bovinos[subcat][prod.code] = { name: prod.name, docId: docSnap.id };
               } else if (prod.category === 'suinos') {
                   productData.suinos[prod.code] = { name: prod.name, docId: docSnap.id };
               }
               productsInverseNormalized[normalizeText(prod.name)] = { code: prod.code.padStart(5, '0'), originalName: prod.name, docId: docSnap.id };
           });
-          populateSidebarList(bovinosList, productData.bovinos);
-          populateSidebarList(suinosList, productData.suinos);
+
+          // Chamar as novas funções para popular as seções de exibição de códigos
+          populateBovinosCodesSection();
+          populateSuinosCodesSection();
           prepareAllFlashcardProducts();
 
           if (currentUserRole === 'admin' && mainContent.classList.contains('show-admin-products')) {
               populateAdminProductLists();
           }
       }).catch(error => {
-          console.error("Erro ao reconstruir índices e sidebar:", error);
+          console.error("Erro ao reconstruir índices e exibir seções:", error);
           // Em caso de erro, ainda tentar popular com o que estiver em productData (se houver um fallback)
-          populateSidebarList(bovinosList, productData.bovinos);
-          populateSidebarList(suinosList, productData.suinos);
+          populateBovinosCodesSection();
+          populateSuinosCodesSection();
       });
+  }
+
+  // --- Novas Funções para popular as seções de exibição de códigos ---
+  function populateBovinosCodesSection() {
+      if (!bovinosCodesSection) return;
+      bovinosCodesSection.innerHTML = '<h2>Códigos Bovinos</h2><p style="text-align: center; color: var(--cor-texto-secundario);">Clique em um item para consultá-lo no terminal.</p><div id="bovinosCodesList"></div>';
+      const bovinosListContainer = bovinosCodesSection.querySelector('#bovinosCodesList');
+      if (!bovinosListContainer) return;
+
+      const subcategoriesOrder = [
+          "Carne Bovina - Corte",
+          "Carne Bovina - Vácuo",
+          "Carne Bovina - Maturada",
+          "Carne Bovina - Fracionada",
+          "Carne Bovina - Bifes",
+          "Miúdos Bovinos"
+      ];
+
+      let hasContent = false;
+
+      subcategoriesOrder.forEach(subcat => {
+          const productsInSubcat = productData.bovinos[subcat];
+          if (productsInSubcat && Object.keys(productsInSubcat).length > 0) {
+              hasContent = true;
+              const subcatTitle = document.createElement('h3');
+              subcatTitle.classList.add('subcategory-title');
+              subcatTitle.textContent = subcat;
+              bovinosListContainer.appendChild(subcatTitle);
+
+              const ul = document.createElement('ul');
+              ul.classList.add('product-list-display');
+
+              Object.entries(productsInSubcat)
+                  .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+                  .forEach(([code, prodInfo]) => {
+                      const li = document.createElement('li');
+                      li.classList.add('product-item');
+                      li.innerHTML = `<span class="product-code">${code.padStart(5, '0')}</span> - <span class="product-name">${prodInfo.name}</span>`;
+                      li.tabIndex = 0;
+                      li.addEventListener('click', () => {
+                          showSection('mainTerminalSection');
+                          if (inputCode) inputCode.value = code.padStart(5, '0');
+                          displayResult(prodInfo.name, true);
+                          if (resultDiv) resultDiv.classList.remove('success', 'error');
+                      });
+                      ul.appendChild(li);
+                  });
+              bovinosListContainer.appendChild(ul);
+          }
+      });
+
+      if (!hasContent) {
+          bovinosListContainer.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Nenhum código bovino cadastrado.</p>';
+      }
+  }
+
+  function populateSuinosCodesSection() {
+      if (!suinosCodesSection) return;
+      suinosCodesSection.innerHTML = '<h2>Códigos Suínos</h2><p style="text-align: center; color: var(--cor-texto-secundario);">Clique em um item para consultá-lo no terminal.</p><ul id="suinosCodesList" class="product-list-display"></ul>';
+      const suinosListContainer = suinosCodesSection.querySelector('#suinosCodesList');
+      if (!suinosListContainer) return;
+
+      if (productData.suinos && Object.keys(productData.suinos).length > 0) {
+          Object.entries(productData.suinos)
+              .sort(([, a], [, b]) => a.name.localeCompare(b.name))
+              .forEach(([code, prodInfo]) => {
+                  const li = document.createElement('li');
+                  li.classList.add('product-item');
+                  li.innerHTML = `<span class="product-code">${code.padStart(5, '0')}</span> - <span class="product-name">${prodInfo.name}</span>`;
+                  li.tabIndex = 0;
+                  li.addEventListener('click', () => {
+                      showSection('mainTerminalSection');
+                      if (inputCode) inputCode.value = code.padStart(5, '0');
+                      displayResult(prodInfo.name, true);
+                      if (resultDiv) resultDiv.classList.remove('success', 'error');
+                  });
+                  suinosListContainer.appendChild(li);
+              });
+      } else {
+          suinosListContainer.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Nenhum código suíno cadastrado.</p>';
+      }
   }
 
 
@@ -995,9 +1122,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (/^\d+$/.test(texto)) { // Busca por código
       const codigo = texto.padStart(5, '0');
       let foundProduct = null;
-      if (productData.bovinos && productData.bovinos[codigo]) {
-          foundProduct = productData.bovinos[codigo].name;
-      } else if (productData.suinos && productData.suinos[codigo]) {
+      // Busca em todas as subcategorias de bovinos
+      for (const subcat in productData.bovinos) {
+          if (productData.bovinos[subcat][codigo]) {
+              foundProduct = productData.bovinos[subcat][codigo].name;
+              break;
+          }
+      }
+      // Se não encontrou em bovinos, busca em suínos
+      if (!foundProduct && productData.suinos && productData.suinos[codigo]) {
           foundProduct = productData.suinos[codigo].name;
       }
       return { result: foundProduct || `Código "${codigo}" não encontrado.`, found: !!foundProduct };
@@ -1020,10 +1153,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Lógica para mostrar/esconder o campo de subcategoria
+  if (selectNewCategory) {
+      selectNewCategory.addEventListener('change', () => {
+          if (selectNewCategory.value === 'bovinos') {
+              if (bovinoSubcategoryWrapper) bovinoSubcategoryWrapper.style.display = 'block';
+          } else {
+              if (bovinoSubcategoryWrapper) bovinoSubcategoryWrapper.style.display = 'none';
+              if (selectNewSubcategory) selectNewSubcategory.value = 'Carne Bovina - Corte'; // Resetar para o valor padrão
+          }
+      });
+  }
+
   function resetAddProductForm() {
       if(inputNewCode) inputNewCode.value = '';
       if(inputNewName) inputNewName.value = '';
       if(selectNewCategory) selectNewCategory.value = 'bovinos';
+      if(selectNewSubcategory) selectNewSubcategory.value = 'Carne Bovina - Corte'; // Resetar subcategoria
+      if(bovinoSubcategoryWrapper) bovinoSubcategoryWrapper.style.display = 'none'; // Esconder subcategoria por padrão
       if(inputNewCode) inputNewCode.readOnly = false;
       if(btnAddNewProduct) btnAddNewProduct.textContent = 'Adicionar Produto';
       if(addProductFeedback) {
@@ -1036,6 +1183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (addProductSectionEl) {
           delete addProductSectionEl.dataset.editingCode;
           delete addProductSectionEl.dataset.originalCategory;
+          delete addProductSectionEl.dataset.originalSubcategory; // Limpar subcategoria original
           delete addProductSectionEl.dataset.docId; // Limpar o docId também
       }
   }
@@ -1045,7 +1193,8 @@ document.addEventListener('DOMContentLoaded', () => {
           showAuthModal('Apenas administradores podem editar produtos.');
           return;
       }
-      const { code, name, category, docid } = event.target.dataset; // Obter docId
+      // Obter subcategory do dataset
+      const { code, name, category, subcategory, docid } = event.target.dataset;
 
       showSection('addProductSection', true);
 
@@ -1056,12 +1205,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if(inputNewName) inputNewName.value = name;
       if(selectNewCategory) selectNewCategory.value = category;
 
+      // Mostrar/esconder e preencher o campo de subcategoria
+      if (category === 'bovinos') {
+          if (bovinoSubcategoryWrapper) bovinoSubcategoryWrapper.style.display = 'block';
+          if (selectNewSubcategory) selectNewSubcategory.value = subcategory || 'Carne Bovina - Corte';
+      } else {
+          if (bovinoSubcategoryWrapper) bovinoSubcategoryWrapper.style.display = 'none';
+          if (selectNewSubcategory) selectNewSubcategory.value = 'Carne Bovina - Corte';
+      }
+
       if(btnAddNewProduct) btnAddNewProduct.textContent = 'Salvar Alterações';
 
       const addProductSectionEl = document.getElementById('addProductSection');
       if (addProductSectionEl) {
           addProductSectionEl.dataset.editingCode = code;
           addProductSectionEl.dataset.originalCategory = category;
+          addProductSectionEl.dataset.originalSubcategory = subcategory; // Armazenar subcategoria original
           addProductSectionEl.dataset.docId = docid; // Armazenar o docId
       }
 
@@ -1089,6 +1248,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newNameVal = inputNewName.value.trim();
         const categoryVal = selectNewCategory.value;
+        const newSubcategoryVal = categoryVal === 'bovinos' ? selectNewSubcategory.value : null; // Obter subcategoria se for bovino
 
         if (editingCode) { // Lógica de EDIÇÃO
             if (currentUserRole !== 'admin') {
@@ -1125,11 +1285,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const successSave = await saveProductData(docId, { name: newNameVal, category: categoryVal });
+            const successSave = await saveProductData(docId, { name: newNameVal, category: categoryVal, subcategory: newSubcategoryVal });
             if (successSave) {
                 addProductFeedback.textContent = `Produto "${newNameVal}" (${editingCode.padStart(5, '0')}) atualizado!`;
                 addProductFeedback.classList.add('correct');
-                rebuildProductIndexesAndSidebar(); // Recarrega dados e sidebar
+                rebuildProductIndexesAndDisplaySections(); // Recarrega dados e UI
                 setTimeout(() => {
                     resetAddProductForm();
                     showSection('adminProductManagementSection', true);
@@ -1152,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const newCodeVal = inputNewCode.value.trim();
-            if (!newCodeVal || !newNameVal || !categoryVal) {
+            if (!newCodeVal || !newNameVal || !categoryVal || (categoryVal === 'bovinos' && !newSubcategoryVal)) {
                 addProductFeedback.textContent = 'Preencha todos os campos.'; addProductFeedback.classList.add('warning'); return;
             }
             if (inputNewCode.readOnly) {
@@ -1175,10 +1335,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 addProductFeedback.textContent = `Nome de produto "${newNameVal}" já existente!`; addProductFeedback.classList.add('error'); return;
             }
 
-            const successSave = await saveProductData(null, { code: formattedCode, name: newNameVal, category: categoryVal });
+            const docData = { code: formattedCode, name: newNameVal, category: categoryVal };
+            if (categoryVal === 'bovinos') {
+                docData.subcategory = newSubcategoryVal;
+            }
+            const successSave = await saveProductData(null, docData);
             if (successSave) {
                 addProductFeedback.textContent = `Produto "${newNameVal}" (${formattedCode}) adicionado!`; addProductFeedback.classList.add('correct');
-                rebuildProductIndexesAndSidebar(); // Recarrega dados e sidebar
+                rebuildProductIndexesAndDisplaySections(); // Recarrega dados e UI
                 setTimeout(() => resetAddProductForm(), 1500);
             } else {
                 // Se falhar, recarregar os dados do Firestore para garantir consistência
@@ -1315,11 +1479,15 @@ document.addEventListener('DOMContentLoaded', () => {
         adminBovinosList.innerHTML = '';
         adminSuinosList.innerHTML = '';
 
-        const createProductListItem = (code, name, category, docId) => { // Adicionar docId
+        const createProductListItem = (code, name, category, docId, subcategory = null) => { // Adicionar docId e subcategory
             const li = document.createElement('li');
             const infoSpan = document.createElement('span');
             infoSpan.classList.add('product-info');
-            infoSpan.textContent = `${code.padStart(5, '0')} - ${name}`;
+            let displayText = `${code.padStart(5, '0')} - ${name}`;
+            if (subcategory) {
+                displayText += ` (${subcategory})`; // Exibir subcategoria na lista de admin
+            }
+            infoSpan.textContent = displayText;
 
             const editBtn = document.createElement('button');
             editBtn.textContent = 'Editar';
@@ -1328,6 +1496,9 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.dataset.name = name;
             editBtn.dataset.category = category;
             editBtn.dataset.docid = docId; // Armazenar docId no dataset
+            if (subcategory) {
+                editBtn.dataset.subcategory = subcategory; // Adicionar subcategory ao dataset
+            }
             editBtn.addEventListener('click', handleSetupEditProduct);
 
             const deleteBtn = document.createElement('button');
@@ -1345,13 +1516,35 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // Reconstruir listas a partir de productData (que já foi populado do Firestore)
-        if (productData.bovinos && Object.keys(productData.bovinos).length > 0) {
-            Object.entries(productData.bovinos).sort(([,a],[,b]) => a.name.localeCompare(b.name)).forEach(([code, prodInfo]) => {
-                adminBovinosList.appendChild(createProductListItem(code, prodInfo.name, 'bovinos', prodInfo.docId));
-            });
-        } else {
+        const subcategoriesOrder = [
+            "Carne Bovina - Corte", "Carne Bovina - Vácuo", "Carne Bovina - Maturada",
+            "Carne Bovina - Fracionada", "Carne Bovina - Bifes", "Miúdos Bovinos"
+        ];
+        let hasBovineContent = false;
+        subcategoriesOrder.forEach(subcat => {
+            const productsInSubcat = productData.bovinos[subcat];
+            if (productsInSubcat && Object.keys(productsInSubcat).length > 0) {
+                hasBovineContent = true;
+                const subcatTitle = document.createElement('h4');
+                subcatTitle.classList.add('subcategory-title'); // Reutiliza estilo de título de subcategoria
+                subcatTitle.textContent = subcat;
+                adminBovinosList.appendChild(subcatTitle);
+
+                const ul = document.createElement('ul');
+                ul.classList.add('product-list-admin');
+
+                Object.entries(productsInSubcat)
+                    .sort(([,a],[,b]) => a.name.localeCompare(b.name))
+                    .forEach(([code, prodInfo]) => {
+                        ul.appendChild(createProductListItem(code, prodInfo.name, 'bovinos', prodInfo.docId, subcat));
+                    });
+                adminBovinosList.appendChild(ul);
+            }
+        });
+        if (!hasBovineContent) {
             adminBovinosList.innerHTML = '<li>Nenhum produto bovino cadastrado.</li>';
         }
+
 
         if (productData.suinos && Object.keys(productData.suinos).length > 0) {
              Object.entries(productData.suinos).sort(([,a],[,b]) => a.name.localeCompare(b.name)).forEach(([code, prodInfo]) => {
@@ -1373,7 +1566,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const codeToDelete = event.target.dataset.code;
-        const categoryToDelete = event.target.dataset.category;
+        // categoryToDelete não é mais estritamente necessário para a exclusão via docId
+        // const categoryToDelete = event.target.dataset.category;
         const docIdToDelete = event.target.dataset.docid; // Obter o ID do documento
 
         if (!docIdToDelete) {
@@ -1392,12 +1586,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     adminProductManagementFeedback.textContent = `Produto ${codeToDelete} excluído com sucesso!`;
                     adminProductManagementFeedback.classList.add('correct');
                 }
-                rebuildProductIndexesAndSidebar(); // Recarregar dados e atualizar UI
+                rebuildProductIndexesAndDisplaySections(); // Recarregar dados e atualizar UI
             } catch (error) {
                 console.error("Erro ao excluir produto do Firestore:", error);
                 if(adminProductManagementFeedback) {
                     adminProductManagementFeedback.textContent = `Erro ao excluir: ${error.message}`;
-                    adminProductManagementFeedback.classList.add('error');
+                    adminProductManagementFeedback.className = 'error';
                 }
             }
             setTimeout(() => { if(adminProductManagementFeedback) adminProductManagementFeedback.textContent = ''; adminProductManagementFeedback.className = ''; }, 4000);
@@ -1475,7 +1669,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("ID do usuário para exclusão não encontrado.");
             if(adminUserManagementFeedback) {
                 adminUserManagementFeedback.textContent = 'Erro: ID do usuário não encontrado.';
-                adminUserManagementFeedback.className = 'error';
+                adminUserManagementFeedback.classList.add('error');
             }
             return;
         }
@@ -1550,8 +1744,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if(backToGamesHubFromFlashcardButton) backToGamesHubFromFlashcardButton.addEventListener('click', () => showSection('gamesHubSection'));
     if(backToProfileFromUserAdminButton) backToProfileFromUserAdminButton.addEventListener('click', () => showSection('userProfileSection', true));
 
+    // Novos event listeners para as seções de listagem de códigos
+    if(accessBovinosCodesButton) accessBovinosCodesButton.addEventListener('click', () => showSection('bovinosCodesSection'));
+    if(accessSuinosCodesButton) accessSuinosCodesButton.addEventListener('click', () => showSection('suinosCodesSection'));
+    if(backToHomeBovinosCodesButton) backToHomeBovinosCodesButton.addEventListener('click', () => showSection('initialScreen'));
+    if(backToHomeSuinosCodesButton) backToHomeSuinosCodesButton.addEventListener('click', () => showSection('initialScreen'));
+
+
     document.querySelectorAll('.back-to-home-button').forEach(button => {
         button.addEventListener('click', (e) => {
+            // Verifica se o botão clicado é o de "Voltar ao Início" da seção de adicionar produto
+            // ou se a seção de adicionar produto está atualmente visível.
+            // Isso garante que o formulário seja resetado ao sair da tela de adicionar/editar.
             if (e.target.id === 'backToHomeAddProduct' || mainContent.classList.contains('show-add-product')) {
                  resetAddProductForm();
             }
@@ -1559,6 +1763,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Ajustado para os novos itens da sidebar (sem acordeões de produtos)
     document.querySelectorAll('#sidebar h2[data-type="main-content"]').forEach(el => {
         const target = el.dataset.target;
         if (target) {
@@ -1578,10 +1783,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     document.addEventListener('click', e => {
+      // Fecha a sidebar se clicar fora dela ou do hambúrguer, e não for o título da aplicação nem o modal de autenticação
       if (sidebar && !sidebar.contains(e.target) && hamburger && !hamburger.contains(e.target) && authModalOverlay && !authModalOverlay.contains(e.target) && e.target !== butcherCodeTitle) {
         if(hamburger) hamburger.classList.remove('open'); if(sidebar) sidebar.classList.remove('open'); document.body.classList.remove('sidebar-open');
       }
     });
+    // Removido o loop para sidebarTitles que eram acordeões de produtos.
+    // Agora, os itens da sidebar são links diretos para seções.
+    /*
     if(sidebarTitles) {
       sidebarTitles.forEach(title => {
         title.addEventListener('click', () => {
@@ -1601,14 +1810,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+    */
 
     // --- Lógica dos Jogos (GameCode e Flashcard) ---
     function gameCodeGenerateQuestions() {
         const allProductsList = [];
-        // Agora, itera sobre o objeto productData para obter todos os produtos
-        if (productData.bovinos) {
-            Object.entries(productData.bovinos).forEach(([code, prodInfo]) => allProductsList.push([code, prodInfo.name]));
+        // Agora, itera sobre as subcategorias de bovinos
+        for (const subcat in productData.bovinos) {
+            Object.entries(productData.bovinos[subcat]).forEach(([code, prodInfo]) => allProductsList.push([code, prodInfo.name]));
         }
+        // Adiciona produtos suínos
         if (productData.suinos) {
             Object.entries(productData.suinos).forEach(([code, prodInfo]) => allProductsList.push([code, prodInfo.name]));
         }
@@ -1653,7 +1864,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 while (optionsSet.size < Math.min(4, allProductsList.length)) {
                     const [randomCode, randomName] = allProductsList[Math.floor(Math.random() * allProductsList.length)];
                     let randomOption = (type === 'codeToName') ? randomName : randomCode.padStart(5, '0');
-                    if (randomOption !== correctAnswer && randomOption !== undefined && randomOption !== null && String(randomOption).trim() !== '') {
+                    if (randomOption !== correctAnswer && randomOption !== null && String(randomOption).trim() !== '') {
                         optionsSet.add(randomOption);
                     }
                 }
@@ -1847,10 +2058,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function prepareAllFlashcardProducts() {
         allFlashcardProducts = [];
-        // Agora, itera sobre o objeto productData para obter todos os produtos
-        if (productData.bovinos) {
-            Object.entries(productData.bovinos).forEach(([code, prodInfo]) => allFlashcardProducts.push({ code, name: prodInfo.name }));
+        // Agora, itera sobre as subcategorias de bovinos
+        for (const subcat in productData.bovinos) {
+            Object.entries(productData.bovinos[subcat]).forEach(([code, prodInfo]) => allFlashcardProducts.push({ code, name: prodInfo.name }));
         }
+        // Adiciona produtos suínos
         if (productData.suinos) {
             Object.entries(productData.suinos).forEach(([code, prodInfo]) => allFlashcardProducts.push({ code, name: prodInfo.name }));
         }
@@ -1905,7 +2117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateFlashcardDOM(cardData) {
         if (!cardData) {
             if(flashcardFrontContent) flashcardFrontContent.textContent = "Sem mais cards!";
-            if(flashcardBackContent) flashcardBackcardContent.textContent = "Reinicie ou adicione produtos.";
+            if(flashcardBackContent) flashcardBackContent.textContent = "Reinicie ou adicione produtos.";
             if(flipCardButton) flipCardButton.style.display = 'none';
             if(flashcardControlsDiv) flashcardControlsDiv.style.display = 'none';
             if(nextFlashcardButton) nextFlashcardButton.style.display = 'none';
@@ -2044,3 +2256,4 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductData();
     showSection('initialScreen');
 });
+
