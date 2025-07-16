@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ButcherCode</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <!-- Link para o Font Awesome (ícones) -->
@@ -37,14 +37,6 @@
   <!-- Menu Lateral (Sidebar) -->
   <nav id="sidebar" aria-label="Menu lateral">
     <ul class="menu-sections">
-      <li class="menu-section">
-        <h2 tabindex="0" data-target="bovinosList" data-type="accordion">Códigos Bovinos</h2>
-        <ul class="subfolder" id="bovinosList"></ul>
-      </li>
-      <li class="menu-section">
-        <h2 tabindex="0" data-target="suinosList" data-type="accordion">Códigos Suínos</h2>
-        <ul class="subfolder" id="suinosList"></ul>
-      </li>
       <li class="menu-section" id="loginRegisterSidebarItem" style="display:none;">
         <h2 tabindex="0" id="loginRegisterSidebarButton">Login / Criar Conta</h2>
       </li>
@@ -73,11 +65,35 @@
             </div>
         </div>
         <div id="initial-screen-options">
-            <button id="accessTerminalButton">Acessar Terminal</button>
+            <button id="accessBovinosCodesButton">Códigos Bovinos</button>
+            <button id="accessSuinosCodesButton">Códigos Suínos</button>
+            <button id="accessTerminalButton">Terminal de Consulta</button>
             <button id="accessGamesButton">Central de Jogos</button>
-            <button id="viewCommentsButton">Ver Comentários</button>
+        <!--<button id="viewCommentsButton">Ver Comentários</button>-->
             <button id="accessInstructionsButton">Ver Instruções</button>
         </div>
+    </section>
+
+    <!-- Seção de Listagem de Códigos Bovinos -->
+    <section id="bovinosCodesSection">
+        <h2>Códigos Bovinos</h2>
+        <p style="text-align: center; color: var(--cor-texto-secundario);">Clique em um item para consultá-lo no terminal.</p>
+        <div id="bovinosCodesList">
+            <!-- As subcategorias e produtos serão carregados aqui via JS -->
+            <p style="text-align: center; color: var(--cor-texto-secundario);">Carregando códigos bovinos...</p>
+        </div>
+        <button class="back-to-home-button" id="backToHomeBovinosCodes">Voltar ao Início</button>
+    </section>
+
+    <!-- Seção de Listagem de Códigos Suínos -->
+    <section id="suinosCodesSection">
+        <h2>Códigos Suínos</h2>
+        <p style="text-align: center; color: var(--cor-texto-secundario);">Clique em um item para consultá-lo no terminal.</p>
+        <ul id="suinosCodesList" class="product-list-display">
+            <!-- Os produtos suínos serão carregados aqui via JS -->
+            <p style="text-align: center; color: var(--cor-texto-secundario);">Carregando códigos suínos...</p>
+        </ul>
+        <button class="back-to-home-button" id="backToHomeSuinosCodes">Voltar ao Início</button>
     </section>
 
     <!-- Seção do Terminal Principal -->
@@ -107,6 +123,18 @@
             <select id="selectNewCategory">
                 <option value="bovinos">Bovinos</option>
                 <option value="suinos">Suínos</option>
+            </select>
+        </div>
+        <!-- Nova seção para subcategorias de bovinos, visível apenas quando 'Bovinos' for selecionado -->
+        <div id="bovinoSubcategoryWrapper" class="input-wrapper" style="display: none;">
+            <label for="selectNewSubcategory">Subcategoria (Bovinos):</label>
+            <select id="selectNewSubcategory">
+                <option value="Carne Bovina - Corte">Carne Bovina - Corte</option>
+                <option value="Carne Bovina - Vácuo">Carne Bovina - Vácuo</option>
+                <option value="Carne Bovina - Maturada">Carne Bovina - Maturada</option>
+                <option value="Carne Bovina - Fracionada">Carne Bovina - Fracionada</option>
+                <option value="Carne Bovina - Bifes">Carne Bovina - Bifes</option>
+                <option value="Miúdos Bovinos">Miúdos Bovinos</option>
             </select>
         </div>
         <button id="btnAddNewProduct">Adicionar Produto</button>
@@ -157,7 +185,10 @@
         <p style="color: var(--cor-aviso); margin-bottom: 15px;">Atenção: As exclusões de produtos são permanentes. Os códigos não podem ser alterados durante a edição.</p>
         <div id="adminProductManagementFeedback" style="margin-bottom:15px;"></div>
         <h3>Bovinos</h3>
-        <ul id="adminBovinosList" class="product-list-admin"><li>Carregando...</li></ul>
+        <div id="adminBovinosList">
+            <!-- Subcategorias e produtos bovinos para admin serão carregados aqui -->
+            <p style="text-align: center; color: var(--cor-texto-secundario);">Carregando produtos bovinos...</p>
+        </div>
         <h3 style="margin-top: 20px;">Suínos</h3>
         <ul id="adminSuinosList" class="product-list-admin"><li>Carregando...</li></ul>
         <button class="back-to-home-button" id="backToHomeAdminProducts">Voltar ao Início</button>
@@ -252,16 +283,16 @@
             <ul>
                 <li><strong>Navegação:</strong>
                     <ul>
-                        <li>Utilize o menu lateral (ícone de hambúrguer <i class="fas fa-bars"></i> no canto superior esquerdo) para acessar as listas de códigos e outras seções.</li>
-                        <li>Use os botões na tela inicial para acessar o "Terminal de Consulta", a "Central de Jogos" e os "Comentários".</li>
+                        <li>Utilize o menu lateral (ícone de hambúrguer <i class="fas fa-bars"></i> no canto superior esquerdo) para acessar seu perfil, comentários e instruções.</li>
+                        <li>Use os botões na tela inicial para acessar as listas de códigos, o "Terminal de Consulta" e a "Central de Jogos".</li>
                     </ul>
                 </li>
                 <li><strong>Consultar Códigos/Produtos (Terminal):</strong>
                     <ul>
-                        <li>Acesse "Acessar Terminal" pela tela inicial.</li>
+                        <li>Acesse "Terminal de Consulta" pela tela inicial.</li>
                         <li>Digite um código (ex: "14601") para ver o nome do produto.</li>
                         <li>Digite o nome de um produto (ex: "Acém") para ver o código.</li>
-                        <li>Você também pode navegar pelas listas de "Códigos Bovinos" e "Códigos Suínos" no menu lateral para ver os itens e clicar para auto-preencher no terminal.</li>
+                        <li>Você também pode navegar pelas listas de "Códigos Bovinos" e "Códigos Suínos" na tela inicial para ver os itens e clicar para auto-preencher no terminal.</li>
                     </ul>
                 </li>
                 <li><strong>Central de Jogos:</strong>
@@ -305,7 +336,7 @@
                     <strong>🔪 Cooperador (Nome destacado em <span class="cooperator-username">cor especial</span>):</strong>
                     <ul>
                         <li>Todas as permissões de um Usuário Comum.</li>
-                        <li>Após o login (via "Meu Perfil"): Adicionar novos produtos (código, nome e categoria).</li>
+                        <li>Após o login (via "Meu Perfil"): Adicionar novos produtos (código, nome e categoria, e subcategoria para bovinos).</li>
                         <li>Seu nome terá um destaque especial nos comentários e na mensagem de boas-vindas.</li>
                     </ul>
                 </li>
@@ -315,7 +346,7 @@
                         <li>Todas as permissões de um Cooperador.</li>
                         <li>Após o login (via "Meu Perfil"):
                             <ul>
-                                <li>Acessar "Gerenciar Produtos" para editar (nome, categoria) e excluir produtos existentes.</li>
+                                <li>Acessar "Gerenciar Produtos" para editar (nome, categoria, subcategoria) e excluir produtos existentes.</li>
                                 <li>Acessar "Gerenciar Usuários" para listar e excluir dados de usuários da aplicação.</li>
                             </ul>
                         </li>
