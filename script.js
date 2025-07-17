@@ -164,6 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminUserManagementFeedback = document.getElementById('adminUserManagementFeedback');
   const backToProfileFromUserAdminButton = document.getElementById('backToProfileFromUserAdmin');
 
+  // NOVOS SELETORES PARA ATALHOS NO TERMINAL
+  const terminalBovinosShortcut = document.getElementById('terminalBovinosShortcut');
+  const terminalSuinosShortcut = document.getElementById('terminalSuinosShortcut');
+
 
   // --- Variáveis Globais e Estado ---
   let currentUser = null;
@@ -993,7 +997,15 @@ document.addEventListener('DOMContentLoaded', () => {
               } else if (prod.category === 'suinos') {
                   productData.suinos[prod.code] = { name: prod.name, docId: docSnap.id };
               }
-              productsInverseNormalized[normalizeText(prod.name)] = { code: prod.code.padStart(5, '0'), originalName: prod.name, docId: docSnap.id };
+              // productsInverseNormalized[normalizeText(prod.name)] = { code: prod.code.padStart(5, '0'), originalName: prod.name, docId: docSnap.id };
+              // Mantido para busca por nome, mas não mais para garantir unicidade de nome.
+              // Se houver nomes duplicados, a busca por nome retornará o primeiro que encontrar.
+              // Para garantir que a busca por nome retorne o que o usuário espera, pode ser necessário
+              // uma lógica mais complexa ou uma interface que lide com nomes duplicados (ex: lista de opções).
+              // Por enquanto, a primeira ocorrência será retornada.
+              if (!productsInverseNormalized[normalizeText(prod.name)]) {
+                  productsInverseNormalized[normalizeText(prod.name)] = { code: prod.code.padStart(5, '0'), originalName: prod.name, docId: docSnap.id };
+              }
           });
 
           // Chamar as novas funções para popular as seções de exibição de códigos
@@ -1266,7 +1278,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Verificar se o novo nome já existe para outro produto (excluindo o que está sendo editado)
+            // REMOVIDA: Verificação de unicidade de nome para permitir nomes duplicados.
+            // A regra agora é: mesmo produto com códigos diferentes é permitido.
+            /*
             const normalizedNewName = normalizeText(newNameVal);
             const productsColRef = collection(db, 'products');
             const q = query(productsColRef, where('name', '==', newNameVal));
@@ -1284,6 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addProductFeedback.classList.add('error');
                 return;
             }
+            */
 
             const successSave = await saveProductData(docId, { name: newNameVal, category: categoryVal, subcategory: newSubcategoryVal });
             if (successSave) {
@@ -1320,7 +1335,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const formattedCode = newCodeVal.padStart(5, '0');
 
-            // Verificar se o código já existe no Firestore
+            // Verificar se o código já existe no Firestore (mantido, pois códigos devem ser únicos)
             const productsColRef = collection(db, 'products');
             const qCode = query(productsColRef, where('code', '==', formattedCode));
             const codeSnapshot = await getDocs(qCode);
@@ -1328,12 +1343,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 addProductFeedback.textContent = `Código "${formattedCode}" já existente!`; addProductFeedback.classList.add('error'); return;
             }
 
-            // Verificar se o nome já existe no Firestore
+            // REMOVIDA: Verificação de unicidade de nome para permitir nomes duplicados.
+            // A regra agora é: mesmo produto com códigos diferentes é permitido.
+            /*
             const qName = query(productsColRef, where('name', '==', newNameVal));
             const nameSnapshot = await getDocs(qName);
             if (!nameSnapshot.empty) {
                 addProductFeedback.textContent = `Nome de produto "${newNameVal}" já existente!`; addProductFeedback.classList.add('error'); return;
             }
+            */
 
             const docData = { code: formattedCode, name: newNameVal, category: categoryVal };
             if (categoryVal === 'bovinos') {
@@ -1591,7 +1609,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Erro ao excluir produto do Firestore:", error);
                 if(adminProductManagementFeedback) {
                     adminProductManagementFeedback.textContent = `Erro ao excluir: ${error.message}`;
-                    adminProductManagementFeedback.className = 'error';
+                    adminProductManagementFeedback.classList.add('error');
                 }
             }
             setTimeout(() => { if(adminProductManagementFeedback) adminProductManagementFeedback.textContent = ''; adminProductManagementFeedback.className = ''; }, 4000);
@@ -1744,12 +1762,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if(backToGamesHubFromFlashcardButton) backToGamesHubFromFlashcardButton.addEventListener('click', () => showSection('gamesHubSection'));
     if(backToProfileFromUserAdminButton) backToProfileFromUserAdminButton.addEventListener('click', () => showSection('userProfileSection', true));
 
-    // Novos event listeners para as seções de listagem de códigos
+    // Novos event listeners para as seções de listagem de códigos (na tela inicial)
     if(accessBovinosCodesButton) accessBovinosCodesButton.addEventListener('click', () => showSection('bovinosCodesSection'));
     if(accessSuinosCodesButton) accessSuinosCodesButton.addEventListener('click', () => showSection('suinosCodesSection'));
-    if(backToHomeBovinosCodesButton) backToHomeBovinosCodesButton.addEventListener('click', () => showSection('initialScreen'));
-    if(backToHomeSuinosCodesButton) backToHomeSuinosCodesButton.addEventListener('click', () => showSection('initialScreen'));
 
+    // NOVOS EVENT LISTENERS PARA ATALHOS NO TERMINAL
+    if(terminalBovinosShortcut) terminalBovinosShortcut.addEventListener('click', () => showSection('bovinosCodesSection'));
+    if(terminalSuinosShortcut) terminalSuinosShortcut.addEventListener('click', () => showSection('suinosCodesSection'));
+
+    // Os botões "Voltar ao Início" já estão configurados para as seções de códigos bovinos e suínos
+    // backToHomeBovinosCodesButton e backToHomeSuinosCodesButton já são selecionados por document.querySelectorAll('.back-to-home-button')
+    // e chamam showSection('initialScreen')
 
     document.querySelectorAll('.back-to-home-button').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -2256,4 +2279,3 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductData();
     showSection('initialScreen');
 });
-
