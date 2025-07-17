@@ -69,7 +69,7 @@
             <button id="accessSuinosCodesButton">Códigos Suínos</button>
             <button id="accessTerminalButton">Terminal de Consulta</button>
             <button id="accessGamesButton">Central de Jogos</button>
-        <!--<button id="viewCommentsButton">Ver Comentários</button>-->
+          <!--<button id="viewCommentsButton">Ver Comentários</button>-->
             <button id="accessInstructionsButton">Ver Instruções</button>
         </div>
     </section>
@@ -104,6 +104,14 @@
         </div>
         <button id="btnExecute">Executar</button>
         <div id="result" aria-live="polite" role="status"></div>
+
+        <!-- Novos Atalhos no Terminal -->
+        <div style="margin-top: 30px; border-top: 1px dashed var(--cor-borda-geral); padding-top: 20px;">
+            <p style="text-align: center; margin-bottom: 15px; color: var(--cor-texto-secundario);">Ou acesse as listas de códigos:</p>
+          <p><button class="terminal-shortcut-button" id="terminalBovinosShortcut">Ver Códigos Bovinos</button></p>
+          <p><button class="terminal-shortcut-button" id="terminalSuinosShortcut">Ver Códigos Suínos</button></p>
+        </div>
+
         <button class="back-to-home-button" id="backToHomeTerminal">Voltar ao Início</button>
     </section>
 
@@ -293,6 +301,7 @@
                         <li>Digite um código (ex: "14601") para ver o nome do produto.</li>
                         <li>Digite o nome de um produto (ex: "Acém") para ver o código.</li>
                         <li>Você também pode navegar pelas listas de "Códigos Bovinos" e "Códigos Suínos" na tela inicial para ver os itens e clicar para auto-preencher no terminal.</li>
+                        <li>**NOVO!** Dentro do terminal, use os botões "Ver Códigos Bovinos" e "Ver Códigos Suínos" para ir diretamente para as listas completas.</li>
                     </ul>
                 </li>
                 <li><strong>Central de Jogos:</strong>
